@@ -1,6 +1,8 @@
 Minimalistic Dependency Injection - dinistiq
 ============================================
 
+[![Build Status](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/badge/icon)](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/)
+
 Or: What I got wrong about DI
 
 Minimalistic component to use dependency injection for the wire-up of software components. It thus mostly deals with singletons - some of the implementing interfaces - which should be injected as dependencies into one another.
