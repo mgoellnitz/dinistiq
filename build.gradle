@@ -51,7 +51,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      groupId 'dinistiq'
+      // groupId 'dinistiq'
       from components.java
       artifact sourcesJar 
     }
