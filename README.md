@@ -1,7 +1,7 @@
 ![dinistiq](https://raw.github.com/mgoellnitz/dinistiq/master/doc/dinistiq.png)
 
-Minimalistic Dependency Injection - dinistiq
-============================================
+Minimalistic Dependency Injection
+=================================
 
 [![Build Status](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/badge/icon)](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/)
 
