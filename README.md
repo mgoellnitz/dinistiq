@@ -1,4 +1,4 @@
-dinistiq - Minimalistic Dependency Injection
+Minimalistic Dependency Injection - dinistiq
 ============================================
 
 Or: What I got wrong about DI
@@ -29,7 +29,7 @@ public class TestComponentB {
 } // TestComponentB
 ```
 
-It then finds those components from the auto-scanned portion of the classpath where it instanciates and Class annotated with @Named (and an optional name as the value parameter).
+It then finds those components from the auto-scanned portion of the classpath where it instanciates all classes annotated with @Named (and an optional name as the value parameter).
 
 ```Java
 @Named
@@ -38,7 +38,7 @@ public class TestComponent implements TestInterface {
 } // TestComponent
 ```
 
-If this is not enough, you can explicitly add some bean to be instaciated in properties files
+If this is not enough, you can explicitly add some beans to be instaciated in properties files
 
 ```
 unannotatedComponent=dinistiq.test.components.UnannotatedComponent
@@ -46,7 +46,7 @@ unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 
 Those files must simply be put in the folder dinistiq/ anywhere on your classpath.
 
-For any of the instanciated beans you can provide more values to explicitly inject again by properties files.
+For any of the instanciated beans you can provide more values to explicitly inject - again by the use of properties files.
 
 After instanciation of the bean a properties file with the bean name as its base file name is searched first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the classpath. Thus you can deliver your components with a reasonable default and necessary overrides for the specific application.
 
@@ -55,7 +55,7 @@ file dinistiq/beans/example.properties
 activateCaching=true
 ```
 
-This will call the property setter set setActivateCaching() on the bean named example. The bean named example comes either from automatic scann of a class named Example
+This will call the property setter set setActivateCaching() on the bean named example. The bean named example comes either from automatic scan of a class named Example
 
 ```Java
 @Named
@@ -77,13 +77,15 @@ or from the naming through a configuration properties file
 
 file dinistiq/demo.properties
 ```
-activateCaching=true
+example=some.package.ExampleComponent
 ```
+
+This complete set up is done without any configuration for dinistiq itself.
 
 How to use
 ----------
 
-Apart from optional configuration files to be placed somehere on your classpath you simply have to tell dinistiq which portion of the classpath to scan for annotations.
+Apart from optional configuration files to be placed somehere on your classpath, you simply have to tell dinistiq which portion of the classpath to scan for annotations.
 
 ```Java
 public class Test  {
@@ -102,9 +104,9 @@ public class Test  {
 } // Test
 ```
 
-Make this portion of the classpath as small as ever possible or point to some invented and thus empty package.
+Make this portion of the classpath as small as ever possible or point to some invented and thus empty package, if you want to avoid scanning.
 
-After this you can ask dinistiq for instances of the components it created and injected.
+After this step you can ask dinistiq for instances of the components it created and injected.
 
 ```Java
 public class Test  {
@@ -160,7 +162,7 @@ dinistiq comes with a very lean web integration with a front controller servlet 
 </web-app>
 ```
 
-This fron controller servlet tries to find the other servlets from the dinistiq context by asking for registrable servlets. 
+This front controller servlet tries to find the other servlets from the dinistiq context by asking for registrable servlets. 
 
 ```Java
 /**
@@ -182,19 +184,19 @@ public interface RegisterableServlet extends Servlet, Comparable<RegisterableSer
 } // RegisterableServlet
 ```
 
-So a servlet has to tell which regular expressions its request should meet to be able to handle the and it tells an order number to sort all available servlet to have a certain precedency rule for them.
+So a servlet has to tell which regular expressions its request should meet to be able to handle them. Additionally it tells an order number to sort all available servlets to provide a certain precedency rule for them.
 
-Note: Since / is such a common character in URLs and Regular exressions need to escape exactly this character, you can pass the / unescaped as it gets auto-escaped by dinistiq.
+Note: Since / is such a common character in URLs and regular exressions need to escape exactly this character, you must pass the / unescaped as it gets auto-escaped by dinistiq.
 
 Comparison
 ----------
 
-The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an interesting comparison of some DI implementations done in Java and we want to add the values for dinistiq to this list:
+The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an interesting comparison of some DI implementations done in Java and we want to add some values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
 |Version|0.1|
-|Archives Size|<20kB|
+|Archive size|<20kB|
 |Further dependencies|<5|
 |API||
 |Methods in injector/context|3|
