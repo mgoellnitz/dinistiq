@@ -216,7 +216,7 @@ The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
 |Bind to all (generic) supertypes|yes|
 |Type link|-|
 |Injection||
-|Annotation guidance|required|
+|Annotation guidance|only JSR330|
 |Constructor injection|no|
 |Field injection|yes|
 |Setting injection|yes|

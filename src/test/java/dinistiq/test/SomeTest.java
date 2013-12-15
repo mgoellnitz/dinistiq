@@ -22,6 +22,7 @@ import dinistiq.Dinistiq;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,6 +60,27 @@ public class SomeTest {
         Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
         Assert.assertNotNull("DI container could not be initialized", d);
         Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
+    } // testFindImplementedInterface()
+
+
+    @Test
+    public void testMapBeans() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages);
+        } catch (Exception e) {
+            //
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        Set<Map> maps = d.findTypedBeans(Map.class);
+        Assert.assertTrue("no maps at all found", maps.size()>0);
+        System.err.println("Maps: "+maps);
+        Map<Object, Object> map = d.findBean(Map.class, "mapTest");
+        Assert.assertNotNull("test map not found", map);
+        Assert.assertEquals("default value not correct", "defaultValueA", map.get("keyA"));
+        Assert.assertEquals("specialized value not correct", "overriddenValueB", map.get("keyB"));
     } // testFindImplementedInterface()
 
 } // SomeTest

@@ -19,6 +19,7 @@
 package dinistiq;
 
 import java.beans.Introspector;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -74,7 +75,9 @@ public class Dinistiq {
     public <T extends Object> T findTypedBean(Class<T> type) {
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
-                LOG.info("findTypedBean() returning "+bean+" :"+type.getName());
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("findTypedBean() returning "+bean+" :"+type.getName());
+                } // if
                 return (T) bean;
             } // if
         } // for
@@ -87,7 +90,10 @@ public class Dinistiq {
         T result = null;
         Object bean = beans.get(name);
         if (bean!=null) {
-            if (bean.getClass().isAssignableFrom(cls)) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("findBean() "+name+" :"+bean.getClass().getName());
+            } // if
+            if (cls.isAssignableFrom(bean.getClass())) {
                 result = (T) bean;
             } // if
         } // if
@@ -164,7 +170,9 @@ public class Dinistiq {
      * @param name optional name - if null the name is taken from the @Named annotation or from the class name otherwise
      */
     private void createInstance(Class<? extends Object> c, String name) {
-        LOG.info("createInstance("+name+") c="+c);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("createInstance("+name+") c="+c);
+        } // if
         // Check constructor
         // Instanciate and save
         try {
@@ -178,6 +186,28 @@ public class Dinistiq {
             LOG.error("createInstance() error instanciating bean of type "+c.getName(), e);
         } // try/catch
     } // createInstance()
+
+
+    /**
+     * Get properties according to standard directory scheme from defaults and specialized properties for a given key.
+     *
+     * @param key key resembling the properties file name to look for in dinistiq/defaults and dinistiq/beans
+     * resources folder
+     * @return map collected from defaults and specialized values
+     * @throws IOException
+     */
+    private Properties getProperties(String key) throws IOException {
+        Properties beanProperties = new Properties();
+        InputStream stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
+        if (stream!=null) {
+            beanProperties.load(stream);
+        } // if
+        stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/beans/"+key+".properties");
+        if (stream!=null) {
+            beanProperties.load(stream);
+        } // if
+        return beanProperties;
+    }
 
 
     /**
@@ -213,10 +243,10 @@ public class Dinistiq {
             LOG.debug("() checking "+propertiesFilenames.size()+" files for properties");
         } // if
         for (String propertyResource : propertiesFilenames) {
-            // ignore subfolders!
             if (LOG.isDebugEnabled()) {
                 LOG.debug("() check "+propertyResource);
             } // if
+            // ignore subfolders!
             if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("() resource "+propertyResource);
@@ -229,8 +259,17 @@ public class Dinistiq {
         } // if
         for (String key : beanlist.stringPropertyNames()) {
             String className = beanlist.getProperty(key);
-            Class<? extends Object> c = Class.forName(className);
-            createInstance(c, key);
+            if ("java.util.Map".equals(className)) {
+                Properties mapProperties = getProperties(key);
+                Map<Object, Object> map = new HashMap<>(mapProperties);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("() creating map '"+key+"' "+map);
+                } // if
+                beans.put(key, map);
+            } else {
+                Class<? extends Object> c = Class.forName(className);
+                createInstance(c, key);
+            } // ifs
         } // for
 
         // Fill in injections
@@ -244,16 +283,7 @@ public class Dinistiq {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("() bean "+key+": "+orderedBeanIndex+" "+orderedBeans);
             } // if
-
-            Properties beanProperties = new Properties();
-            InputStream stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
-            if (stream!=null) {
-                beanProperties.load(stream);
-            } // if
-            stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/beans/"+key+".properties");
-            if (stream!=null) {
-                beanProperties.load(stream);
-            } // if
+            Properties beanProperties = getProperties(key);
 
             // fill injected fields
             Class<? extends Object> beanClass = bean.getClass();
@@ -347,7 +377,7 @@ public class Dinistiq {
                     } // if
                 } // if
             } // for
-        } // for
+        }
 
         // Call Post Construct
         if (LOG.isInfoEnabled()) {
