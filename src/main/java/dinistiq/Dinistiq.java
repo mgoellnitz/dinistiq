@@ -51,8 +51,6 @@ public class Dinistiq {
 
     private ClassResolver classResolver = new SimpleClassResolver();
 
-    private int orderedBeanIndex = -1;
-
     private List<Object> orderedBeans = new ArrayList<Object>();
 
     private Map<String, Object> beans = new HashMap<String, Object>();
@@ -101,17 +99,6 @@ public class Dinistiq {
     } // findBean()
 
 
-    private void sortBeanIntoList(Object bean) {
-        final int idx = orderedBeans.indexOf(bean);
-        if ((idx>orderedBeanIndex)||(idx<0)) {
-            if (idx>=0) {
-                orderedBeans.remove(bean);
-            }// if
-            orderedBeans.add(orderedBeanIndex++, bean);
-        } // if
-    } // sortBeanIntoList()
-
-
     private Object getValue(String customer, Class<? extends Object> cls, Type type) throws Exception {
         if (Collection.class.isAssignableFrom(cls)) {
             if (LOG.isDebugEnabled()) {
@@ -142,7 +129,6 @@ public class Dinistiq {
         if (bean==null) {
             throw new Exception("for "+customer+": bean of type "+cls.getName()+" not found.");
         } // if
-        sortBeanIntoList(bean);
         return bean;
     } // getValue()
 
@@ -156,7 +142,6 @@ public class Dinistiq {
             throw new Exception("for "+customer+": no bean with name '"+name+"' found.");
         } // if
         if (cls.isAssignableFrom(bean.getClass())) {
-            sortBeanIntoList(bean);
             return bean;
         }
         throw new Exception("for "+customer+": "+name+" :"+cls.getName()+" not found.");
@@ -237,6 +222,7 @@ public class Dinistiq {
             createInstance(c, null);
         } // for
 
+        // Read bean list from property files mapping names to class names to instanciate
         Properties beanlist = new Properties();
         final Collection<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
         if (LOG.isDebugEnabled()) {
@@ -272,17 +258,16 @@ public class Dinistiq {
             } // ifs
         } // for
 
-        // Fill in injections
+        // Fill in injections and note needed dependencies
+        Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
-            orderedBeanIndex = orderedBeans.indexOf(bean);
-            if (orderedBeanIndex<0) {
-                orderedBeans.add(bean);
-            } // if
-            orderedBeanIndex = orderedBeans.indexOf(bean);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("() bean "+key+": "+orderedBeanIndex+" "+orderedBeans);
-            } // if
+
+            // note dependencies
+            Set<Object> beanDependencies = new HashSet<Object>();
+            dependencies.put(key, beanDependencies);
+
+            // Prepare values from properties files
             Properties beanProperties = getProperties(key);
 
             // fill injected fields
@@ -310,6 +295,7 @@ public class Dinistiq {
                             field.setAccessible(true);
                             field.set(bean, b);
                             field.setAccessible(accessible);
+                            beanDependencies.add(b);
                         } catch (Exception e) {
                             LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                         } // try/catch
@@ -339,6 +325,7 @@ public class Dinistiq {
                             } // if
                         } // for
                         parameters[i] = getValue(key, parameterType, genericParameterTypes[i], name);
+                        beanDependencies.add(parameters[i]);
                     } // for
                     try {
                         m.invoke(bean, parameters);
@@ -377,7 +364,51 @@ public class Dinistiq {
                     } // if
                 } // if
             } // for
-        }
+        } // for
+
+        // sort beans according to dependencies
+        if (LOG.isInfoEnabled()) {
+            LOG.info("() sorting beans according to dependencies");
+        } // if
+        while (dependencies.size()>0) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("() "+dependencies.size()+" beans left");
+            } // if
+            Set<String> deletions = new HashSet<String>();
+            for (String key : dependencies.keySet()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("() checking if "+key+" can be safely put into the ordered list");
+                } // if
+                boolean dependenciesMet = true;
+                for (Object dep : dependencies.get(key)) {
+                    boolean isMet = true;
+                    if (dep instanceof Collection) {
+                        Collection depCollection = (Collection) dep;
+                        for (Object d : depCollection) {
+                            isMet = isMet&&orderedBeans.contains(d);
+                        } // for
+                    } else {
+                        isMet = orderedBeans.contains(dep);
+                    } // if
+                    if (LOG.isDebugEnabled()) {
+                        if (!isMet) {
+                            LOG.debug("() "+key+" is missing "+dep+" :"+dep.getClass().getName());
+                        } // if
+                    } // if
+                    dependenciesMet = dependenciesMet&&isMet;
+                } // for
+                if (dependenciesMet) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("() adding "+key+" to the list "+orderedBeans);
+                    } // if
+                    orderedBeans.add(beans.get(key));
+                    deletions.add(key);
+                } // if
+            } // for
+            for (String key : deletions) {
+                dependencies.remove(key);
+            } // for
+        } // while
 
         // Call Post Construct
         if (LOG.isInfoEnabled()) {

@@ -146,13 +146,17 @@ dinistiq comes with a very lean web integration with a front controller servlet 
   
   <display-name>dinistiq.web</display-name>
 
+  <listener>
+    <listener-class>dinistiq.web.DinistiqContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>dinistiq.packages</param-name>
+      <param-value>com.example.components,org.example.components</param-value>
+  </context-param>
+  
   <servlet>
     <servlet-name>dinistiq</servlet-name>
     <servlet-class>dinistiq.web.DinistiqServlet</servlet-class>
-    <init-param>
-      <param-name>dinistiq.packages</param-name>
-      <param-value>com.example.components,org.example.components</param-value>
-    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>dinistiq</servlet-name>

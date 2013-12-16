@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +39,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
+/**
+ * Front controller servlet for all dinistiq related calls.
+ *
+ * All servlets depending on injected components should implement the registrable servlet interface to
+ * be registered with this one and be consireded and called in the correct order according to their
+ * respective URL patterns.
+ */
 public class DinistiqServlet extends HttpServlet {
 
     private static final Log LOG = LogFactory.getLog(DinistiqServlet.class);
@@ -58,9 +63,6 @@ public class DinistiqServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: Will be removed soon.
-        req.setAttribute("tangramAdminUser", "true");
-
         final String requestURI = req.getRequestURI();
         int idx = requestURI.indexOf("/", 1);
         idx++;
@@ -89,29 +91,10 @@ public class DinistiqServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         if (LOG.isWarnEnabled()) {
-            LOG.warn("Starting... ("+LOG.getClass().getName()+")");
+            LOG.warn("init() ("+LOG.getClass().getName()+")");
         } // if
-        Set<String> packages = new HashSet<String>();
-        final Enumeration initParameterNames = config.getInitParameterNames();
-        while (initParameterNames.hasMoreElements()) {
-            String parameterName = ""+(initParameterNames.nextElement());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("init() parameter "+parameterName);
-            } // if
-            if (parameterName.equals("dinistiq.packages")) {
-                final String packagNameString = config.getInitParameter(parameterName);
-                String[] packageNames = packagNameString.split(",");
-                for (String packageName : packageNames) {
-                    packageName = packageName.trim();
-                    packages.add(packageName);
-                } // for
-            } // if
-            if (parameterName.startsWith("dinistiq.package.")) {
-                packages.add(config.getInitParameter(parameterName));
-            } // if
-        } // for
         try {
-            Dinistiq dinistiq = new Dinistiq(packages);
+            Dinistiq dinistiq = (Dinistiq) (config.getServletContext().getAttribute(DinistiqContextLoaderListener.DINISTIQ_INSTANCE));
             Collection<RegisterableServlet> servlets = dinistiq.findTypedBeans(RegisterableServlet.class);
             List<RegisterableServlet> orderedServlets = new ArrayList<RegisterableServlet>(servlets.size());
             for (RegisterableServlet servlet : servlets) {
