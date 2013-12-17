@@ -383,7 +383,8 @@ public class Dinistiq {
                 for (Object dep : dependencies.get(key)) {
                     boolean isMet = true;
                     if (dep instanceof Collection) {
-                        Collection depCollection = (Collection) dep;
+                        @SuppressWarnings("unchecked")
+                        Collection<Object> depCollection = (Collection<Object>) dep;
                         for (Object d : depCollection) {
                             isMet = isMet&&orderedBeans.contains(d);
                         } // for

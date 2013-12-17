@@ -64,6 +64,7 @@ public class SomeTest {
 
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void testMapBeans() {
         Set<String> packages = new HashSet<String>();
         packages.add(TestInterface.class.getPackage().getName());
