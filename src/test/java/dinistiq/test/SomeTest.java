@@ -19,6 +19,7 @@
 package dinistiq.test;
 
 import dinistiq.Dinistiq;
+import dinistiq.test.components.StaticInjection;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
 import java.util.HashSet;
@@ -82,6 +83,20 @@ public class SomeTest {
         Assert.assertNotNull("test map not found", map);
         Assert.assertEquals("default value not correct", "defaultValueA", map.get("keyA"));
         Assert.assertEquals("specialized value not correct", "overriddenValueB", map.get("keyB"));
-    } // testFindImplementedInterface()
+    } // testMapBeans()
+
+    @Test
+    public void testStaticInjection() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages);
+        } catch (Exception e) {
+            //
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        Assert.assertNotNull("Static field not injected", StaticInjection.getTestInterface());
+    } // testStaticInjection()
 
 } // SomeTest
