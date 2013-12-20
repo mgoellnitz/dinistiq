@@ -192,7 +192,26 @@ public class Dinistiq {
             beanProperties.load(stream);
         } // if
         return beanProperties;
-    }
+    } // getProperties()
+
+
+    /**
+     * tries to convert the given value as an object reference.
+     *
+     * @param propertyValue
+     * @return referenced object or original string if unavailable
+     */
+    private Object getReferenceValue(String propertyValue) {
+        Object result = propertyValue;
+        if (propertyValue.startsWith("${")) {
+            String referenceName = propertyValue.substring(2, propertyValue.length()-1);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getReferenceValue("+propertyValue+") "+referenceName);
+            } // if
+            result = beans.containsKey(referenceName) ? beans.get(referenceName) : result;
+        } // if
+        return result;
+    } // getReferenceValue()
 
 
     /**
@@ -222,7 +241,7 @@ public class Dinistiq {
             createInstance(c, null);
         } // for
 
-        // Read bean list from property files mapping names to class names to instanciate
+        // Read bean list from property files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
         final Collection<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
         if (LOG.isDebugEnabled()) {
@@ -358,11 +377,11 @@ public class Dinistiq {
                             LOG.debug("() trying to set value "+propertyName+" "+isBoolean+":"+isCollection);
                         } // if
                         try {
-                            parameters[0] = isBoolean ? "true".equals(propertyValue) : propertyValue;
+                            parameters[0] = isBoolean ? "true".equals(propertyValue) : getReferenceValue(propertyValue);
                             if (isCollection) {
-                                Set<String> valueSet = new HashSet<String>();
+                                Set<Object> valueSet = new HashSet<Object>();
                                 for (String value : propertyValue.split(",")) {
-                                    valueSet.add(value);
+                                    valueSet.add(getReferenceValue(value));
                                 } // for
                                 parameters[0] = valueSet;
                             } // if

@@ -50,18 +50,34 @@ public class SomeTest {
     public void testFindExplicitlyInstanciatedComponent() {
         Set<String> packages = new HashSet<String>();
         packages.add(TestInterface.class.getPackage().getName());
-        Dinistiq d = null;
         try {
-            d = new Dinistiq(packages);
+            Dinistiq d = new Dinistiq(packages);
+            TestInterface ti = d.findTypedBean(TestInterface.class);
+            TestInterface test = d.findBean(TestInterface.class, "test");
+            Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
+            Assert.assertNotNull("DI container could not be initialized", d);
+            Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
         } catch (Exception e) {
             //
         } // try/catch
-        TestInterface ti = d.findTypedBean(TestInterface.class);
-        TestInterface test = d.findBean(TestInterface.class, "test");
-        Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
-        Assert.assertNotNull("DI container could not be initialized", d);
-        Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
-    } // testFindImplementedInterface()
+    } // testFindExplicitlyInstanciatedComponent()
+
+
+    @Test
+    public void testReferenceValue() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        try {
+            Dinistiq d = new Dinistiq(packages);
+            Assert.assertNotNull("DI container could not be initialized", d);
+            // In this case in order to let the reference injection work, the bean MUST be named to find the correct properties file
+            UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class, "unannotatedComponent");
+            Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
+            Assert.assertNotNull("Cannot find value injected as a reference ", unannotatedComponent.getTestInterface());
+        } catch (Exception e) {
+            //
+        } // try/catch
+    } // testReferenceValue()
 
 
     @Test
@@ -84,6 +100,7 @@ public class SomeTest {
         Assert.assertEquals("default value not correct", "defaultValueA", map.get("keyA"));
         Assert.assertEquals("specialized value not correct", "overriddenValueB", map.get("keyB"));
     } // testMapBeans()
+
 
     @Test
     public void testStringValue() {

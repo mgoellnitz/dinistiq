@@ -24,6 +24,19 @@ import javax.inject.Inject;
 public class UnannotatedComponent {
 
     @Inject
-    TestComponentB b;
+    private TestComponentB b;
+
+    private TestInterface testInterface;
+
+
+    @Inject
+    public void setSomething(TestInterface testInterface) {
+        this.testInterface = testInterface;
+    } // setSomething()
+
+
+    public TestInterface getTestInterface() {
+        return testInterface;
+    } // getTestInterface()
 
 } // UnannotatedComponent
