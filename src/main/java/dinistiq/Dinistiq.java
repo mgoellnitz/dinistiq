@@ -253,8 +253,17 @@ public class Dinistiq {
                 } // if
                 beans.put(key, map);
             } else {
-                Class<? extends Object> c = Class.forName(className);
-                createInstance(c, key);
+                // expect java.lang.Sting("value")
+                if (className.startsWith("java.lang.String")) {
+                    String value = className.substring(JAVALANG_STRING.length()+2, className.length()-2);
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("() storing string '"+key+"' "+value);
+                    } // if
+                    beans.put(key, value);
+                } else {
+                    Class<? extends Object> c = Class.forName(className);
+                    createInstance(c, key);
+                } // ifs
             } // ifs
         } // for
 
@@ -456,5 +465,6 @@ public class Dinistiq {
             LOG.info("() setup completed after "+(System.currentTimeMillis()-start)+"ms");
         } // if
     } // ()
+    public static final String JAVALANG_STRING = "java.lang.String";
 
 } // Dinistiq

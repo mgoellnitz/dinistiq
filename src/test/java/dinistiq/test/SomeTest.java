@@ -86,6 +86,23 @@ public class SomeTest {
     } // testMapBeans()
 
     @Test
+    public void testStringValue() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages);
+        } catch (Exception e) {
+            //
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        String stringValue = d.findBean(String.class, "stringTest");
+        Assert.assertNotNull("not string with name 'stringTest' found", stringValue);
+        Assert.assertEquals("unexpected string value", "stringValue", stringValue);
+    } // testStringValue()
+
+
+    @Test
     public void testStaticInjection() {
         Set<String> packages = new HashSet<String>();
         packages.add(TestInterface.class.getPackage().getName());
