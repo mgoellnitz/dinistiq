@@ -27,8 +27,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -183,13 +185,23 @@ public class Dinistiq {
      */
     private Properties getProperties(String key) throws IOException {
         Properties beanProperties = new Properties();
-        InputStream stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
-        if (stream!=null) {
-            beanProperties.load(stream);
-        } // if
-        stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/beans/"+key+".properties");
-        if (stream!=null) {
-            beanProperties.load(stream);
+        final Enumeration<URL> resources = this.getClass().getClassLoader().getResources(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
+        while (resources.hasMoreElements()) {
+            final URL resource = resources.nextElement();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getProperties("+key+") loading defaults from "+resources);
+            } // if
+            beanProperties.load(resource.openStream());
+        } // while
+        /*
+         InputStream stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
+         if (stream!=null) {
+         beanProperties.load(stream);
+         } // if
+         */
+        InputStream beanStream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/beans/"+key+".properties");
+        if (beanStream!=null) {
+            beanProperties.load(beanStream);
         } // if
         return beanProperties;
     } // getProperties()
@@ -215,15 +227,23 @@ public class Dinistiq {
 
 
     /**
-     * Dinistiq test run.
-     *
-     * We need to describe which class(es) should implement an interface in a configuration file.
-     *
-     * We need to describe which not auto-scanned beans should be instanciated. Maybe as an alternative to the above.
-     *
-     * We need to describe complex value structures as vales to be used for injection into certain beans.
+     * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
+     * substructur of ther resource path.
      */
     public Dinistiq(Set<String> packages) throws Exception {
+        this(packages, null);
+    } // Dinistiq()
+
+
+    /**
+     * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
+     * substructur of ther resource path.
+     * Add all the external named beans from thei given map for later lookup to the context as well.
+     */
+    public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
+        if (externalBeans!=null) {
+            beans.putAll(externalBeans);
+        } // if
         // to have the properties files in the path which we intend to use for configuration
         packages.add(this.getClass().getPackage().getName());
         if (LOG.isDebugEnabled()) {
@@ -297,6 +317,9 @@ public class Dinistiq {
 
             // Prepare values from properties files
             Properties beanProperties = getProperties(key);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("("+key+") bean properties"+beanProperties.keySet());
+            } // if
 
             // fill injected fields
             Class<? extends Object> beanClass = bean.getClass();

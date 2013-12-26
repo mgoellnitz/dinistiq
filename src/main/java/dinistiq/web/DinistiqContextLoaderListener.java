@@ -19,7 +19,9 @@
 package dinistiq.web;
 
 import dinistiq.Dinistiq;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -60,6 +62,8 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             } // for
         } // if
         try {
+            Map<String, Object> externalBeans = new HashMap<String, Object>();
+            externalBeans.put("servletContext", contextEnvironment.getServletContext());
             Dinistiq dinistiq = new Dinistiq(packages);
             config.setAttribute(DINISTIQ_INSTANCE, dinistiq);
         } catch (Exception ex) {
