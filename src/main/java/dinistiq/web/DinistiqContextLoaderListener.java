@@ -64,7 +64,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         try {
             Map<String, Object> externalBeans = new HashMap<String, Object>();
             externalBeans.put("servletContext", contextEnvironment.getServletContext());
-            Dinistiq dinistiq = new Dinistiq(packages);
+            Dinistiq dinistiq = new Dinistiq(packages, externalBeans);
             config.setAttribute(DINISTIQ_INSTANCE, dinistiq);
         } catch (Exception ex) {
             LOG.error("init()", ex);
