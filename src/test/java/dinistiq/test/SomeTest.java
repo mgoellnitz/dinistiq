@@ -19,9 +19,11 @@
 package dinistiq.test;
 
 import dinistiq.Dinistiq;
+import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.StaticInjection;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -117,6 +119,25 @@ public class SomeTest {
         Assert.assertNotNull("not string with name 'stringTest' found", stringValue);
         Assert.assertEquals("unexpected string value", "stringValue", stringValue);
     } // testStringValue()
+
+
+    @Test
+    public void testInitialBeans() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Map<String, Object> initialBeans = new HashMap<String, Object>();
+        InitialBean initialBean = new InitialBean();
+        initialBeans.put("initialBean", initialBean);
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages, initialBeans);
+        } catch (Exception e) {
+            //
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        InitialBean ib = d.findTypedBean(InitialBean.class);
+        Assert.assertNotNull("Bean from externally provided initial map of beans not found", ib);
+    } // testStaticInjection()
 
 
     @Test

@@ -51,6 +51,8 @@ public class Dinistiq {
 
     private static final String PRODUCT_BASE_PATH = "dinistiq";
 
+    private static final String JAVALANG_STRING = "java.lang.String";
+
     private ClassResolver classResolver = new SimpleClassResolver();
 
     private List<Object> orderedBeans = new ArrayList<Object>();
@@ -229,15 +231,6 @@ public class Dinistiq {
     /**
      * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
      * substructur of ther resource path.
-     */
-    public Dinistiq(Set<String> packages) throws Exception {
-        this(packages, null);
-    } // Dinistiq()
-
-
-    /**
-     * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
-     * substructur of ther resource path.
      * Add all the external named beans from thei given map for later lookup to the context as well.
      */
     public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
@@ -247,12 +240,14 @@ public class Dinistiq {
         // to have the properties files in the path which we intend to use for configuration
         packages.add(this.getClass().getPackage().getName());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("()");
+            LOG.debug("() initial beans "+beans.keySet());
         } // if
         long start = System.currentTimeMillis();
         for (String pack : packages) {
             classResolver.addPackage(pack);
         } // for
+
+        // Instanciate annotated beans
         final Set<Class<Object>> classes = classResolver.getAnnotated(Named.class);
         if (LOG.isInfoEnabled()) {
             LOG.info("() "+classes.size());
@@ -305,6 +300,10 @@ public class Dinistiq {
                 } // ifs
             } // ifs
         } // for
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("() beans "+beans.keySet());
+        } // if
 
         // Fill in injections and note needed dependencies
         Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
@@ -507,6 +506,15 @@ public class Dinistiq {
             LOG.info("() setup completed after "+(System.currentTimeMillis()-start)+"ms");
         } // if
     } // ()
-    public static final String JAVALANG_STRING = "java.lang.String";
+
+
+    /**
+     * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
+     * substructur of ther resource path.
+     */
+    public Dinistiq(Set<String> packages) throws Exception {
+        this(packages, null);
+    } // Dinistiq()
+
 
 } // Dinistiq
