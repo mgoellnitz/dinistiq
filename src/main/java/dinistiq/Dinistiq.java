@@ -226,7 +226,6 @@ public class Dinistiq {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("getReferenceValue("+propertyValue+") "+referenceName);
             } // if
-
             result = beans.containsKey(referenceName) ? beans.get(referenceName) : result;
         } // if
         if (result instanceof String) {
@@ -234,20 +233,19 @@ public class Dinistiq {
             Pattern p = Pattern.compile("\\$\\{.*\\}");
             Matcher m = p.matcher(stringValue);
             while (m.find()) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("getReferenceValue("+propertyValue+") string replacement in "+stringValue);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("getReferenceValue("+propertyValue+") string replacement in "+stringValue);
                 } // if
                 String name = m.group();
                 name = name.substring(2, name.length()-1);
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("getReferenceValue("+propertyValue+") replacing "+name);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("getReferenceValue("+propertyValue+") replacing "+name);
                 } // if
-                stringValue = stringValue.replace("${"+name+"}", beans.containsKey(name) ? ""+beans.get(name) : "__UNKNOWN__");
+                String replacement = beans.containsKey(name) ? ""+beans.get(name) : (environment.containsKey(name) ? environment.get(name) : "__UNKNOWN__");
+                stringValue = stringValue.replace("${"+name+"}", replacement);
                 m = p.matcher(stringValue);
             } // while
             result = stringValue;
-
-            // environment.containsKey(referenceName) ? environment.get(referenceName) : result;
         } // if
         return result;
     } // getReferenceValue()

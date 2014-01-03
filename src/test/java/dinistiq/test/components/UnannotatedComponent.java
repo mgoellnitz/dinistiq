@@ -28,15 +28,27 @@ public class UnannotatedComponent {
 
     private TestInterface testInterface;
 
+    private TestInterface handWritten;
+
+
+    public TestInterface getAutoInjected() {
+        return testInterface;
+    } // getAutoInjected()
+
 
     @Inject
-    public void setSomething(TestInterface testInterface) {
+    public void autoInjected(TestInterface testInterface) {
         this.testInterface = testInterface;
-    } // setSomething()
+    } // autoInjected()
 
 
     public TestInterface getTestInterface() {
-        return testInterface;
+        return handWritten;
     } // getTestInterface()
+
+
+    public void setTestInterface(TestInterface testInterface) {
+        this.handWritten = testInterface;
+    } // autoInjected()
 
 } // UnannotatedComponent

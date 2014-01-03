@@ -75,6 +75,7 @@ public class SomeTest {
             // In this case in order to let the reference injection work, the bean MUST be named to find the correct properties file
             UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class, "unannotatedComponent");
             Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
+            Assert.assertNotNull("Cannot find auto-injected value ", unannotatedComponent.getAutoInjected());
             Assert.assertNotNull("Cannot find value injected as a reference ", unannotatedComponent.getTestInterface());
         } catch (Exception e) {
             //
