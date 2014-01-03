@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,6 +54,8 @@ public class Dinistiq {
     private static final String PRODUCT_BASE_PATH = "dinistiq";
 
     private static final String JAVALANG_STRING = "java.lang.String";
+
+    private final Map<String, String> environment;
 
     private ClassResolver classResolver = new SimpleClassResolver();
 
@@ -210,7 +214,7 @@ public class Dinistiq {
 
 
     /**
-     * tries to convert the given value as an object reference.
+     * tries to convert the given value as an object reference or string pattern replacement.
      *
      * @param propertyValue
      * @return referenced object or original string if unavailable
@@ -222,10 +226,113 @@ public class Dinistiq {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("getReferenceValue("+propertyValue+") "+referenceName);
             } // if
+
             result = beans.containsKey(referenceName) ? beans.get(referenceName) : result;
+        } // if
+        if (result instanceof String) {
+            String stringValue = (String) result;
+            Pattern p = Pattern.compile("\\$\\{.*\\}");
+            Matcher m = p.matcher(stringValue);
+            while (m.find()) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("getReferenceValue("+propertyValue+") string replacement in "+stringValue);
+                } // if
+                String name = m.group();
+                name = name.substring(2, name.length()-1);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("getReferenceValue("+propertyValue+") replacing "+name);
+                } // if
+                stringValue = stringValue.replace("${"+name+"}", beans.containsKey(name) ? ""+beans.get(name) : "__UNKNOWN__");
+                m = p.matcher(stringValue);
+            } // while
+            result = stringValue;
+
+            // environment.containsKey(referenceName) ? environment.get(referenceName) : result;
         } // if
         return result;
     } // getReferenceValue()
+
+
+    /**
+     * store URL parts of a given named value with suffixed names in a given map of config values.
+     *
+     * @param name base name of the parts
+     * @param value original value of the property
+     * @param values map to store split values in
+     */
+    private void storeUrlParts(String name, String value, Map<String, Object> values) {
+        // split
+        int idx = value.indexOf("://");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("storeUrlParts("+idx+") "+value);
+        } // if
+        if ((idx>0)&&(value.length()>idx+5)) {
+            // Might be a URL
+            try {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("storeUrlParts() splitting "+value+"("+name+")");
+                } // if
+                String protocol = value.substring(0, idx);
+                if (StringUtils.isNotBlank(protocol)) {
+                    values.put(name+".protocol", protocol);
+                } // if
+                idx += 3;
+                String host = value.substring(idx);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("storeUrlParts() host I: "+host);
+                } // if
+                String uri = "";
+                idx = host.indexOf('/');
+                if (idx>0) {
+                    uri = host.substring(idx+1);
+                    host = host.substring(0, idx);
+                } // if
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("storeUrlParts() host II: "+host);
+                    LOG.debug("storeUrlParts() uri: "+uri);
+                } // if
+                if (StringUtils.isNotBlank(uri)) {
+                    values.put(name+".uri", uri);
+                } // if
+                String username = "";
+                idx = host.indexOf('@');
+                if (idx>0) {
+                    username = host.substring(0, idx);
+                    host = host.substring(idx+1);
+                } // if
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("storeUrlParts() host III: "+host);
+                    LOG.debug("storeUrlParts() username: "+username);
+                } // if
+                idx = username.indexOf(':');
+                if (idx>0) {
+                    String[] userinfos = username.split(":");
+                    if (userinfos.length>1) {
+                        username = userinfos[0];
+                        values.put(name+".password", userinfos[1]);
+                    } // if
+                } // if
+                if (StringUtils.isNotBlank(username)) {
+                    values.put(name+".username", username);
+                } // if
+
+                String port = "";
+                idx = host.indexOf(':');
+                if (idx>0) {
+                    port = host.substring(idx+1);
+                    host = host.substring(0, idx);
+                } // if
+                if (StringUtils.isNotBlank(host)) {
+                    values.put(name+".host", host);
+                } // if
+                if (StringUtils.isNotBlank(port)) {
+                    values.put(name+".port", port);
+                } // if
+            } catch (Exception e) {
+                LOG.error("storeUrlParts() error reading "+value+" as a url", e);
+            } // try/catch
+        } // if
+    } // storeUrlParts()
 
 
     /**
@@ -234,14 +341,22 @@ public class Dinistiq {
      * Add all the external named beans from thei given map for later lookup to the context as well.
      */
     public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
+        // Use all externally provided beans
         if (externalBeans!=null) {
             beans.putAll(externalBeans);
         } // if
-        // to have the properties files in the path which we intend to use for configuration
-        packages.add(this.getClass().getPackage().getName());
+
+        // Add environment to scope and split potential URL values
+        environment = new HashMap<String, String>(System.getenv());
+        for (String key : environment.keySet()) {
+            storeUrlParts(key, environment.get(key), beans);
+        } // for
         if (LOG.isDebugEnabled()) {
             LOG.debug("() initial beans "+beans.keySet());
         } // if
+
+        // to have the properties files in the path which we intend to use for configuration
+        packages.add(this.getClass().getPackage().getName());
         long start = System.currentTimeMillis();
         for (String pack : packages) {
             classResolver.addPackage(pack);
@@ -281,7 +396,11 @@ public class Dinistiq {
             String className = beanlist.getProperty(key);
             if ("java.util.Map".equals(className)) {
                 Properties mapProperties = getProperties(key);
-                Map<Object, Object> map = new HashMap<>(mapProperties);
+                Map<Object, Object> map = new HashMap<>();
+                for (String name : mapProperties.stringPropertyNames()) {
+                    Object value = getReferenceValue(mapProperties.getProperty(name));
+                    map.put(name, value);
+                }  // while
                 if (LOG.isInfoEnabled()) {
                     LOG.info("() creating map '"+key+"' "+map);
                 } // if
@@ -290,6 +409,7 @@ public class Dinistiq {
                 // expect java.lang.Sting("value")
                 if (className.startsWith("java.lang.String")) {
                     String value = className.substring(JAVALANG_STRING.length()+2, className.length()-2);
+                    value = ""+getReferenceValue(value);
                     if (LOG.isInfoEnabled()) {
                         LOG.info("() storing string '"+key+"' "+value);
                     } // if

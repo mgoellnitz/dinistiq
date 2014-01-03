@@ -137,7 +137,28 @@ public class SomeTest {
         Assert.assertNotNull("DI container could not be initialized", d);
         InitialBean ib = d.findTypedBean(InitialBean.class);
         Assert.assertNotNull("Bean from externally provided initial map of beans not found", ib);
-    } // testStaticInjection()
+    } // testInitialBeans()
+
+
+    @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void testStringReplacement() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Map<String, Object> initialBeans = new HashMap<String, Object>();
+        InitialBean initialBean = new InitialBean();
+        initialBeans.put("initialBean", initialBean);
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages, initialBeans);
+        } catch (Exception e) {
+            //
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        Map<Object, Object> map = d.findBean(Map.class, "mapTest");
+        Assert.assertNotNull("test map not found", map);
+        Assert.assertEquals("pattern not replaced as expected", "here comes a string value", map.get("replacementTest"));
+    } // testStringReplacement()
 
 
     @Test
