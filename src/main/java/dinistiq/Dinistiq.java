@@ -230,7 +230,7 @@ public class Dinistiq {
         } // if
         if (result instanceof String) {
             String stringValue = (String) result;
-            Pattern p = Pattern.compile("\\$\\{.*\\}");
+            Pattern p = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
             Matcher m = p.matcher(stringValue);
             while (m.find()) {
                 if (LOG.isDebugEnabled()) {
@@ -350,7 +350,7 @@ public class Dinistiq {
             storeUrlParts(key, environment.get(key), beans);
         } // for
         if (LOG.isDebugEnabled()) {
-            LOG.debug("() initial beans "+beans.keySet());
+            LOG.debug("() initial beans "+beans);
         } // if
 
         // to have the properties files in the path which we intend to use for configuration

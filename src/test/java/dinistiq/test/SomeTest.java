@@ -158,7 +158,7 @@ public class SomeTest {
         Assert.assertNotNull("DI container could not be initialized", d);
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);
-        Assert.assertEquals("pattern not replaced as expected", "here comes a string value", map.get("replacementTest"));
+        Assert.assertEquals("pattern not replaced as expected", "here comes a string value (a string value)", map.get("replacementTest"));
     } // testStringReplacement()
 
 
