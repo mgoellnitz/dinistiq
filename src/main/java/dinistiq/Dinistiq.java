@@ -55,6 +55,8 @@ public class Dinistiq {
 
     private static final String JAVALANG_STRING = "java.lang.String";
 
+    private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
+
     private final Map<String, String> environment;
 
     private ClassResolver classResolver = new SimpleClassResolver();
@@ -166,8 +168,6 @@ public class Dinistiq {
         if (LOG.isInfoEnabled()) {
             LOG.info("createInstance("+name+") c="+c);
         } // if
-        // Check constructor
-        // Instanciate and save
         try {
             final Object bean = c.newInstance();
             String beanName = (name==null) ? c.getAnnotation(Named.class).value() : name;
@@ -199,12 +199,6 @@ public class Dinistiq {
             } // if
             beanProperties.load(resource.openStream());
         } // while
-        /*
-         InputStream stream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
-         if (stream!=null) {
-         beanProperties.load(stream);
-         } // if
-         */
         InputStream beanStream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/beans/"+key+".properties");
         if (beanStream!=null) {
             beanProperties.load(beanStream);
@@ -230,7 +224,7 @@ public class Dinistiq {
         } // if
         if (result instanceof String) {
             String stringValue = (String) result;
-            Pattern p = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
+            Pattern p = REPLACEMENT_PATTERN;
             Matcher m = p.matcher(stringValue);
             while (m.find()) {
                 if (LOG.isDebugEnabled()) {
@@ -261,9 +255,6 @@ public class Dinistiq {
     private void storeUrlParts(String name, String value, Map<String, Object> values) {
         // split
         int idx = value.indexOf("://");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("storeUrlParts("+idx+") "+value);
-        } // if
         if ((idx>0)&&(value.length()>idx+5)) {
             // Might be a URL
             try {
@@ -276,18 +267,11 @@ public class Dinistiq {
                 } // if
                 idx += 3;
                 String host = value.substring(idx);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("storeUrlParts() host I: "+host);
-                } // if
                 String uri = "";
                 idx = host.indexOf('/');
                 if (idx>0) {
                     uri = host.substring(idx+1);
                     host = host.substring(0, idx);
-                } // if
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("storeUrlParts() host II: "+host);
-                    LOG.debug("storeUrlParts() uri: "+uri);
                 } // if
                 if (StringUtils.isNotBlank(uri)) {
                     values.put(name+".uri", uri);
@@ -297,10 +281,6 @@ public class Dinistiq {
                 if (idx>0) {
                     username = host.substring(0, idx);
                     host = host.substring(idx+1);
-                } // if
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("storeUrlParts() host III: "+host);
-                    LOG.debug("storeUrlParts() username: "+username);
                 } // if
                 idx = username.indexOf(':');
                 if (idx>0) {
@@ -334,8 +314,8 @@ public class Dinistiq {
 
 
     /**
-     * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
-     * substructur of ther resource path.
+     * Create a dinistiq context from the given packages set and the config files placed in the dinistiq/
+     * substructur of the resource path.
      * Add all the external named beans from thei given map for later lookup to the context as well.
      */
     public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
@@ -627,8 +607,8 @@ public class Dinistiq {
 
 
     /**
-     * Create a dinistiq context from the given packages set and the config feiles placed in the dinistiq/
-     * substructur of ther resource path.
+     * Create a dinistiq context from the given packages set and the config files placed in the dinistiq/
+     * substructur of the resource path.
      */
     public Dinistiq(Set<String> packages) throws Exception {
         this(packages, null);

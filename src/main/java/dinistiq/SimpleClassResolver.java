@@ -45,9 +45,9 @@ public class SimpleClassResolver implements ClassResolver {
 
     private static final Log LOG = LogFactory.getLog(SimpleClassResolver.class);
 
-    private Set<String> packageNames;
+    private final Set<String> packageNames;
 
-    private Set<String> properties = new HashSet<String>();
+    private final Set<String> properties = new HashSet<String>();
 
 
     public SimpleClassResolver() {
@@ -60,11 +60,17 @@ public class SimpleClassResolver implements ClassResolver {
     } // SimpleClassResolver()
 
 
+    @Override
     public void addPackage(String packageName) {
         packageNames.add(packageName);
     } // addPackageName()
 
 
+    /**
+     * Adds all relevant JAR/.class URLs for a given package to an already present set of URLs.
+     * @param urls set of URLs to add the newly resolved ones to.
+     * @param packageName name of the package
+     */
     private void addUrlsForPackage(Set<URL> urls, String packageName) {
         String packagePath = packageName.replace('.', '/');
         try {
@@ -93,6 +99,13 @@ public class SimpleClassResolver implements ClassResolver {
     } // addUrlsForPackage()
 
 
+    /**
+     * Checks a set of class or properties names and adds them to the classNames collection.
+     * Check is performed against package name and file extension.
+     *
+     * @param classNames
+     * @param name
+     */
     private void checkClassAndAdd(Set<String> classNames, String name) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("checkClassAndAdd() name="+name);
@@ -142,6 +155,9 @@ public class SimpleClassResolver implements ClassResolver {
     } // recurseSubDir()
 
 
+    /**
+     * Get all names of classes from the underlying packages.
+     */
     private Set<String> getClassNames() {
         Set<String> classNames = new HashSet<String>();
         Set<URL> urls = new HashSet<URL>();
@@ -177,6 +193,8 @@ public class SimpleClassResolver implements ClassResolver {
 
     /**
      * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
+     *
+     * @see ClassResolver#getSubclasses(java.lang.Class)
      */
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
         Set<Class<T>> result = new HashSet<Class<T>>();
@@ -205,7 +223,10 @@ public class SimpleClassResolver implements ClassResolver {
 
     /**
      * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
+     *
+     * @see ClassResolver#getAnnotated(java.lang.Class)
      */
+    @Override
     public <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<Class<T>>();
         Set<String> classNames = getClassNames();
@@ -233,7 +254,10 @@ public class SimpleClassResolver implements ClassResolver {
     /**
      * Get classes from underlying packages satisfying the given annotation and superclass.
      * Interfaces are excluded.
+     *
+     * @see ClassResolver#getAnnotatedSubclasses(java.lang.Class, java.lang.Class)
      */
+    @Override
     public <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<Class<T>>();
         Set<String> classNames = getClassNames();
@@ -258,6 +282,10 @@ public class SimpleClassResolver implements ClassResolver {
     } // getAnnotatedSubclasses()
 
 
+    /**
+     * @see ClassResolver#getProperties(java.lang.String)
+     */
+    @Override
     public Collection<String> getProperties(String path) {
         Collection<String> result = new HashSet<String>();
         for (String property : properties) {

@@ -24,22 +24,55 @@ import java.util.Set;
 
 
 /**
- * Instances resolv classes according to a set of package, type and annotations.
+ * Instances resolve classes according to a set of package, type and annotations.
  */
 public interface ClassResolver {
 
+    /**
+     * Add a package to the set of packages to be considered for resolving.
+     *
+     * @param packageName name of the package to add
+     */
     void addPackage(String packageName);
 
 
+    /**
+     * Get all available subclasses of a given class.
+     *
+     * @param <T>
+     * @param type
+     * @return Set of classes implementing the given type
+     */
     <T extends Object> Set<Class<T>> getSubclasses(Class<T> type);
 
 
+    /**
+     * Get all classes annotated with a given annotation.
+     *
+     * @param <T>
+     * @param annotation
+     * @return Set of classes with the given annotation
+     */
     <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation);
 
 
+    /**
+     * Get all available subclasses of a given type annotated with a given annotation.
+     *
+     * @param <T>
+     * @param c
+     * @param annotation
+     * @return
+     */
     <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation);
 
 
+    /**
+     * Get the filenames of properties files in a given path.
+     *
+     * @param path
+     * @return
+     */
     Collection<String> getProperties(String path);
 
 } // ClassResolver
