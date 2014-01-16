@@ -7,22 +7,26 @@ Minimalistic Dependency Injection
 
 Or: What I got wrong about DI
 
-Minimalistic component to use dependency injection for the wire-up of software components. It thus mostly deals with singletons - some of the implementing interfaces - which should be injected as dependencies into one another.
+Minimalistic component to use dependency injection for the wire-up of software components. 
+It thus mostly deals with singletons - some of the implementing interfaces - which should 
+be injected as dependencies into one another.
 
 Fire up the wire up
 -------------------
 
-Dinistiq scans a given portion of the classpath for classes annotated with JSR330 Annotations. It does not introduce any custom annotations.
+Dinistiq scans a given portion of the classpath for classes annotated with JSR330 Annotations. 
+It does not introduce any custom annotations.
 
 The missing bits can be configured by a set of property files, describing
 
 - additional components that should be instancianted
-- additional values that should be injected into the instancianted components but cannot be taken from the autoscanned
+- additional values that should be injected into the instancianted components but cannot be taken from the autoscanned parts
 
 Convention over Configuration
 -----------------------------
 
-First of all the most important thing to use dinistiq is, to annotate you dependencies with JSR @Inject so that dinistiq can find out which components are needed.
+First of all the most important thing to use dinistiq is, to annotate you dependencies with 
+JSR @Inject so that dinistiq can find out which components are needed.
 
 ```Java
 public class TestComponentB {
@@ -33,7 +37,8 @@ public class TestComponentB {
 } // TestComponentB
 ```
 
-It then finds those components from the auto-scanned portion of the classpath where it instanciates all classes annotated with @Named (and an optional name as the value parameter).
+It then finds those components from the auto-scanned portion of the classpath where it instanciates 
+all classes annotated with @Named (and an optional name as the value parameter).
 
 ```Java
 @Named
@@ -50,16 +55,21 @@ unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 
 Those files must simply be put in the folder dinistiq/ anywhere on your classpath.
 
-For any of the instanciated beans you can provide more values to explicitly inject - again by the use of properties files.
+For any of the instanciated beans you can provide more values to explicitly inject - again 
+by the use of properties files.
 
-After instanciation of the bean a properties file with the bean name as its base file name is searched first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the classpath. Thus you can deliver your components with a reasonable default and necessary overrides for the specific application.
+After instanciation of the bean a properties file with the bean name as its base file name 
+is searched first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the 
+classpath. Thus you can deliver your components with a reasonable default and necessary 
+overrides for the specific application.
 
 file dinistiq/beans/example.properties
 ```
 activateCaching=true
 ```
 
-This will call the property setter set setActivateCaching() on the bean named example. The bean named example comes either from automatic scan of a class named Example
+This will call the property setter set setActivateCaching() on the bean named example. The 
+bean named example comes either from automatic scan of a class named Example
 
 ```Java
 @Named
@@ -89,7 +99,8 @@ This complete set up is done without any configuration for dinistiq itself.
 How to use
 ----------
 
-Apart from optional configuration files to be placed somehere on your classpath, you simply have to tell dinistiq which portion of the classpath to scan for annotations.
+Apart from optional configuration files to be placed somehere on your classpath, you simply 
+have to tell dinistiq which portion of the classpath to scan for annotations.
 
 ```Java
 public class Test  {
@@ -108,7 +119,8 @@ public class Test  {
 } // Test
 ```
 
-Make this portion of the classpath as small as ever possible or point to some invented and thus empty package, if you want to avoid scanning.
+Make this portion of the classpath as small as ever possible or point to some invented and thus 
+empty package, if you want to avoid scanning.
 
 After this step you can ask dinistiq for instances of the components it created and injected.
 
@@ -135,7 +147,8 @@ public class Test  {
 Web embedding
 -------------
 
-dinistiq comes with a very lean web integration with a front controller servlet with which other servlets implemented as components can be registered.
+dinistiq comes with a very lean web integration with a front controller servlet with which other 
+servlets implemented as components can be registered.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -151,7 +164,7 @@ dinistiq comes with a very lean web integration with a front controller servlet 
   </listener>
   <context-param>
     <param-name>dinistiq.packages</param-name>
-      <param-value>com.example.components,org.example.components</param-value>
+    <param-value>com.example.components,org.example.components</param-value>
   </context-param>
   
   <servlet>
@@ -170,7 +183,8 @@ dinistiq comes with a very lean web integration with a front controller servlet 
 </web-app>
 ```
 
-This front controller servlet tries to find the other servlets from the dinistiq context by asking for registrable servlets. 
+This front controller servlet tries to find the other servlets from the dinistiq context by asking 
+for registrable servlets. 
 
 ```Java
 /**
@@ -192,9 +206,113 @@ public interface RegisterableServlet extends Servlet, Comparable<RegisterableSer
 } // RegisterableServlet
 ```
 
-So a servlet has to tell which regular expressions its request should meet to be able to handle them. Additionally it tells an order number to sort all available servlets to provide a certain precedency rule for them.
+So a servlet has to tell which regular expressions its request should meet to be able to handle them. 
+Additionally it tells an order number to sort all available servlets to provide a certain precedency 
+rule for them.
 
-Note: Since / is such a common character in URLs and regular exressions need to escape exactly this character, you must pass the / unescaped as it gets auto-escaped by dinistiq.
+Note: Since / is such a common character in URLs and regular exressions need to escape exactly this 
+character, you must pass the / unescaped as it gets auto-escaped by dinistiq.
+
+Custom Class Resolver
+---------------------
+
+It is perfectly possible that you will find our class resolving pretty dumb. So we provide the 
+option to pass over a class resolver instance to dinistiq instead of the set of package names.
+
+```Java
+public class Test  {
+
+    public static main(String[] args) {
+        Set<String> packages = new HashSet<String>();
+        packages.add(Test.class.getPackage().getName());
+        packages.add(Dinistiq.class.getPackage().getName());
+        Dinistiq d = null;
+        ClassResolver classResolver = new BetterClassResolver(packages);
+        try {
+            d = new Dinistiq(classResolver);
+        } catch (Exception e) {
+            //
+        } // try/catch
+    } // main()
+
+} // Test
+```
+
+Be sure to add the package dinistiq in these cases as shown above. Otherwise for abvious 
+reasons the properties files from the dinistiq path cannot be found as resourves to take
+into consideration.
+
+If you want to use custom class resolvers with the web integration you need to implement
+a class resolver taking the set of package names as the single parameter to the constructor
+and put the name of this implementing class in the context loader listener configuration
+for dinistiq.
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+  
+  <display-name>dinistiq.web</display-name>
+
+  <listener>
+    <listener-class>dinistiq.web.DinistiqContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>dinistiq.packages</param-name>
+    <param-value>com.example.components,org.example.components</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dinistiq.class.resolver</param-name>
+    <param-value>org.example.dinistiq.BetterClassResolver</param-value>
+  </context-param>
+  
+  <servlet>
+    <servlet-name>dinistiq</servlet-name>
+    <servlet-class>dinistiq.web.DinistiqServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dinistiq</servlet-name>
+    <url-pattern>/d/*</url-pattern>
+  </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>
+```
+
+External Components
+-------------------
+
+If your software needs to use some components which cannot be instanciated or obtained using
+all of the means presented here, you can pass over a named set of instances as a base set
+of beans for dinistiq to add the scanned and configured beans to.
+
+We use this to e.g. put the servlet context in the set of beans for web integration (see below).
+
+```Java
+public class DinistiqContextLoaderListener implements ServletContextListener {
+
+    @Override
+    public void contextInitialized(ServletContextEvent contextEnvironment) {
+        ServletContext context = contextEnvironment.getServletContext();
+        Set<String> packages = new HashSet<String>();
+        ...
+        try {
+            Map<String, Object> externalBeans = new HashMap<String, Object>();
+            externalBeans.put("servletContext", context);
+            Dinistiq dinistiq = new Dinistiq(packages, externalBeans);
+            context.setAttribute(DINISTIQ_INSTANCE, dinistiq);
+        } catch (Exception ex) {
+            LOG.error("init()", ex);
+        } // try/catch
+    } // contextInitialized()
+
+} // DinistiqContextLoaderListener
+```
 
 Comparison
 ----------

@@ -18,7 +18,9 @@
  */
 package dinistiq.web;
 
+import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
+import dinistiq.SimpleClassResolver;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,9 +53,9 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         if (LOG.isWarnEnabled()) {
             LOG.warn("contextInitialized() log: "+LOG.getClass().getName());
         } // if
-        ServletContext config = contextEnvironment.getServletContext();
+        ServletContext context = contextEnvironment.getServletContext();
         Set<String> packages = new HashSet<String>();
-        final String packagNameString = config.getInitParameter("dinistiq.packages");
+        final String packagNameString = context.getInitParameter("dinistiq.packages");
         if (StringUtils.isNotBlank(packagNameString)) {
             String[] packageNames = packagNameString.split(",");
             for (String packageName : packageNames) {
@@ -61,11 +63,26 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
                 packages.add(packageName);
             } // for
         } // if
+        final String classResolverName = context.getInitParameter("dinistiq.class.resolver");
+        ClassResolver classResolver = null;
+        if (StringUtils.isNotBlank(classResolverName)) {
+            try {
+                final Class<?> forName = Class.forName(classResolverName);
+                Object[] args = new Object[1];
+                args[0] = packages;
+                forName.getConstructors()[0].newInstance(args);
+            } catch (Exception e) {
+                LOG.error("contextInitialized() cannot obtain custom class resolver", e);
+            } // try/catch
+        } // if
+        if (classResolver==null) {
+            classResolver = new SimpleClassResolver(packages);
+        } // if
         try {
             Map<String, Object> externalBeans = new HashMap<String, Object>();
-            externalBeans.put("servletContext", contextEnvironment.getServletContext());
-            Dinistiq dinistiq = new Dinistiq(packages, externalBeans);
-            config.setAttribute(DINISTIQ_INSTANCE, dinistiq);
+            externalBeans.put("servletContext", context);
+            Dinistiq dinistiq = new Dinistiq(classResolver, externalBeans);
+            context.setAttribute(DINISTIQ_INSTANCE, dinistiq);
         } catch (Exception ex) {
             LOG.error("init()", ex);
         } // try/catch

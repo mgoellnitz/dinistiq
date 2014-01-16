@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,25 +48,24 @@ public class SimpleClassResolver implements ClassResolver {
 
     private final Set<String> properties = new HashSet<String>();
 
-
-    public SimpleClassResolver() {
-        packageNames = new HashSet<String>();
-    } // SimpleClassResolver()
+    private Set<String> classNames = null;
 
 
     public SimpleClassResolver(Set<String> packageNames) {
         this.packageNames = packageNames;
+        // to have the properties files in the path which we intend to use for configuration
+        this.packageNames.add(this.getClass().getPackage().getName());
     } // SimpleClassResolver()
 
 
-    @Override
-    public void addPackage(String packageName) {
-        packageNames.add(packageName);
-    } // addPackageName()
+    public SimpleClassResolver() {
+        this(new HashSet<String>());
+    } // SimpleClassResolver()
 
 
     /**
      * Adds all relevant JAR/.class URLs for a given package to an already present set of URLs.
+     *
      * @param urls set of URLs to add the newly resolved ones to.
      * @param packageName name of the package
      */
@@ -106,7 +104,7 @@ public class SimpleClassResolver implements ClassResolver {
      * @param classNames
      * @param name
      */
-    private void checkClassAndAdd(Set<String> classNames, String name) {
+    protected final void checkClassAndAdd(Set<String> classNames, String name) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("checkClassAndAdd() name="+name);
         } // if
@@ -137,17 +135,17 @@ public class SimpleClassResolver implements ClassResolver {
     } // checkClassAndAdd()
 
 
-    private void recurseSubDir(Set<String> classNames, File dir, int basePathLength) {
+    protected final void recurseSubDir(Set<String> classNames, File dir, int basePathLength) {
         for (File f : dir.listFiles()) {
             String fileName = f.getAbsolutePath().substring(basePathLength);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("getClassNames() fileName="+fileName);
+                LOG.debug("recurseSubDir() fileName="+fileName);
             } // if
             if ((fileName.endsWith(".class"))||(fileName.endsWith(".properties"))) {
                 checkClassAndAdd(classNames, fileName);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("getClassNames() drilling down "+f.getAbsolutePath());
+                    LOG.debug("recurseSubDir() drilling down "+f.getAbsolutePath());
                 } // if
                 recurseSubDir(classNames, f, basePathLength);
             } // if
@@ -158,35 +156,37 @@ public class SimpleClassResolver implements ClassResolver {
     /**
      * Get all names of classes from the underlying packages.
      */
-    private Set<String> getClassNames() {
-        Set<String> classNames = new HashSet<String>();
-        Set<URL> urls = new HashSet<URL>();
-        for (String packageName : packageNames) {
-            addUrlsForPackage(urls, packageName);
+    protected Set<String> getClassNames() {
+        if (classNames==null) {
+            classNames = new HashSet<String>();
+            Set<URL> urls = new HashSet<URL>();
+            for (String packageName : packageNames) {
+                addUrlsForPackage(urls, packageName);
+            } // if
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getClassNames() url # "+urls.size());
+            } // if
+            for (URL u : urls) {
+                try {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("getClassNames(): path "+u.getPath());
+                    } // if
+                    if (u.getPath().endsWith(".jar")) {
+                        JarInputStream is = new JarInputStream(u.openStream());
+                        JarEntry entry;
+                        while ((entry = is.getNextJarEntry())!=null) {
+                            checkClassAndAdd(classNames, entry.getName());
+                        } // while
+                    } else {
+                        File dir = new File(u.getPath());
+                        int basePathLength = dir.getAbsolutePath().length()+1;
+                        recurseSubDir(classNames, dir, basePathLength);
+                    } // if
+                } catch (IOException e) {
+                    LOG.error("getClassNames()", e);
+                } // try/catch
+            } // for
         } // if
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getClassNames() url # "+urls.size());
-        } // if
-        for (URL u : urls) {
-            try {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("getClassNames(): path "+u.getPath());
-                } // if
-                if (u.getPath().endsWith(".jar")) {
-                    JarInputStream is = new JarInputStream(u.openStream());
-                    JarEntry entry;
-                    while ((entry = is.getNextJarEntry())!=null) {
-                        checkClassAndAdd(classNames, entry.getName());
-                    } // while
-                } else {
-                    File dir = new File(u.getPath());
-                    int basePathLength = dir.getAbsolutePath().length()+1;
-                    recurseSubDir(classNames, dir, basePathLength);
-                } // if
-            } catch (IOException e) {
-                LOG.error("getClassNames()", e);
-            } // try/catch
-        } // for
         return classNames;
     } // getClassNames()
 
@@ -286,8 +286,8 @@ public class SimpleClassResolver implements ClassResolver {
      * @see ClassResolver#getProperties(java.lang.String)
      */
     @Override
-    public Collection<String> getProperties(String path) {
-        Collection<String> result = new HashSet<String>();
+    public Set<String> getProperties(String path) {
+        Set<String> result = new HashSet<String>();
         for (String property : properties) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("("+path+") checking "+property);

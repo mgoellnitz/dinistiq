@@ -19,7 +19,6 @@
 package dinistiq;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Set;
 
 
@@ -27,14 +26,6 @@ import java.util.Set;
  * Instances resolve classes according to a set of package, type and annotations.
  */
 public interface ClassResolver {
-
-    /**
-     * Add a package to the set of packages to be considered for resolving.
-     *
-     * @param packageName name of the package to add
-     */
-    void addPackage(String packageName);
-
 
     /**
      * Get all available subclasses of a given class.
@@ -73,6 +64,6 @@ public interface ClassResolver {
      * @param path
      * @return
      */
-    Collection<String> getProperties(String path);
+    Set<String> getProperties(String path);
 
 } // ClassResolver

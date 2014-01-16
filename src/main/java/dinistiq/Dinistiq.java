@@ -57,9 +57,7 @@ public class Dinistiq {
 
     private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
 
-    private final Map<String, String> environment;
-
-    private ClassResolver classResolver = new SimpleClassResolver();
+    private final Map<String, String> environment = new HashMap<String, String>(System.getenv());
 
     private List<Object> orderedBeans = new ArrayList<Object>();
 
@@ -314,18 +312,18 @@ public class Dinistiq {
 
 
     /**
-     * Create a dinistiq context from the given packages set and the config files placed in the dinistiq/
-     * substructur of the resource path.
-     * Add all the external named beans from thei given map for later lookup to the context as well.
+     * Create a dinistiq context from the given class resolver and optional external beans.
+     * Add all the external named beans from thei given map for later lookup to the context as well
+     * and be sure that your class resolver takes the resources in the dinistiq/ path of your
+     * class path into cosideration.
      */
-    public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
+    public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) throws Exception {
         // Use all externally provided beans
         if (externalBeans!=null) {
             beans.putAll(externalBeans);
         } // if
 
         // Add environment to scope and split potential URL values
-        environment = new HashMap<String, String>(System.getenv());
         for (String key : environment.keySet()) {
             storeUrlParts(key, environment.get(key), beans);
         } // for
@@ -333,12 +331,8 @@ public class Dinistiq {
             LOG.debug("() initial beans "+beans);
         } // if
 
-        // to have the properties files in the path which we intend to use for configuration
-        packages.add(this.getClass().getPackage().getName());
+        // measure time for init process
         long start = System.currentTimeMillis();
-        for (String pack : packages) {
-            classResolver.addPackage(pack);
-        } // for
 
         // Instanciate annotated beans
         final Set<Class<Object>> classes = classResolver.getAnnotated(Named.class);
@@ -603,7 +597,17 @@ public class Dinistiq {
         if (LOG.isInfoEnabled()) {
             LOG.info("() setup completed after "+(System.currentTimeMillis()-start)+"ms");
         } // if
-    } // ()
+    } // Dinistiq()
+
+
+    /**
+     * Create a dinistiq context from the given packages set and the config files placed in the dinistiq/
+     * substructur of the resource path.
+     * Add all the external named beans from thei given map for later lookup to the context as well.
+     */
+    public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
+        this(new SimpleClassResolver(packages), externalBeans);
+    } // Dinistiq()()
 
 
     /**
