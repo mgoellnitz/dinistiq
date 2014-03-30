@@ -70,10 +70,13 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
                 final Class<?> forName = Class.forName(classResolverName);
                 Object[] args = new Object[1];
                 args[0] = packages;
-                forName.getConstructors()[0].newInstance(args);
+                classResolver = (ClassResolver)forName.getConstructors()[0].newInstance(args);
             } catch (Exception e) {
                 LOG.error("contextInitialized() cannot obtain custom class resolver", e);
             } // try/catch
+        } // if
+        if (LOG.isInfoEnabled()) {
+            LOG.info("contextInitialized() classResolver: "+classResolver+ " :"+classResolverName);
         } // if
         if (classResolver==null) {
             classResolver = new SimpleClassResolver(packages);
