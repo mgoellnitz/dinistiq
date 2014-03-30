@@ -189,16 +189,27 @@ public class Dinistiq {
      */
     private Properties getProperties(String key) throws IOException {
         Properties beanProperties = new Properties();
-        final Enumeration<URL> resources = this.getClass().getClassLoader().getResources(PRODUCT_BASE_PATH+"/defaults/"+key+".properties");
+        final String defaultsName = PRODUCT_BASE_PATH+"/defaults/"+key+".properties";
+        final Enumeration<URL> resources = this.getClass().getClassLoader().getResources(defaultsName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getProperties("+key+") searching defaults "+defaultsName+" "+resources);
+        } // if
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("getProperties("+key+") loading defaults from "+resources);
+                LOG.debug("getProperties("+key+") loading defaults from "+defaultsName);
             } // if
             beanProperties.load(resource.openStream());
         } // while
-        InputStream beanStream = this.getClass().getClassLoader().getResourceAsStream(PRODUCT_BASE_PATH+"/beans/"+key+".properties");
+        final String beanValuesName = PRODUCT_BASE_PATH+"/beans/"+key+".properties";
+        InputStream beanStream = this.getClass().getClassLoader().getResourceAsStream(beanValuesName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getProperties("+key+") searching bean values "+beanValuesName+" "+beanStream);
+        } // if
         if (beanStream!=null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getProperties("+key+") loading bean values from "+beanValuesName);
+            } // if
             beanProperties.load(beanStream);
         } // if
         return beanProperties;
@@ -359,7 +370,7 @@ public class Dinistiq {
                     LOG.debug("() resource "+propertyResource);
                 } // if
                 beanlist.load(this.getClass().getClassLoader().getResourceAsStream(propertyResource));
-            }// if
+            } // if
         } // for
         if (LOG.isInfoEnabled()) {
             LOG.info("() beanlist "+beanlist);
@@ -492,6 +503,10 @@ public class Dinistiq {
                         } // if
                         try {
                             parameters[0] = isBoolean ? "true".equals(propertyValue) : getReferenceValue(propertyValue);
+                            // TODO: Ad hoc way of dealing with a long parameter
+                            if ("long".equals(parameterType.getName())) {
+                                parameters[0] = new Long(propertyValue);
+                            } // if
                             if (isCollection) {
                                 Set<Object> valueSet = new HashSet<Object>();
                                 for (String value : propertyValue.split(",")) {
