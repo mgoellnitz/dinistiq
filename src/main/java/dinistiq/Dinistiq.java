@@ -503,9 +503,12 @@ public class Dinistiq {
                         } // if
                         try {
                             parameters[0] = isBoolean ? "true".equals(propertyValue) : getReferenceValue(propertyValue);
-                            // TODO: Ad hoc way of dealing with a long parameter
+                            // TODO: Ad hoc way of dealing with numeric parameters
                             if ("long".equals(parameterType.getName())) {
                                 parameters[0] = new Long(propertyValue);
+                            } // if
+                            if ("int".equals(parameterType.getName())) {
+                                parameters[0] = new Integer(propertyValue);
                             } // if
                             if (isCollection) {
                                 Set<Object> valueSet = new HashSet<Object>();
