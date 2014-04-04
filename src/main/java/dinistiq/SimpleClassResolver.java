@@ -290,7 +290,7 @@ public class SimpleClassResolver implements ClassResolver {
         Set<String> result = new HashSet<String>();
         for (String property : properties) {
             if (LOG.isInfoEnabled()) {
-                LOG.info("("+path+") checking "+property);
+                LOG.info("getProperties("+path+") checking "+property);
             } // if
             if (property.startsWith(path)) {
                 result.add(property);

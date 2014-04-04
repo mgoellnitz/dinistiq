@@ -348,7 +348,7 @@ public class Dinistiq {
         // Instanciate annotated beans
         final Set<Class<Object>> classes = classResolver.getAnnotated(Named.class);
         if (LOG.isInfoEnabled()) {
-            LOG.info("() "+classes.size());
+            LOG.info("() number of annotated beans "+classes.size());
         } // if
         for (Class<? extends Object> c : classes) {
             createInstance(c, null);
