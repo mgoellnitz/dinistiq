@@ -510,6 +510,12 @@ public class Dinistiq {
                             if ("int".equals(parameterType.getName())) {
                                 parameters[0] = new Integer(propertyValue);
                             } // if
+                            if ("float".equals(parameterType.getName())) {
+                                parameters[0] = new Float(propertyValue);
+                            } // if
+                            if ("double".equals(parameterType.getName())) {
+                                parameters[0] = new Double(propertyValue);
+                            } // if
                             if (isCollection) {
                                 Set<Object> valueSet = new HashSet<Object>();
                                 for (String value : propertyValue.split(",")) {
