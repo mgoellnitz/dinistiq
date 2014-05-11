@@ -503,7 +503,6 @@ public class Dinistiq {
                         } // if
                         try {
                             parameters[0] = isBoolean ? "true".equals(propertyValue) : getReferenceValue(propertyValue);
-                            // TODO: Ad hoc way of dealing with numeric parameters
                             if ("long".equals(parameterType.getName())) {
                                 parameters[0] = new Long(propertyValue);
                             } // if

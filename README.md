@@ -119,7 +119,8 @@ file dinistiq/demo.properties
 example=some.package.ExampleComponent
 ```
 
-This complete set-up is done without any configuration for dinistiq itself.
+This complete set-up is done without any configuration for dinistiq itself but 
+(optionally while common) onyl for the components to be used.
 
 How to use
 ----------
@@ -263,8 +264,8 @@ public class Test  {
 } // Test
 ```
 
-Be sure to add the package dinistiq in these cases as shown above. Otherwise for abvious 
-reasons the properties files from the dinistiq path cannot be found as resourves to take
+Be sure to add the package dinistiq in these cases as shown above. Otherwise for obvious 
+reasons the properties files from the dinistiq path cannot be found as resources to be taken
 into consideration.
 
 If you want to use custom class resolvers with the web integration you need to implement
