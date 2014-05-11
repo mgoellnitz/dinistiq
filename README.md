@@ -20,12 +20,12 @@ It does not introduce any custom annotations.
 The missing bits can be configured by a set of property files, describing
 
 - additional components that should be instancianted
-- additional values that should be injected into the instancianted components but cannot be taken from the autoscanned parts
+- additional values that should be injected into the instancianted components but cannot be derived from the autoscanned parts
 
 Convention over Configuration
 -----------------------------
 
-First of all the most important thing to use dinistiq is, to annotate you dependencies with 
+First of all the most important thing to use dinistiq is to annotate you dependencies with 
 JSR @Inject so that dinistiq can find out which components are needed.
 
 ```Java
@@ -37,8 +37,8 @@ public class TestComponentB {
 } // TestComponentB
 ```
 
-It then finds those components from the auto-scanned portion of the classpath where it instanciates 
-all classes annotated with @Named (and an optional name as the value parameter).
+It then resolves those components from the auto-scanned portion of the classpath where it instanciates 
+all classes annotated with @Named (with an optional name as the value parameter).
 
 ```Java
 @Named
@@ -47,19 +47,27 @@ public class TestComponent implements TestInterface {
 } // TestComponent
 ```
 
+When no name is explicitly passed, the class name of the instanciated component with a lower case letter
+at the beginning is taken as the component's name. Thus in this example the instanciated bean of class 
+TestComponent will be available with the name testComponent. The term "name" is used in this document 
+since it is used as the parameter name in the JSR330 annotations. Since names must be unique they are 
+in this case in fact identifiers througout the whole process.
+
 If this is not enough, you can explicitly add some beans to be instaciated in properties files
 
 ```
 unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 ```
 
-Those files must simply be put in the folder dinistiq/ anywhere on your classpath.
+Those files must simply be put in the folder dinistiq/ anywhere on your classpath. This example 
+will instanciate the class dinistiq.test.components.UnannotatedComponent and store this bean with 
+the name uannotatedComponent in the set of available beans.
 
 For any of the instanciated beans you can provide more values to explicitly inject - again 
 by the use of properties files.
 
-After instanciation of the bean a properties file with the bean name as its base file name 
-is searched first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the 
+After instanciation of the bean a properties file with the bean's name as its base file name 
+is searched - first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the 
 classpath. Thus you can deliver your components with a reasonable default and necessary 
 overrides for the specific application.
 
@@ -68,8 +76,25 @@ file dinistiq/beans/example.properties
 activateCaching=true
 ```
 
-This will call the property setter set setActivateCaching() on the bean named example. The 
-bean named example comes either from automatic scan of a class named Example
+This will call the property setter setActivateCaching() on the bean named example. The grammar of
+the properties files describing the explicit injection supports, collections, boolean values, numeric
+value, strings, and references.
+
+file dinistiq/beans/example.properties
+```
+# numerics
+intValue=42
+longValue=123456789
+floatValue=3.14159
+doubleValue=2.7
+# references
+testInterface=${testComponent}
+# strings and references in compound strings
+replacement=a string
+replacementTest=here comes ${replacement}
+```
+
+The bean named example is either a result of the automatic discovery of a class named Example
 
 ```Java
 @Named
@@ -87,14 +112,14 @@ public class ExampleComponent  {
 } // ExampleComponent
 ```
 
-or from the naming through a configuration properties file
+or taken from the naming in a configuration properties file
 
 file dinistiq/demo.properties
 ```
 example=some.package.ExampleComponent
 ```
 
-This complete set up is done without any configuration for dinistiq itself.
+This complete set-up is done without any configuration for dinistiq itself.
 
 How to use
 ----------
@@ -361,3 +386,7 @@ The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
 |Error behaviour||
 |Dependency cycles|illegal|
 |Detection of a cyclic dependencies error|runtime|
+
+The closest competitor of dinistiq seems to be TinyDI - https://code.google.com/p/tinydi/. 
+It recognises JSR330 Annotation but seems to lack the option of config files like the 
+simple properties file mechanism of dinistiq.
