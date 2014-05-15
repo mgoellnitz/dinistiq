@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013 Martin Goellnitz
+ * Copyright 2013-2014 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -109,8 +109,7 @@ public class SimpleClassResolver implements ClassResolver {
             LOG.debug("checkClassAndAdd() name="+name);
         } // if
         if (name.endsWith(".class")&&(name.indexOf('$')<0)) {
-            name = name.replace(File.separatorChar, '/');
-            name = name.replace('/', '.');
+            name = name.replace(File.separatorChar, '/').replace('/', '.');
             String className = name.substring(0, name.length()-6);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("checkClassAndAdd() class name "+className);
@@ -173,10 +172,9 @@ public class SimpleClassResolver implements ClassResolver {
                     } // if
                     if (u.getPath().endsWith(".jar")) {
                         JarInputStream is = new JarInputStream(u.openStream());
-                        JarEntry entry;
-                        while ((entry = is.getNextJarEntry())!=null) {
+                        for (JarEntry entry = is.getNextJarEntry(); entry!=null;) {
                             checkClassAndAdd(classNames, entry.getName());
-                        } // while
+                        } // for
                     } else {
                         File dir = new File(u.getPath());
                         int basePathLength = dir.getAbsolutePath().length()+1;

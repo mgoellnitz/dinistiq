@@ -69,7 +69,9 @@ public class Dinistiq {
         Set<T> result = new HashSet<T>();
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
-                LOG.info("findTypedBeans() returning "+bean+" :"+type.getName());
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("findTypedBeans() adding to result result "+bean+" :"+type.getName());
+                } // if
                 result.add((T) bean);
             } // if
         } // for
@@ -79,15 +81,8 @@ public class Dinistiq {
 
     @SuppressWarnings("unchecked")
     public <T extends Object> T findTypedBean(Class<T> type) {
-        for (Object bean : beans.values()) {
-            if (type.isAssignableFrom(bean.getClass())) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("findTypedBean() returning "+bean+" :"+type.getName());
-                } // if
-                return (T) bean;
-            } // if
-        } // for
-        return null;
+        Set<T> allBeans = findTypedBeans(type);
+        return allBeans.size() > 0 ? allBeans.iterator().next() : null;
     } // findTypedBean()
 
 
@@ -124,11 +119,7 @@ public class Dinistiq {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("getValue() transforming to list");
                     } // if
-                    List<Object> resultList = new ArrayList<>(resultCollection.size());
-                    for (Object o : resultCollection) {
-                        resultList.add(o);
-                    } // for
-                    return resultList;
+                    return new ArrayList<>(resultCollection);
                 } // if
                 return resultCollection;
             } // if
@@ -151,7 +142,7 @@ public class Dinistiq {
         } // if
         if (cls.isAssignableFrom(bean.getClass())) {
             return bean;
-        }
+        } // if
         throw new Exception("for "+customer+": "+name+" :"+cls.getName()+" not found.");
     } // getValue()
 
@@ -217,7 +208,7 @@ public class Dinistiq {
 
 
     /**
-     * tries to convert the given value as an object reference or string pattern replacement.
+     * Tries to convert the given value as an object reference or string pattern replacement.
      *
      * @param propertyValue
      * @return referenced object or original string if unavailable
@@ -381,18 +372,16 @@ public class Dinistiq {
                 Properties mapProperties = getProperties(key);
                 Map<Object, Object> map = new HashMap<>();
                 for (String name : mapProperties.stringPropertyNames()) {
-                    Object value = getReferenceValue(mapProperties.getProperty(name));
-                    map.put(name, value);
+                    map.put(name, getReferenceValue(mapProperties.getProperty(name)));
                 }  // while
                 if (LOG.isInfoEnabled()) {
                     LOG.info("() creating map '"+key+"' "+map);
                 } // if
                 beans.put(key, map);
             } else {
-                // expect java.lang.Sting("value")
+                // expect java.lang.String("value")
                 if (className.startsWith("java.lang.String")) {
-                    String value = className.substring(JAVALANG_STRING.length()+2, className.length()-2);
-                    value = ""+getReferenceValue(value);
+                    String value = ""+getReferenceValue(className.substring(JAVALANG_STRING.length()+2, className.length()-2));
                     if (LOG.isInfoEnabled()) {
                         LOG.info("() storing string '"+key+"' "+value);
                     } // if
@@ -436,11 +425,8 @@ public class Dinistiq {
                             LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection");
                         } // if
 
-                        String name = null;
                         Named named = field.getAnnotation(Named.class);
-                        if (named!=null) {
-                            name = named.value();
-                        } // if
+                        String name = (named == null) ? null : named.value();
 
                         Object b = getValue(key, field.getType(), field.getGenericType(), name);
                         try {
@@ -470,11 +456,9 @@ public class Dinistiq {
                     for (int i = 0; i<parameterTypes.length; i++) {
                         Class<? extends Object> parameterType = parameterTypes[i];
                         String name = null;
-                        Annotation[] annotations = parameterAnnotations[i];
-                        for (Annotation a : annotations) {
+                        for (Annotation a : parameterAnnotations[i]) {
                             if (a instanceof Named) {
-                                Named named = (Named) a;
-                                name = named.value();
+                                name = ((Named)a).value();
                             } // if
                         } // for
                         parameters[i] = getValue(key, parameterType, genericParameterTypes[i], name);
