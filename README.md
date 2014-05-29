@@ -5,10 +5,13 @@ Minimalistic Dependency Injection
 
 [![Build Status](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/badge/icon)](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/)
 
+A small footprint approach to dependency injection in with a framework or container 
+implemented in java.
+
 Or: What I got wrong about DI
 
 Minimalistic component to use dependency injection for the wire-up of software components. 
-It thus mostly deals with singletons - some of the implementing interfaces - which should 
+It thus mostly deals with singletons - some of them implementing interfaces - which should 
 be injected as dependencies into one another.
 
 Fire up the wire up
