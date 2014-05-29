@@ -66,7 +66,7 @@ public class SimpleClassResolver implements ClassResolver {
     /**
      * Adds all relevant JAR/.class URLs for a given package to an already present set of URLs.
      *
-     * @param urls set of URLs to add the newly resolved ones to.
+     * @param urls        set of URLs to add the newly resolved ones to.
      * @param packageName name of the package
      */
     private void addUrlsForPackage(Set<URL> urls, String packageName) {
@@ -135,7 +135,10 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     protected final void recurseSubDir(Set<String> classNames, File dir, int basePathLength) {
-        for (File f : dir.listFiles()) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("recurseSubDir() scanning "+dir.getAbsolutePath());
+        } // if
+        for (File f : (dir.isDirectory() ? dir.listFiles() : new File[0])) {
             String fileName = f.getAbsolutePath().substring(basePathLength);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("recurseSubDir() fileName="+fileName);
@@ -143,9 +146,6 @@ public class SimpleClassResolver implements ClassResolver {
             if ((fileName.endsWith(".class"))||(fileName.endsWith(".properties"))) {
                 checkClassAndAdd(classNames, fileName);
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("recurseSubDir() drilling down "+f.getAbsolutePath());
-                } // if
                 recurseSubDir(classNames, f, basePathLength);
             } // if
         } // for
@@ -172,7 +172,7 @@ public class SimpleClassResolver implements ClassResolver {
                     } // if
                     if (u.getPath().endsWith(".jar")) {
                         JarInputStream is = new JarInputStream(u.openStream());
-                        for (JarEntry entry = is.getNextJarEntry(); entry!=null;) {
+                        for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
                             checkClassAndAdd(classNames, entry.getName());
                         } // for
                     } else {
@@ -216,7 +216,6 @@ public class SimpleClassResolver implements ClassResolver {
         } // if
         return result;
     } // getSubclasses()
-
 
 
     /**
