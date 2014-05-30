@@ -177,6 +177,7 @@ public class SimpleClassResolver implements ClassResolver {
                         for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
                             checkClassAndAdd(classNames, entry.getName());
                         } // for
+                        is.close();
                     } else {
                         File dir = new File(u.getPath());
                         int basePathLength = dir.getAbsolutePath().length()+1;
