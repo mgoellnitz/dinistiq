@@ -56,7 +56,7 @@ TestComponent will be available with the name testComponent. The term "name" is 
 since it is used as the parameter name in the JSR330 annotations. Since names must be unique they are 
 in this case in fact identifiers througout the whole process.
 
-If this is not enough, you can explicitly add some beans to be instaciated in properties files
+If this is not enough, you can explicitly add some beans to be instanciated in properties files
 
 ```
 unannotatedComponent=dinistiq.test.components.UnannotatedComponent
@@ -66,10 +66,14 @@ Those files must simply be put in the folder dinistiq/ anywhere on your classpat
 will instanciate the class dinistiq.test.components.UnannotatedComponent and store this bean with 
 the name uannotatedComponent in the set of available beans.
 
+The properties files are scanned in alphabetical order, so you can override the class for e.g. 
+unannotatedComponent in a latter properties file, so classes given for bean names used in mybeans.properties
+can be overridden in override-mybeans.properties.
+
 For any of the instanciated beans you can provide more values to explicitly inject - again 
 by the use of properties files.
 
-After instanciation of the bean a properties file with the bean's name as its base file name 
+After instanciation of the bean a properties file with the bean's name as its base filename 
 is searched - first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the 
 classpath. Thus you can deliver your components with a reasonable default and necessary 
 overrides for the specific application.
@@ -196,8 +200,8 @@ public class Test  {
 Web embedding
 -------------
 
-dinistiq comes with a very lean web integration with a front controller servlet with which other 
-servlets implemented as components can be registered.
+dinistiq comes with a very lean web integration. A small servlet is used as a front controller 
+with which other servlets implemented as components can be registered.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>

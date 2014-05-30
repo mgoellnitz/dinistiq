@@ -20,6 +20,7 @@ package dinistiq;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.SortedSet;
 
 
 /**
@@ -59,11 +60,11 @@ public interface ClassResolver {
 
 
     /**
-     * Get the filenames of properties files in a given path.
+     * Get the filenames of properties files in a given path in alphabetical order.
      *
      * @param path
      * @return
      */
-    Set<String> getProperties(String path);
+    SortedSet<String> getProperties(String path);
 
 } // ClassResolver

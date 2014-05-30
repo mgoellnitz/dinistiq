@@ -26,6 +26,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import org.apache.commons.logging.Log;
@@ -283,8 +285,8 @@ public class SimpleClassResolver implements ClassResolver {
      * @see ClassResolver#getProperties(java.lang.String)
      */
     @Override
-    public Set<String> getProperties(String path) {
-        Set<String> result = new HashSet<String>();
+    public SortedSet<String> getProperties(String path) {
+        SortedSet<String> result = new TreeSet<String>();
         for (String property : properties) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("getProperties("+path+") checking "+property);
