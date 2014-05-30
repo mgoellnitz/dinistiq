@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
@@ -347,7 +348,7 @@ public class Dinistiq {
 
         // Read bean list from property files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
-        final Collection<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
+        SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
         if (LOG.isDebugEnabled()) {
             LOG.debug("() checking "+propertiesFilenames.size()+" files for properties");
         } // if
