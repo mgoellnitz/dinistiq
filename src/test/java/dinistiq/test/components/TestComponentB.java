@@ -27,6 +27,13 @@ public class TestComponentB {
     @Inject
     public TestInterface test;
 
+    @Inject
+    @Named("stringTest")
     private String hallo;
+
+
+    public String getHallo() {
+        return hallo;
+    }
 
 } // TestComponentB

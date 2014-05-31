@@ -22,6 +22,7 @@ import dinistiq.Dinistiq;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.NumericInjection;
 import dinistiq.test.components.StaticInjection;
+import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
 import java.util.HashMap;
@@ -55,15 +56,31 @@ public class SomeTest {
         packages.add(TestInterface.class.getPackage().getName());
         try {
             Dinistiq d = new Dinistiq(packages);
+            Assert.assertNotNull("DI container could not be initialized", d);
             TestInterface ti = d.findTypedBean(TestInterface.class);
             TestInterface test = d.findBean(TestInterface.class, "test");
             Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
-            Assert.assertNotNull("DI container could not be initialized", d);
             Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
         } catch (Exception e) {
             //
         } // try/catch
     } // testFindExplicitlyInstanciatedComponent()
+
+
+    @Test
+    public void testNamedInjection() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        try {
+            Dinistiq d = new Dinistiq(packages);
+            Assert.assertNotNull("DI container could not be initialized", d);
+            TestComponentB testComponentB = d.findTypedBean(TestComponentB.class);
+            Assert.assertNotNull("need TestComponentB instance", testComponentB);
+            Assert.assertEquals("Cannot find string values as expection ", "stringValue", testComponentB.getHallo());
+        } catch (Exception e) {
+            //
+        } // try/catch
+    } // testNamedInjection()
 
 
     @Test

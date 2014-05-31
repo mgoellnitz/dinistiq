@@ -422,12 +422,11 @@ public class Dinistiq {
                         LOG.debug("("+key+") field "+field.getName());
                     } // if
                     if (field.getAnnotation(Inject.class)!=null) {
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection");
-                        } // if
-
                         Named named = field.getAnnotation(Named.class);
                         String name = (named == null) ? null : named.value();
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
+                        } // if
 
                         Object b = getValue(key, field.getType(), field.getGenericType(), name);
                         try {
