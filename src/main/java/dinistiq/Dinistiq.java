@@ -346,7 +346,7 @@ public class Dinistiq {
             createInstance(c, null);
         } // for
 
-        // Read bean list from property files mapping names to names of the classes to be instanciated
+        // Read bean list from properties files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
         SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
         if (LOG.isDebugEnabled()) {
@@ -447,7 +447,7 @@ public class Dinistiq {
             for (Method m : bean.getClass().getMethods()) {
                 if (m.getAnnotation(Inject.class)!=null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("() inject parameters on method "+m.getName());
+                        LOG.debug("("+key+") inject parameters on method "+m.getName());
                     } // if
                     Class<? extends Object>[] parameterTypes = m.getParameterTypes();
                     Type[] genericParameterTypes = m.getGenericParameterTypes();
@@ -475,7 +475,7 @@ public class Dinistiq {
                     final Class<?> parameterType = m.getParameterTypes()[0];
                     final Type genericType = m.getGenericParameterTypes()[0];
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("() writable property found "+propertyName+" :"+parameterType+" "+genericType);
+                        LOG.debug("("+key+") writable property found "+propertyName+" :"+parameterType+" "+genericType);
                     } // if
                     if (beanProperties.stringPropertyNames().contains(propertyName)) {
                         final String propertyValue = beanProperties.getProperty(propertyName);
@@ -483,7 +483,7 @@ public class Dinistiq {
                         boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                         Object[] parameters = new Object[1];
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("() trying to set value "+propertyName+" "+isBoolean+":"+isCollection);
+                            LOG.debug("("+key+") trying to set value "+propertyName+" "+isBoolean+":"+isCollection);
                         } // if
                         try {
                             parameters[0] = isBoolean ? "true".equals(propertyValue) : getReferenceValue(propertyValue);
