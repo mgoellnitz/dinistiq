@@ -54,7 +54,7 @@ public class Dinistiq {
 
     private static final String PRODUCT_BASE_PATH = "dinistiq";
 
-    private static final String JAVALANG_STRING = "java.lang.String";
+    private static final String JAVALANG_PREFIX = "java.lang.";
 
     private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
 
@@ -83,7 +83,7 @@ public class Dinistiq {
     @SuppressWarnings("unchecked")
     public <T extends Object> T findTypedBean(Class<T> type) {
         Set<T> allBeans = findTypedBeans(type);
-        return allBeans.size() > 0 ? allBeans.iterator().next() : null;
+        return allBeans.size()>0 ? allBeans.iterator().next() : null;
     } // findTypedBean()
 
 
@@ -151,7 +151,7 @@ public class Dinistiq {
     /**
      * creates an instance of the given type and registeres it with the container.
      *
-     * @param c type to create an instance of
+     * @param c    type to create an instance of
      * @param name optional name - if null the name is taken from the @Named annotation or from the class name otherwise
      */
     private void createInstance(Class<? extends Object> c, String name) {
@@ -175,7 +175,7 @@ public class Dinistiq {
      * Get properties according to standard directory scheme from defaults and specialized properties for a given key.
      *
      * @param key key resembling the properties file name to look for in dinistiq/defaults and dinistiq/beans
-     * resources folder
+     *            resources folder
      * @return map collected from defaults and specialized values
      * @throws IOException
      */
@@ -249,8 +249,8 @@ public class Dinistiq {
     /**
      * store URL parts of a given named value with suffixed names in a given map of config values.
      *
-     * @param name base name of the parts
-     * @param value original value of the property
+     * @param name   base name of the parts
+     * @param value  original value of the property
      * @param values map to store split values in
      */
     private void storeUrlParts(String name, String value, Map<String, Object> values) {
@@ -380,18 +380,25 @@ public class Dinistiq {
                 } // if
                 beans.put(key, map);
             } else {
-                // expect java.lang.String("value")
-                if (className.startsWith("java.lang.String")) {
-                    String value = ""+getReferenceValue(className.substring(JAVALANG_STRING.length()+2, className.length()-2));
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("() storing string '"+key+"' "+value);
+                // expect java.lang.Xyz("value")
+                int idx = className.indexOf('(');
+                if ((className.startsWith(JAVALANG_PREFIX))&&(idx>0)) {
+                    String value = ""+getReferenceValue(className.substring(idx+2, className.length()-2));
+                    className = className.substring(0, idx);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("() instanciating "+value+" :"+className);
                     } // if
-                    beans.put(key, value);
+                    Class<? extends Object> c = Class.forName(className.substring(0, idx));
+                    Object instance = c.getConstructor(String.class).newInstance(value);
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("() storing value "+key+" :"+instance.getClass().getName()+" - "+instance);
+                    } // if
+                    beans.put(key, instance);
                 } else {
                     Class<? extends Object> c = Class.forName(className);
                     createInstance(c, key);
-                } // ifs
-            } // ifs
+                } // if
+            } // if
         } // for
 
         if (LOG.isDebugEnabled()) {
@@ -423,7 +430,7 @@ public class Dinistiq {
                     } // if
                     if (field.getAnnotation(Inject.class)!=null) {
                         Named named = field.getAnnotation(Named.class);
-                        String name = (named == null) ? null : named.value();
+                        String name = (named==null) ? null : named.value();
                         if (LOG.isInfoEnabled()) {
                             LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
                         } // if
@@ -458,7 +465,7 @@ public class Dinistiq {
                         String name = null;
                         for (Annotation a : parameterAnnotations[i]) {
                             if (a instanceof Named) {
-                                name = ((Named)a).value();
+                                name = ((Named) a).value();
                             } // if
                         } // for
                         parameters[i] = getValue(key, parameterType, genericParameterTypes[i], name);

@@ -43,7 +43,7 @@ public class SomeTest {
         try {
             d = new Dinistiq(packages);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         Assert.assertNotNull("Cannot find instanciated component for interface", d.findTypedBean(TestInterface.class));
@@ -62,7 +62,7 @@ public class SomeTest {
             Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
             Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
     } // testFindExplicitlyInstanciatedComponent()
 
@@ -78,7 +78,7 @@ public class SomeTest {
             Assert.assertNotNull("need TestComponentB instance", testComponentB);
             Assert.assertEquals("Cannot find string values as expection ", "stringValue", testComponentB.getHallo());
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
     } // testNamedInjection()
 
@@ -96,7 +96,7 @@ public class SomeTest {
             Assert.assertNotNull("Cannot find auto-injected value ", unannotatedComponent.getAutoInjected());
             Assert.assertNotNull("Cannot find value injected as a reference ", unannotatedComponent.getTestInterface());
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
     } // testReferenceValue()
 
@@ -110,7 +110,7 @@ public class SomeTest {
         try {
             d = new Dinistiq(packages);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         Set<Map> maps = d.findTypedBeans(Map.class);
@@ -131,7 +131,7 @@ public class SomeTest {
         try {
             d = new Dinistiq(packages);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         String stringValue = d.findBean(String.class, "stringTest");
@@ -151,7 +151,7 @@ public class SomeTest {
         try {
             d = new Dinistiq(packages, initialBeans);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         InitialBean ib = d.findTypedBean(InitialBean.class);
@@ -160,18 +160,40 @@ public class SomeTest {
 
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void testStringReplacement() {
+    public void testBooleans() {
         Set<String> packages = new HashSet<String>();
         packages.add(TestInterface.class.getPackage().getName());
         Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
+        initialBeans.put("booleanBasetypeValueTrue", true);
+        initialBeans.put("booleanTypedValueTrue", Boolean.TRUE);
+        initialBeans.put("booleanBasetypeValueFalse", false);
+        initialBeans.put("booleanTypedValueFalse", Boolean.FALSE);
         Dinistiq d = null;
         try {
             d = new Dinistiq(packages, initialBeans);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        Assert.assertTrue("Boolean string based value cannot be set to true", d.findBean(Boolean.class, "booleanStringValueTrue"));
+        Assert.assertFalse("Boolean string based value cannot be set to false", d.findBean(Boolean.class, "booleanStringValueFalse"));
+        Assert.assertTrue("Boolean base type value cannot be set to true", d.findBean(Boolean.class, "booleanBasetypeValueTrue"));
+        Assert.assertFalse("Boolean base type value cannot be set to false", d.findBean(Boolean.class, "booleanBasetypeValueFalse"));
+        Assert.assertTrue("Boolean typed value cannot be set to true", d.findBean(Boolean.class, "booleanTypedValueTrue"));
+        Assert.assertFalse("Boolean typed value cannot be set to false", d.findBean(Boolean.class, "booleanTypedValueFalse"));
+    } // testBooleans()
+
+
+    @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void testStringReplacement() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages);
+        } catch (Exception e) {
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
@@ -188,7 +210,7 @@ public class SomeTest {
         try {
             d = new Dinistiq(packages);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         Assert.assertNotNull("Static field not injected", StaticInjection.getTestInterface());
@@ -202,7 +224,7 @@ public class SomeTest {
         try {
             d = new Dinistiq(packages);
         } catch (Exception e) {
-            //
+            Assert.fail(e.toString());
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         NumericInjection ni = d.findTypedBean(NumericInjection.class);

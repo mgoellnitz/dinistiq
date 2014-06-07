@@ -126,6 +126,25 @@ file dinistiq/demo.properties
 example=some.package.ExampleComponent
 ```
 
+At the top level, the types of the beans cannot be inferred, as the example
+
+```
+unannotatedComponent=dinistiq.test.components.UnannotatedComponent
+```
+
+showed. If you need some typical confiuration type at this level like Strings, Booleans, 
+and Maps some extensions of this mere class based syntax had to be introduced. Any simple 
+type found in the java.lang package can be  intanciated with a value set since these 
+values are immutable and there are thus no modifiable fields or setters in these classes. 
+So
+
+```
+booleanValue=java.lang.Boolean("false")
+stringValue=java.lang.String("string value")
+```
+
+are some examples for this.
+
 This complete set-up is done without any configuration for dinistiq itself but 
 (optionally while common) onyl for the components to be used.
 
