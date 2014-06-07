@@ -181,6 +181,10 @@ public class SomeTest {
         Assert.assertFalse("Boolean base type value cannot be set to false", d.findBean(Boolean.class, "booleanBasetypeValueFalse"));
         Assert.assertTrue("Boolean typed value cannot be set to true", d.findBean(Boolean.class, "booleanTypedValueTrue"));
         Assert.assertFalse("Boolean typed value cannot be set to false", d.findBean(Boolean.class, "booleanTypedValueFalse"));
+
+        UnannotatedComponent unannotatedComponent = d.findTypedBean(UnannotatedComponent.class);
+        Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
+        Assert.assertTrue("Boolean value could not be referenced in other bean", unannotatedComponent.isBasetypeBooleanValue());
     } // testBooleans()
 
 
@@ -216,6 +220,7 @@ public class SomeTest {
         Assert.assertNotNull("Static field not injected", StaticInjection.getTestInterface());
     } // testStaticInjection()
 
+
     @Test
     public void testNumericInjection() {
         Set<String> packages = new HashSet<String>();
@@ -231,7 +236,7 @@ public class SomeTest {
         final String msg = "Failure in injection of numeric value";
         Assert.assertEquals(msg, 42, ni.getIntValue());
         Assert.assertEquals(msg, 123456789, ni.getLongValue());
-        Assert.assertEquals(msg, 3.14159, ni.getFloatValue(),ni.getFloatValue()-3.14159);
+        Assert.assertEquals(msg, 3.14159, ni.getFloatValue(), ni.getFloatValue()-3.14159);
         Assert.assertEquals(msg, 2.7, ni.getDoubleValue(), ni.getDoubleValue()-2.7);
     } // testNumericInjection()
 

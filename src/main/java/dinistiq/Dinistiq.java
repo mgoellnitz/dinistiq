@@ -490,10 +490,13 @@ public class Dinistiq {
                         boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                         Object[] parameters = new Object[1];
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("("+key+") trying to set value "+propertyName+" "+isBoolean+":"+isCollection);
+                            LOG.debug("("+key+") trying to set value "+propertyName+" "+isBoolean+":"+isCollection+" "+propertyValue);
                         } // if
                         try {
-                            parameters[0] = isBoolean ? "true".equals(propertyValue) : getReferenceValue(propertyValue);
+                            parameters[0] = getReferenceValue(propertyValue);
+                            if (isBoolean&&(parameters[0] instanceof String))  {
+                                parameters[0] = "true".equals(propertyValue);
+                            } // if
                             if ("long".equals(parameterType.getName())) {
                                 parameters[0] = new Long(propertyValue);
                             } // if

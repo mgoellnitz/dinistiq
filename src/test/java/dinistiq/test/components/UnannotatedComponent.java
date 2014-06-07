@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013 Martin Goellnitz
+ * Copyright 2013-2014 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,6 +30,8 @@ public class UnannotatedComponent {
 
     private TestInterface handWritten;
 
+    private boolean basetypeBooleanValue;
+
 
     public TestInterface getAutoInjected() {
         return testInterface;
@@ -50,5 +52,15 @@ public class UnannotatedComponent {
     public void setTestInterface(TestInterface testInterface) {
         this.handWritten = testInterface;
     } // autoInjected()
+
+
+    public boolean isBasetypeBooleanValue() {
+        return basetypeBooleanValue;
+    }
+
+
+    public void setBasetypeBooleanValue(boolean basetypeBooleanValue) {
+        this.basetypeBooleanValue = basetypeBooleanValue;
+    }
 
 } // UnannotatedComponent
