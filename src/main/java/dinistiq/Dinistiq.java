@@ -151,7 +151,7 @@ public class Dinistiq {
     /**
      * creates an instance of the given type and registeres it with the container.
      *
-     * @param c    type to create an instance of
+     * @param c type to create an instance of
      * @param name optional name - if null the name is taken from the @Named annotation or from the class name otherwise
      */
     private void createInstance(Class<? extends Object> c, String name) {
@@ -175,7 +175,7 @@ public class Dinistiq {
      * Get properties according to standard directory scheme from defaults and specialized properties for a given key.
      *
      * @param key key resembling the properties file name to look for in dinistiq/defaults and dinistiq/beans
-     *            resources folder
+     * resources folder
      * @return map collected from defaults and specialized values
      * @throws IOException
      */
@@ -249,8 +249,8 @@ public class Dinistiq {
     /**
      * store URL parts of a given named value with suffixed names in a given map of config values.
      *
-     * @param name   base name of the parts
-     * @param value  original value of the property
+     * @param name base name of the parts
+     * @param value original value of the property
      * @param values map to store split values in
      */
     private void storeUrlParts(String name, String value, Map<String, Object> values) {
@@ -436,14 +436,16 @@ public class Dinistiq {
                         } // if
 
                         Object b = getValue(key, field.getType(), field.getGenericType(), name);
+                        final boolean accessible = field.isAccessible();
                         try {
-                            final boolean accessible = field.isAccessible();
                             field.setAccessible(true);
                             field.set(bean, b);
-                            field.setAccessible(accessible);
                             beanDependencies.add(b);
+                            // TODO: If b is no singleton it should be removed from the list and potentially a new instance should be created
                         } catch (Exception e) {
                             LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
+                        } finally {
+                            field.setAccessible(accessible);
                         } // try/catch
                     } // if
                 } // for
@@ -494,7 +496,7 @@ public class Dinistiq {
                         } // if
                         try {
                             parameters[0] = getReferenceValue(propertyValue);
-                            if (isBoolean&&(parameters[0] instanceof String))  {
+                            if (isBoolean&&(parameters[0] instanceof String)) {
                                 parameters[0] = "true".equals(propertyValue);
                             } // if
                             if ("long".equals(parameterType.getName())) {

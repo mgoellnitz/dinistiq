@@ -19,9 +19,11 @@
 package dinistiq.test.components;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 
 @Named
+@Singleton
 public class NumericInjection {
 
     private int intValue;
