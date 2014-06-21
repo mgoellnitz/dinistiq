@@ -386,6 +386,11 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 } // DinistiqContextLoaderListener
 ```
 
+Building
+--------
+
+The code for dinistiq is supposed to be written in Java 7 and prepared for building with gradle. Gradle versions 1.x up to 2.0-rc1 are tested to be working.
+
 Comparison
 ----------
 
