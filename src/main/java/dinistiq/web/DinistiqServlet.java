@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013 Martin Goellnitz
+ * Copyright 2013-2014 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -35,8 +35,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DinistiqServlet extends HttpServlet {
 
-    private static final Log LOG = LogFactory.getLog(DinistiqServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DinistiqServlet.class);
 
     /**
      * Maps URI pattern regular expressions to implementing servlets.

@@ -30,8 +30,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SimpleClassResolver implements ClassResolver {
 
-    private static final Log LOG = LogFactory.getLog(SimpleClassResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleClassResolver.class);
 
     private final Set<String> packageNames;
 

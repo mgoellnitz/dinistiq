@@ -21,20 +21,20 @@ package dinistiq.test.components;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Named
 @Singleton
 public class TestComponent implements TestInterface {
 
-    private static final Log log = LogFactory.getLog(TestComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestComponent.class);
 
 
     @PostConstruct
     public void afterPropertiesSet() {
-        log.info("afterPropertiesSet() YEAH!");
+        LOG.info("afterPropertiesSet() YEAH!");
     } // afterPropertiesSet()
 
 } // TestComponent

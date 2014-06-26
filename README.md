@@ -168,8 +168,10 @@ maven { url "http://repository-tangram.forge.cloudbees.com/snapshot" }
 and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.1"
+compile "dinistiq:dinistiq:0.2"
 ```
+
+Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
 
 Apart from optional configuration files to be placed somehere on your classpath, you simply 
 have to tell dinistiq which portion of the classpath to scan for annotations.
