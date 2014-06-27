@@ -202,6 +202,9 @@ public class SomeTest {
         Assert.assertNotNull("DI container could not be initialized", d);
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);
+        // test if system properties can be used
+        Assert.assertNotNull("no os name found", map.get("osName"));
+        Assert.assertNotEquals("os name must be given", "__UNKNOWN__", map.get("osName"));
         Assert.assertEquals("pattern not replaced as expected", "here comes a string value (a string value)", map.get("replacementTest"));
     } // testStringReplacement()
 
@@ -233,11 +236,10 @@ public class SomeTest {
         } // try/catch
         Assert.assertNotNull("DI container could not be initialized", d);
         NumericInjection ni = d.findTypedBean(NumericInjection.class);
-        final String msg = "Failure in injection of numeric value";
-        Assert.assertEquals(msg, 42, ni.getIntValue());
-        Assert.assertEquals(msg, 123456789, ni.getLongValue());
-        Assert.assertEquals(msg, 3.14159, ni.getFloatValue(), ni.getFloatValue()-3.14159);
-        Assert.assertEquals(msg, 2.7, ni.getDoubleValue(), ni.getDoubleValue()-2.7);
+        Assert.assertEquals("Failure in injection of numeric value", 42, ni.getIntValue());
+        Assert.assertEquals("Failure in injection of numeric value", 123456789, ni.getLongValue());
+        Assert.assertEquals("Failure in injection of numeric value", 3.14159, ni.getFloatValue(), ni.getFloatValue()-3.14159);
+        Assert.assertEquals("Failure in injection of numeric value", 2.7, ni.getDoubleValue(), ni.getDoubleValue()-2.7);
     } // testNumericInjection()
 
 } // SomeTest

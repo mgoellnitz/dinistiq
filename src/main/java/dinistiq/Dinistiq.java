@@ -324,6 +324,12 @@ public class Dinistiq {
             beans.putAll(externalBeans);
         } // if
 
+        // Add system properties to scaope and split potential URL values
+        for (Object keyObject : System.getProperties().keySet()) {
+            String key = ""+keyObject;
+            beans.put(key, System.getProperty(key));
+            storeUrlParts(key, System.getProperty(key), beans);
+        } // for
         // Add environment to scope and split potential URL values
         for (String key : environment.keySet()) {
             storeUrlParts(key, environment.get(key), beans);
