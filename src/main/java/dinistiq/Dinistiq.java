@@ -113,8 +113,7 @@ public class Dinistiq {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("getValue() inner type "+collectionType);
                 } // if
-                Class<? extends Object> ct = (Class<? extends Object>) collectionType;
-                Set<? extends Object> resultCollection = findTypedBeans(ct);
+                Set<? extends Object> resultCollection = findTypedBeans((Class<? extends Object>) collectionType);
                 if (List.class.isAssignableFrom(cls)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("getValue() transforming to list");

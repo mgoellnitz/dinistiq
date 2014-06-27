@@ -79,9 +79,7 @@ public class SimpleClassResolver implements ClassResolver {
                 URL u = urlEnumeration.nextElement();
                 String url = u.toString();
                 int idx = url.indexOf('!');
-                if (idx>0) {
-                    url = url.substring(0, idx);
-                } // if
+                url = (idx > 0) ? url.substring(0, idx) : url;
                 if (url.startsWith("jar:")) {
                     url = url.substring(4);
                 } // if

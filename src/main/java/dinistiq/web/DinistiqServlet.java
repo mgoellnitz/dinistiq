@@ -64,12 +64,9 @@ public class DinistiqServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String contextPath = req.getContextPath();
-        if (contextPath.length()==1) {
-            contextPath = "";
-        } // if
+        contextPath = (contextPath.length()==1) ? contextPath = "" : contextPath;
         final String requestURI = req.getRequestURI();
-        int idx = requestURI.indexOf("/", contextPath.length()+1);
-        String uri = requestURI.substring(idx);
+        String uri = requestURI.substring(requestURI.indexOf("/", contextPath.length()+1));
         if (LOG.isDebugEnabled()) {
             LOG.debug("service() requestURI="+requestURI+" / "+uri);
         } // if

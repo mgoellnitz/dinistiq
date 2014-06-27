@@ -57,8 +57,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         Set<String> packages = new HashSet<String>();
         final String packagNameString = context.getInitParameter("dinistiq.packages");
         if (StringUtils.isNotBlank(packagNameString)) {
-            String[] packageNames = packagNameString.split(",");
-            for (String packageName : packageNames) {
+            for (String packageName : packagNameString.split(",")) {
                 packageName = packageName.trim();
                 packages.add(packageName);
             } // for
@@ -78,9 +77,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         if (LOG.isInfoEnabled()) {
             LOG.info("contextInitialized() classResolver: "+classResolver+ " :"+classResolverName);
         } // if
-        if (classResolver==null) {
-            classResolver = new SimpleClassResolver(packages);
-        } // if
+        classResolver = (classResolver == null) ? new SimpleClassResolver(packages) : classResolver;
         try {
             Map<String, Object> externalBeans = new HashMap<String, Object>();
             externalBeans.put("servletContext", context);
