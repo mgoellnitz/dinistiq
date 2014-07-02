@@ -5,8 +5,8 @@ Minimalistic Dependency Injection
 
 [![Build Status](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/badge/icon)](https://buildhive.cloudbees.com/job/mgoellnitz/job/dinistiq/)
 
-A small footprint approach to dependency injection in with a framework or container 
-implemented in java.
+A small footprint approach to dependency injection with a framework or container 
+implemented in Java.
 
 Or: What I got wrong about DI
 
@@ -156,10 +156,10 @@ Dinisitq - releases and snapshots - are available from the tangram repository at
 
 http://repository-tangram.forge.cloudbees.com/snapshot
 
-The groupid and artifactid are both 'dinistiq'.
+The group id and artifact id are both 'dinistiq'.
 
-Thus for gradle you will need to add to your repositories sections of the build
-file the line
+Thus for projects built with gradle you will need to add to your repositories 
+sections of the build file the line
 
 ```
 maven { url "http://repository-tangram.forge.cloudbees.com/snapshot" }
@@ -168,7 +168,51 @@ maven { url "http://repository-tangram.forge.cloudbees.com/snapshot" }
 and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.2"
+compile "dinistiq:dinistiq:0.2" // SNAPHOST for now
+```
+
+Projects built with legacy tool Apache Maven need the following steps:
+
+module pom.xml
+```xml
+...
+<dependencies>
+  ...
+  <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+  </dependency>
+  ...
+</dependencies>
+```
+
+base  pom.xml
+```xml
+...
+<dependencyManagement>
+  ...
+  <dependency>
+    <groupId>dinistiq</groupId>
+    <artifactId>dinistiq</artifactId>
+    <versions>0.2</version><!-- SNAPHOST for now -->
+  </dependency>
+...
+</dependencyManagement>
+
+...
+
+<repositories>
+  <repository>
+    <id>tangram</id>
+    <name>Tangram and Dinistiq</name>
+    <url>http://repository-tangram.forge.cloudbees.com/snapshot</url>
+    <layout>default</layout>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+...
 ```
 
 Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
@@ -182,12 +226,7 @@ public class Test  {
     public static main(String[] args) {
         Set<String> packages = new HashSet<String>();
         packages.add(Test.class.getPackage().getName());
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages);
-        } catch (Exception e) {
-            //
-        } // try/catch
+        Dinistiq d = new Dinistiq(packages);
     } // main()
 
 } // Test
@@ -401,8 +440,8 @@ The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
 |Library|dinistiq|
 |:------|-------:|
 |Version|0.1|
-|Archive size|<20kB|
-|Further dependencies|<5|
+|Archive size|<25kB|
+|Further dependencies|<=5|
 |API||
 |Methods in injector/context|3|
 |Concept||

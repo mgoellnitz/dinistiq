@@ -53,22 +53,10 @@ public class SimpleClassResolver implements ClassResolver {
     private Set<String> classNames = null;
 
 
-    public SimpleClassResolver(Set<String> packageNames) {
-        this.packageNames = packageNames;
-        // to have the properties files in the path which we intend to use for configuration
-        this.packageNames.add(this.getClass().getPackage().getName());
-    } // SimpleClassResolver()
-
-
-    public SimpleClassResolver() {
-        this(new HashSet<String>());
-    } // SimpleClassResolver()
-
-
     /**
      * Adds all relevant JAR/.class URLs for a given package to an already present set of URLs.
      *
-     * @param urls        set of URLs to add the newly resolved ones to.
+     * @param urls set of URLs to add the newly resolved ones to.
      * @param packageName name of the package
      */
     private void addUrlsForPackage(Set<URL> urls, String packageName) {
@@ -79,7 +67,7 @@ public class SimpleClassResolver implements ClassResolver {
                 URL u = urlEnumeration.nextElement();
                 String url = u.toString();
                 int idx = url.indexOf('!');
-                url = (idx > 0) ? url.substring(0, idx) : url;
+                url = (idx>0) ? url.substring(0, idx) : url;
                 if (url.startsWith("jar:")) {
                     url = url.substring(4);
                 } // if
@@ -152,42 +140,40 @@ public class SimpleClassResolver implements ClassResolver {
     } // recurseSubDir()
 
 
-    /**
-     * Get all names of classes from the underlying packages.
-     */
-    protected Set<String> getClassNames() {
-        if (classNames==null) {
-            classNames = new HashSet<String>();
-            Set<URL> urls = new HashSet<URL>();
-            for (String packageName : packageNames) {
-                addUrlsForPackage(urls, packageName);
-            } // if
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("getClassNames() url # "+urls.size());
-            } // if
-            for (URL u : urls) {
-                try {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("getClassNames(): path "+u.getPath());
-                    } // if
-                    if (u.getPath().endsWith(".jar")) {
-                        JarInputStream is = new JarInputStream(u.openStream());
-                        for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
-                            checkClassAndAdd(classNames, entry.getName());
-                        } // for
-                        is.close();
-                    } else {
-                        File dir = new File(u.getPath());
-                        int basePathLength = dir.getAbsolutePath().length()+1;
-                        recurseSubDir(classNames, dir, basePathLength);
-                    } // if
-                } catch (IOException e) {
-                    LOG.error("getClassNames()", e);
-                } // try/catch
-            } // for
+    public SimpleClassResolver(Set<String> packageNames) {
+        this.packageNames = packageNames;
+        // to have the properties files in the path which we intend to use for configuration
+        this.packageNames.add(this.getClass().getPackage().getName());
+
+        classNames = new HashSet<String>();
+        Set<URL> urls = new HashSet<URL>();
+        for (String packageName : packageNames) {
+            addUrlsForPackage(urls, packageName);
         } // if
-        return classNames;
-    } // getClassNames()
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getClassNames() url # "+urls.size());
+        } // if
+        for (URL u : urls) {
+            try {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("getClassNames(): path "+u.getPath());
+                } // if
+                if (u.getPath().endsWith(".jar")) {
+                    JarInputStream is = new JarInputStream(u.openStream());
+                    for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
+                        checkClassAndAdd(classNames, entry.getName());
+                    } // for
+                    is.close();
+                } else {
+                    File dir = new File(u.getPath());
+                    int basePathLength = dir.getAbsolutePath().length()+1;
+                    recurseSubDir(classNames, dir, basePathLength);
+                } // if
+            } catch (IOException e) {
+                LOG.error("getClassNames()", e);
+            } // try/catch
+        } // for
+    } // SimpleClassResolver()
 
 
     /**
@@ -197,7 +183,6 @@ public class SimpleClassResolver implements ClassResolver {
      */
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
         Set<Class<T>> result = new HashSet<Class<T>>();
-        Set<String> classNames = getClassNames();
         if (LOG.isDebugEnabled()) {
             LOG.debug("getSubclasses() checking "+classNames.size()+" classes");
         } // if
@@ -227,7 +212,6 @@ public class SimpleClassResolver implements ClassResolver {
     @Override
     public <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<Class<T>>();
-        Set<String> classNames = getClassNames();
         if (LOG.isDebugEnabled()) {
             LOG.debug("getAnnotated() checking "+classNames.size()+" classes");
         } // if
@@ -258,7 +242,6 @@ public class SimpleClassResolver implements ClassResolver {
     @Override
     public <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<Class<T>>();
-        Set<String> classNames = getClassNames();
         if (LOG.isDebugEnabled()) {
             LOG.debug("getAnnotatedSubclasses() checking "+classNames.size()+" classes");
         } // if
