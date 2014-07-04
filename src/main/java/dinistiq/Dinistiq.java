@@ -570,7 +570,8 @@ public class Dinistiq {
         if (LOG.isInfoEnabled()) {
             LOG.info("() sorting beans according to dependencies");
         } // if
-        while (dependencies.size()>0) {
+        int ripCord = 10;
+        while ((ripCord-- > 0) && (dependencies.size()>0)) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("() "+dependencies.size()+" beans left");
             } // if
@@ -610,6 +611,9 @@ public class Dinistiq {
                 dependencies.remove(key);
             } // for
         } // while
+        if (dependencies.size() > 0) {
+            throw new Exception("Circular bean injection and initialization dependencies.");
+        } // if
 
         // Call Post Construct
         if (LOG.isInfoEnabled()) {
