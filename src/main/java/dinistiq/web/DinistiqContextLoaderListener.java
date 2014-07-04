@@ -47,6 +47,14 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
     public static final String DINISTIQ_INSTANCE = "DINISTIQ_INSTANCE";
 
 
+    /**
+     * Web related dinistiq initialization with parameters taken from the web.xml.
+     *
+     * Looks up relevant packages for scanning and a custom class resolvers implementation class name.
+     * Exposes any bean from the dinistiq scope to the application scope (servlet context) of the web
+     * layer including an instance of dinistiq itself.
+     * @param contextEnvironment
+     */
     @Override
     public void contextInitialized(ServletContextEvent contextEnvironment) {
         // just to check what our log instance looks like
@@ -83,6 +91,9 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             externalBeans.put("servletContext", context);
             Dinistiq dinistiq = new Dinistiq(classResolver, externalBeans);
             context.setAttribute(DINISTIQ_INSTANCE, dinistiq);
+            for (String name : dinistiq.getAllBeansNames()) {
+                context.setAttribute(name, dinistiq.findBean(Object.class, name));
+            } // for
         } catch (Exception ex) {
             LOG.error("init()", ex);
         } // try/catch

@@ -397,6 +397,9 @@ for dinistiq.
 </web-app>
 ```
 
+Within the web application all beans from the dinistiq scope are available in the
+application scope (servlet context) as attributes.
+
 External Components
 -------------------
 

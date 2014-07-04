@@ -47,6 +47,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class Dinistiq {
 
     private static final Logger LOG = LoggerFactory.getLogger(Dinistiq.class);
@@ -64,6 +65,13 @@ public class Dinistiq {
     private Map<String, Object> beans = new HashMap<String, Object>();
 
 
+    /**
+     * Find all beans of a given type.
+     *
+     * @param <T> type to check resulting beans for
+     * @param cls instance of that type
+     * @return Set of beans - may be empty but not null
+     */
     @SuppressWarnings("unchecked")
     public <T extends Object> Set<T> findTypedBeans(Class<T> type) {
         Set<T> result = new HashSet<T>();
@@ -79,6 +87,14 @@ public class Dinistiq {
     } // findTypedBeans()
 
 
+    /**
+     * Find exactly one beans of a given type.
+     * If there are more beans of that type just one of them is returned. This is fairly randon by design.
+     *
+     * @param <T> type to check resulting bean for
+     * @param cls instance of that type
+     * @return resulting bean or null
+     */
     @SuppressWarnings("unchecked")
     public <T extends Object> T findTypedBean(Class<T> type) {
         Set<T> allBeans = findTypedBeans(type);
@@ -86,6 +102,15 @@ public class Dinistiq {
     } // findTypedBean()
 
 
+    /**
+     * Find exactly one beans of a given type and name.
+     * Return null if not both conditions are met.
+     *
+     * @param <T> type to check resulting bean for
+     * @param cls instance of that type
+     * @param name name the search bean must have
+     * @return resulting bean or null
+     */
     @SuppressWarnings("unchecked")
     public <T extends Object> T findBean(Class<? extends T> cls, String name) {
         T result = null;
@@ -100,6 +125,16 @@ public class Dinistiq {
         } // if
         return result;
     } // findBean()
+
+
+    /**
+     * return the names of all beans in the inistiq scope.
+     *
+     * @return collection of all bean names
+     */
+    public Collection<String> getAllBeansNames() {
+        return beans.keySet();
+    } // getAllBeanNames()
 
 
     private Object getValue(String customer, Class<? extends Object> cls, Type type) throws Exception {
