@@ -54,7 +54,7 @@ public interface ClassResolver {
      * @param <T>
      * @param c
      * @param annotation
-     * @return
+     * @return Set of class instances fulfilling the condition
      */
     <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation);
 
@@ -63,7 +63,7 @@ public interface ClassResolver {
      * Get the filenames of properties files in a given path in alphabetical order.
      *
      * @param path
-     * @return
+     * @return Sorted set of property files paths
      */
     SortedSet<String> getProperties(String path);
 

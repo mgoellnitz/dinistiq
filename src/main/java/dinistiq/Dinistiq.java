@@ -75,7 +75,7 @@ public class Dinistiq {
      * Find all beans of a given type.
      *
      * @param <T> type to check resulting beans for
-     * @param cls instance of that type
+     * @param type instance of that type
      * @return Set of beans - may be empty but not null
      */
     @SuppressWarnings("unchecked")
@@ -98,7 +98,7 @@ public class Dinistiq {
      * If there are more beans of that type just one of them is returned. This is fairly randon by design.
      *
      * @param <T> type to check resulting bean for
-     * @param cls instance of that type
+     * @param type instance of that type
      * @return resulting bean or null
      */
     @SuppressWarnings("unchecked")
