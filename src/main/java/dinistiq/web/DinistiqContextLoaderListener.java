@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
  *
  * A dinistiq.packages init param will be necessary to find application specific components.
  *
- * The instance is store in a servlet context attribute for later use.
+ * The instance is store in a servlet context attribute for later use together with all the other
+ * bean definitions from the dinistiq scope.
  */
 public class DinistiqContextLoaderListener implements ServletContextListener {
 

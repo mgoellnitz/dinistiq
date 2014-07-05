@@ -24,7 +24,7 @@ import java.util.SortedSet;
 
 
 /**
- * Instances resolve classes according to a set of package, type and annotations.
+ * Instances resolve classes from a given set of packages according to type and annotations.
  */
 public interface ClassResolver {
 

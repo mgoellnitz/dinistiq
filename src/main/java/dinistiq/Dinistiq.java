@@ -48,6 +48,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * The dinistiq main class.
+ *
+ * By instanciating this class the bean creation and injection process will be started. Subsequent calls to the
+ * API methods support retrieval of the singleton beans according to type, annotation, or type and annotation.
+ */
 public class Dinistiq {
 
     private static final Logger LOG = LoggerFactory.getLogger(Dinistiq.class);

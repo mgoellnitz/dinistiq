@@ -23,7 +23,11 @@ import javax.servlet.Servlet;
 
 
 /**
- * Servlets which should handle requests fulfilling a certain regular expression for their uris.
+ * Interface to be implemented by servlets to be registered with the web part of dinistiq.
+ *
+ * they must fulfill a certain regular expression for their uris, so that calls can be recognizes as meant for
+ * the implementing instance. Also they support an ordering to allow for URI pattern precedence and default
+ * behaviour at a lower priority level.
  */
 public interface RegisterableServlet extends Servlet, Comparable<RegisterableServlet> {
 
