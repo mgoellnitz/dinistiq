@@ -18,6 +18,8 @@
  */
 defaultTasks 'clean', 'build'
 
+println "Gradle: ${gradle.gradleVersion}"
+
 version = '0.2-SNAPSHOT'
 
 apply plugin: 'java'
