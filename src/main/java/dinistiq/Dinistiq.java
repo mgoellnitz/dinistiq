@@ -486,7 +486,6 @@ public class Dinistiq {
                             field.setAccessible(true);
                             field.set(bean, b);
                             beanDependencies.add(b);
-                            // TODO: If b is no singleton it should be removed from the list and potentially a new instance should be created
                         } catch (Exception e) {
                             LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                         } finally {

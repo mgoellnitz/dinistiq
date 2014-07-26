@@ -485,4 +485,6 @@ The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
 
 The closest competitor of dinistiq seems to be TinyDI - https://code.google.com/p/tinydi/. 
 It recognises JSR330 Annotation but seems to lack the option of config files like the 
-simple properties file mechanism of dinistiq.
+simple properties file mechanism of dinistiq. Additionally - unlike Spring and dinistiq - 
+it depends on public setters for the injections. Private members with the @Inject annotation
+are not enough. Also it is fairly unmaintained for some years now.
