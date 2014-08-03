@@ -415,15 +415,7 @@ public class Dinistiq {
         for (String key : beanlist.stringPropertyNames()) {
             String className = beanlist.getProperty(key);
             if ("java.util.Map".equals(className)) {
-                Properties mapProperties = getProperties(key);
-                Map<Object, Object> map = new HashMap<>();
-                for (String name : mapProperties.stringPropertyNames()) {
-                    map.put(name, getReferenceValue(mapProperties.getProperty(name)));
-                }  // while
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("() creating map '"+key+"' "+map);
-                } // if
-                beans.put(key, map);
+                beans.put(key, new HashMap<Object, Object>());
             } else {
                 // expect java.lang.Xyz("value")
                 int idx = className.indexOf('(');
@@ -469,6 +461,17 @@ public class Dinistiq {
             Class<? extends Object> beanClass = bean.getClass();
             String beanClassName = beanClass.getName();
             while (beanClass!=Object.class) {
+                if (bean instanceof Map) {
+                    Properties mapProperties = getProperties(key);
+                    Map<Object, Object> map = new HashMap<>(); // Old value can safely be ignored.
+                    for (String name : mapProperties.stringPropertyNames()) {
+                        map.put(name, getReferenceValue(mapProperties.getProperty(name)));
+                    }  // while
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("() filling map '"+key+"' "+map);
+                    } // if
+                    beans.put(key, map);
+                } // if
                 for (Field field : beanClass.getDeclaredFields()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("("+key+") field "+field.getName());
@@ -576,7 +579,7 @@ public class Dinistiq {
             LOG.info("() sorting beans according to dependencies");
         } // if
         int ripCord = 10;
-        while ((ripCord-- > 0) && (dependencies.size()>0)) {
+        while ((ripCord-->0)&&(dependencies.size()>0)) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("() "+dependencies.size()+" beans left");
             } // if
@@ -616,7 +619,7 @@ public class Dinistiq {
                 dependencies.remove(key);
             } // for
         } // while
-        if (dependencies.size() > 0) {
+        if (dependencies.size()>0) {
             throw new Exception("Circular bean injection and initialization dependencies.");
         } // if
 
