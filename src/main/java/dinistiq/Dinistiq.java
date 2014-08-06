@@ -463,7 +463,7 @@ public class Dinistiq {
             while (beanClass!=Object.class) {
                 if (bean instanceof Map) {
                     Properties mapProperties = getProperties(key);
-                    Map<Object, Object> map = new HashMap<>(); // Old value can safely be ignored.
+                    Map<Object, Object> map = (Map<Object, Object>)bean;
                     for (String name : mapProperties.stringPropertyNames()) {
                         map.put(name, getReferenceValue(mapProperties.getProperty(name)));
                     }  // while
