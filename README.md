@@ -168,7 +168,7 @@ maven { url "http://repository-tangram.forge.cloudbees.com/snapshot" }
 and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.2" // SNAPHOST for now
+compile "dinistiq:dinistiq:0.2"
 ```
 
 Projects built with legacy tool Apache Maven need the following steps:
@@ -179,8 +179,8 @@ module pom.xml
 <dependencies>
   ...
   <dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
+    <groupId>dinistiq</groupId>
+    <artifactId>dinistiq</artifactId>
   </dependency>
   ...
 </dependencies>
@@ -194,7 +194,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.2</version><!-- SNAPHOST for now -->
+    <versions>0.2</version>
   </dependency>
 ...
 </dependencyManagement>
