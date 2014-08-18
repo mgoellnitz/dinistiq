@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,7 +192,7 @@ public class Dinistiq {
      * creates an instance of the given type and registeres it with the container.
      *
      * @param c type to create an instance of
-     * @param name optional name - if null the name is taken from the @Named annotation or from the class name otherwise
+     * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
      */
     private void createInstance(Class<? extends Object> c, String name) {
         if (LOG.isInfoEnabled()) {
@@ -383,7 +384,7 @@ public class Dinistiq {
         long start = System.currentTimeMillis();
 
         // Instanciate annotated beans
-        final Set<Class<Object>> classes = classResolver.getAnnotated(Named.class);
+        final Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
         if (LOG.isInfoEnabled()) {
             LOG.info("() number of annotated beans "+classes.size());
         } // if

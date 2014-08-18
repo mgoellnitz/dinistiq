@@ -41,10 +41,12 @@ public class TestComponentB {
 ```
 
 It then resolves those components from the auto-scanned portion of the classpath where it instanciates 
-all classes annotated with @Named (with an optional name as the value parameter).
+all classes annotated with @Singleton. Optionally these components may be named with @Named (with an 
+optional name as the value parameter). Without a name given as a parameter, components are always named
+after their class name without the package name and a decapitalized first letter.
 
 ```Java
-@Named
+@Singleton
 public class TestComponent implements TestInterface {
 
 } // TestComponent
@@ -105,6 +107,7 @@ The bean named example is either a result of the automatic discovery of a class 
 
 ```Java
 @Named
+@Singleton
 public class Example {
 
 } // Example
@@ -114,6 +117,7 @@ a name declaration from the scanned class
 
 ```Java
 @Named("example")
+@Singleton
 public class ExampleComponent  {
 
 } // ExampleComponent
@@ -168,7 +172,7 @@ maven { url "http://repository-tangram.forge.cloudbees.com/snapshot" }
 and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.2"
+compile "dinistiq:dinistiq:0.3-SNAPSHOT"
 ```
 
 Projects built with legacy tool Apache Maven need the following steps:
@@ -194,7 +198,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.2</version>
+    <versions>0.3-SNAPSHOT</version>
   </dependency>
 ...
 </dependencyManagement>

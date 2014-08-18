@@ -20,7 +20,7 @@ defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.2'
+version = '0.3-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -40,10 +40,9 @@ dependencies {
   compile "javax.inject:javax.inject:1"
   
   compile "javax.servlet:servlet-api:2.5"
-  compile "javax.servlet:jsp-api:2.0"
     
   testCompile "junit:junit:4.11"
-  // dinistiq logging at debug level through special log4j.properties
+  // tests are logging at debug level through special log4j.properties
   testCompile "org.slf4j:slf4j-log4j12:1.7.7"
 }
 

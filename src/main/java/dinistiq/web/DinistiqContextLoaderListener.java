@@ -54,6 +54,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
      * Looks up relevant packages for scanning and a custom class resolvers implementation class name.
      * Exposes any bean from the dinistiq scope to the application scope (servlet context) of the web
      * layer including an instance of dinistiq itself.
+     *
      * @param contextEnvironment
      */
     @Override
@@ -78,15 +79,15 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
                 final Class<?> forName = Class.forName(classResolverName);
                 Object[] args = new Object[1];
                 args[0] = packages;
-                classResolver = (ClassResolver)forName.getConstructors()[0].newInstance(args);
+                classResolver = (ClassResolver) forName.getConstructors()[0].newInstance(args);
             } catch (Exception e) {
                 LOG.error("contextInitialized() cannot obtain custom class resolver", e);
             } // try/catch
         } // if
         if (LOG.isInfoEnabled()) {
-            LOG.info("contextInitialized() classResolver: "+classResolver+ " :"+classResolverName);
+            LOG.info("contextInitialized() classResolver: "+classResolver+" :"+classResolverName);
         } // if
-        classResolver = (classResolver == null) ? new SimpleClassResolver(packages) : classResolver;
+        classResolver = (classResolver==null) ? new SimpleClassResolver(packages) : classResolver;
         try {
             Map<String, Object> externalBeans = new HashMap<String, Object>();
             externalBeans.put("servletContext", context);
@@ -103,9 +104,6 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("contextDestroyed()");
-        } // if
     } // contextDestroyed()
 
 } // DinistiqContextLoaderListener
