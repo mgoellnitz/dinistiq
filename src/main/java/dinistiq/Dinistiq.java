@@ -22,6 +22,7 @@ import java.beans.Introspector;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -189,24 +190,59 @@ public class Dinistiq {
 
 
     /**
+     * Obtain a parameter array to call a method with injections or a constructor with injections
+     *
+     * @param beanName name of the bean
+     * @param types types array for the call
+     * @param genericTypes generic type array for the call
+     * @param annotations annotations of the parameters
+     * @return
+     * @throws Exception
+     */
+    private Object[] getParameters(Map<String, Set<Object>> dependencies, String beanName, Class<? extends Object>[] types, Type[] genericTypes, Annotation[][] annotations) throws Exception {
+        Object[] parameters = new Object[types.length];
+        for (int i = 0; i<types.length; i++) {
+            String name = null;
+            for (Annotation a : annotations[i]) {
+                if (a instanceof Named) {
+                    name = ((Named) a).value();
+                } // if
+            } // for
+            parameters[i] = getValue(beanName, types[i], genericTypes[i], name);
+            dependencies.get(beanName).add(parameters[i]);
+        } // for
+        return parameters;
+    } // getParameters()
+
+
+    /**
      * creates an instance of the given type and registeres it with the container.
      *
-     * @param c type to create an instance of
+     * @param cls type to create an instance of
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
      */
-    private void createInstance(Class<? extends Object> c, String name) {
+    private void createInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
         if (LOG.isInfoEnabled()) {
-            LOG.info("createInstance("+name+") c="+c);
+            LOG.info("createInstance("+name+") c="+cls);
         } // if
         try {
-            final Object bean = c.newInstance();
-            String beanName = (name==null) ? c.getAnnotation(Named.class).value() : name;
+            String beanName = (name==null) ? cls.getAnnotation(Named.class).value() : name;
             if (StringUtils.isBlank(beanName)) {
-                beanName = Introspector.decapitalize(c.getSimpleName());
+                beanName = Introspector.decapitalize(cls.getSimpleName());
             } // if
+            Constructor<?> c = cls.getConstructor();
+            final Constructor<?>[] constructors = cls.getConstructors();
+            for (Constructor<?> ctor : constructors) {
+                if (ctor.getAnnotation(Inject.class)!=null) {
+                    c = ctor;
+                } // if
+            } // for
+            dependencies.put(beanName, new HashSet<Object>());
+            Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
+            Object bean = c.newInstance(parameters);
             beans.put(beanName, bean);
         } catch (Exception e) {
-            LOG.error("createInstance() error instanciating bean of type "+c.getName(), e);
+            LOG.error("createInstance() error instanciating bean of type "+cls.getName(), e);
         } // try/catch
     } // createInstance()
 
@@ -383,14 +419,8 @@ public class Dinistiq {
         // measure time for init process
         long start = System.currentTimeMillis();
 
-        // Instanciate annotated beans
-        final Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() number of annotated beans "+classes.size());
-        } // if
-        for (Class<? extends Object> c : classes) {
-            createInstance(c, null);
-        } // for
+        // Fill in injections and note needed dependencies
+        Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
 
         // Read bean list from properties files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
@@ -410,9 +440,6 @@ public class Dinistiq {
                 beanlist.load(this.getClass().getClassLoader().getResourceAsStream(propertyResource));
             } // if
         } // for
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() beanlist "+beanlist);
-        } // if
         for (String key : beanlist.stringPropertyNames()) {
             String className = beanlist.getProperty(key);
             if ("java.util.Map".equals(className)) {
@@ -432,25 +459,31 @@ public class Dinistiq {
                         LOG.info("() storing value "+key+" :"+instance.getClass().getName()+" - "+instance);
                     } // if
                     beans.put(key, instance);
+                    dependencies.put(key, new HashSet<Object>());
                 } else {
                     Class<? extends Object> c = Class.forName(className);
-                    createInstance(c, key);
+                    createInstance(dependencies, c, key);
                 } // if
             } // if
         } // for
+        if (LOG.isInfoEnabled()) {
+            LOG.info("() beanlist "+beanlist);
+        } // if
 
+        // Instanciate annotated beans
+        final Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("() number of annotated beans "+classes.size());
+        } // if
+        for (Class<? extends Object> c : classes) {
+            createInstance(dependencies, c, null);
+        } // for
         if (LOG.isDebugEnabled()) {
             LOG.debug("() beans "+beans.keySet());
         } // if
 
-        // Fill in injections and note needed dependencies
-        Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
-
-            // note dependencies
-            Set<Object> beanDependencies = new HashSet<Object>();
-            dependencies.put(key, beanDependencies);
 
             // Prepare values from properties files
             Properties beanProperties = getProperties(key);
@@ -464,7 +497,7 @@ public class Dinistiq {
             while (beanClass!=Object.class) {
                 if (bean instanceof Map) {
                     Properties mapProperties = getProperties(key);
-                    Map<Object, Object> map = (Map<Object, Object>)bean;
+                    Map<Object, Object> map = (Map<Object, Object>) bean;
                     for (String name : mapProperties.stringPropertyNames()) {
                         map.put(name, getReferenceValue(mapProperties.getProperty(name)));
                     }  // while
@@ -483,13 +516,12 @@ public class Dinistiq {
                         if (LOG.isInfoEnabled()) {
                             LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
                         } // if
-
                         Object b = getValue(key, field.getType(), field.getGenericType(), name);
                         final boolean accessible = field.isAccessible();
                         try {
                             field.setAccessible(true);
                             field.set(bean, b);
-                            beanDependencies.add(b);
+                            dependencies.get(key).add(b);
                         } catch (Exception e) {
                             LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                         } finally {
@@ -508,19 +540,8 @@ public class Dinistiq {
                     } // if
                     Class<? extends Object>[] parameterTypes = m.getParameterTypes();
                     Type[] genericParameterTypes = m.getGenericParameterTypes();
-                    Object[] parameters = new Object[parameterTypes.length];
                     final Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-                    for (int i = 0; i<parameterTypes.length; i++) {
-                        Class<? extends Object> parameterType = parameterTypes[i];
-                        String name = null;
-                        for (Annotation a : parameterAnnotations[i]) {
-                            if (a instanceof Named) {
-                                name = ((Named) a).value();
-                            } // if
-                        } // for
-                        parameters[i] = getValue(key, parameterType, genericParameterTypes[i], name);
-                        beanDependencies.add(parameters[i]);
-                    } // for
+                    Object[] parameters = getParameters(dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
                     try {
                         m.invoke(bean, parameters);
                     } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {

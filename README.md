@@ -464,9 +464,9 @@ The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
 |Type link|-|
 |Injection||
 |Annotation guidance|only JSR330|
-|Constructor injection|no|
+|Constructor injection|yes (limited)|
 |Field injection|yes|
-|Setting injection|yes|
+|Setter injection|yes|
 |Factory methods|no|
 |Static injection|no|
 |Method interception|no|

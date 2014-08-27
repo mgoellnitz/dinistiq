@@ -19,6 +19,7 @@
 package dinistiq.test;
 
 import dinistiq.Dinistiq;
+import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.NumericInjection;
 import dinistiq.test.components.StaticInjection;
@@ -241,5 +242,21 @@ public class SomeTest {
         Assert.assertEquals("Failure in injection of numeric value", 3.14159, ni.getFloatValue(), ni.getFloatValue()-3.14159);
         Assert.assertEquals("Failure in injection of numeric value", 2.7, ni.getDoubleValue(), ni.getDoubleValue()-2.7);
     } // testNumericInjection()
+
+
+    @Test
+    public void testConstructorInjection() {
+        Set<String> packages = new HashSet<String>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages);
+        } catch (Exception e) {
+            Assert.fail(e.toString());
+        } // try/catch
+        Assert.assertNotNull("DI container could not be initialized", d);
+        ConstructorInjection ci = d.findTypedBean(ConstructorInjection.class);
+        Assert.assertEquals("Failure in injection of numeric value", "a string value", ci.getString());
+    } // testConstructorInjection()
 
 } // SomeTest
