@@ -196,7 +196,7 @@ public class Dinistiq {
      * @param types types array for the call
      * @param genericTypes generic type array for the call
      * @param annotations annotations of the parameters
-     * @return
+     * @return array suitable as parameter for invoke or newInstance calls
      * @throws Exception
      */
     private Object[] getParameters(Map<String, Set<Object>> dependencies, String beanName, Class<? extends Object>[] types, Type[] genericTypes, Annotation[][] annotations) throws Exception {

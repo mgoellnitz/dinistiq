@@ -68,12 +68,9 @@ public class SimpleClassResolver implements ClassResolver {
                 String url = u.toString();
                 int idx = url.indexOf('!');
                 url = (idx>0) ? url.substring(0, idx) : url;
-                if (url.startsWith("jar:")) {
-                    url = url.substring(4);
-                } // if
-                if (!url.endsWith(".jar")) {
-                    url = url.substring(0, url.length()-packagePath.length());
-                } //
+                url = url.startsWith("jar:") ? url.substring(4) : url;
+                url = url.startsWith("vfs:/") ? "file"+url.substring(3, url.length()-packagePath.length()-2) : url;
+                url = (!url.endsWith(".jar")) ? url.substring(0, url.length()-packagePath.length()) : url;
                 if (LOG.isInfoEnabled()) {
                     LOG.info("addUrlsForPackage() resulting URL "+url);
                 } // if
@@ -151,16 +148,22 @@ public class SimpleClassResolver implements ClassResolver {
             addUrlsForPackage(urls, packageName);
         } // if
         if (LOG.isDebugEnabled()) {
-            LOG.debug("getClassNames() url # "+urls.size());
+            LOG.debug("() url # "+urls.size());
         } // if
         for (URL u : urls) {
             try {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("getClassNames(): path "+u.getPath());
+                    LOG.info("(): path "+u.getPath());
                 } // if
                 if (u.getPath().endsWith(".jar")) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("(): scanning jar "+u.getPath());
+                    } // if
                     JarInputStream is = new JarInputStream(u.openStream());
                     for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("(): entry "+entry.getName());
+                        } // if
                         checkClassAndAdd(classNames, entry.getName());
                     } // for
                     is.close();
@@ -170,7 +173,7 @@ public class SimpleClassResolver implements ClassResolver {
                     recurseSubDir(classNames, dir, basePathLength);
                 } // if
             } catch (IOException e) {
-                LOG.error("getClassNames()", e);
+                LOG.error("()", e);
             } // try/catch
         } // for
     } // SimpleClassResolver()
