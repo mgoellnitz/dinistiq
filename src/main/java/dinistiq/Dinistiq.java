@@ -103,7 +103,6 @@ public class Dinistiq {
      * @param type instance of that type
      * @return resulting bean or null
      */
-    @SuppressWarnings("unchecked")
     public <T extends Object> T findTypedBean(Class<T> type) {
         Set<T> allBeans = findTypedBeans(type);
         return allBeans.size()>0 ? allBeans.iterator().next() : null;
@@ -391,15 +390,35 @@ public class Dinistiq {
 
 
     /**
+     * Fill bean as a map.
+     *
+     * @param bean must be of type Map<Object, Object>
+     * @param mapProperties properties map with the values to be added to the map bean
+     */
+    @SuppressWarnings("unchecked")
+    private void fillMap(Object bean, Properties mapProperties) {
+        Map<Object, Object> map = (Map<Object, Object>) bean;
+        for (String name : mapProperties.stringPropertyNames()) {
+            map.put(name, getReferenceValue(mapProperties.getProperty(name)));
+        }  // while
+    } // fillMap
+
+
+    /**
      * Create a dinistiq context from the given class resolver and optional external beans.
      * Add all the external named beans from thei given map for later lookup to the context as well
      * and be sure that your class resolver takes the resources in the dinistiq/ path of your
      * class path into cosideration.
      */
     public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) throws Exception {
+        Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
+
         // Use all externally provided beans
         if (externalBeans!=null) {
             beans.putAll(externalBeans);
+            for (String externalBeanName : externalBeans.keySet()) {
+                dependencies.put(externalBeanName, new HashSet<>());
+            } // for
         } // if
 
         // Add system properties to scaope and split potential URL values
@@ -418,9 +437,6 @@ public class Dinistiq {
 
         // measure time for init process
         long start = System.currentTimeMillis();
-
-        // Fill in injections and note needed dependencies
-        Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
 
         // Read bean list from properties files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
@@ -482,6 +498,7 @@ public class Dinistiq {
             LOG.debug("() beans "+beans.keySet());
         } // if
 
+        // Fill in injections and note needed dependencies
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
 
@@ -497,14 +514,10 @@ public class Dinistiq {
             while (beanClass!=Object.class) {
                 if (bean instanceof Map) {
                     Properties mapProperties = getProperties(key);
-                    Map<Object, Object> map = (Map<Object, Object>) bean;
-                    for (String name : mapProperties.stringPropertyNames()) {
-                        map.put(name, getReferenceValue(mapProperties.getProperty(name)));
-                    }  // while
+                    fillMap(bean, mapProperties);
                     if (LOG.isInfoEnabled()) {
-                        LOG.info("() filling map '"+key+"' "+map);
+                        LOG.info("() filled map '"+key+"' "+bean);
                     } // if
-                    beans.put(key, map);
                 } // if
                 for (Field field : beanClass.getDeclaredFields()) {
                     if (LOG.isDebugEnabled()) {
@@ -642,7 +655,7 @@ public class Dinistiq {
             } // for
         } // while
         if (dependencies.size()>0) {
-            throw new Exception("Circular bean injection and initialization dependencies.");
+            throw new Exception("Circular bean injection and initialization dependencies. "+dependencies);
         } // if
 
         // Call Post Construct
