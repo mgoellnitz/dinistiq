@@ -14,6 +14,9 @@
     </module>
     <module name="JavadocStyle"/>
     -->
+    <module name="LineLength">
+      <property name="max" value="205"/>
+    </module>
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
@@ -33,47 +36,25 @@
      <property name="countEmpty" value="false"/>
     </module>
     <module name="ParameterNumber"/>
-    <module name="LineLength">
-      <property name="max" value="160"/>
-    </module>
     <module name="EmptyForIteratorPad"/>
     <module name="MethodParamPad"/>
-    <module name="NoWhitespaceAfter">
-      <property name="severity" value="ignore"/>
-    </module>
     <module name="NoWhitespaceBefore"/>
-    <module name="OperatorWrap">
-      <property name="severity" value="ignore"/>
-    </module>
+    <module name="OperatorWrap"/>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
-    <module name="WhitespaceAfter">
-      <property name="severity" value="ignore"/>
-    </module>
-    <!-- We don't want spaces around binary operators
-    <module name="WhitespaceAround"/>
-    -->
+    <module name="WhitespaceAfter"/>
     <module name="ModifierOrder"/>
     <module name="RedundantModifier"/>
     <module name="AvoidNestedBlocks"/>
     <module name="EmptyBlock"/>
-    <!-- sameline
-    <module name="LeftCurly">
-      <property name="option" value="nl"/>
-    </module>
-    -->
     <module name="NeedBraces"/>
-    <!--
-    <module name="RightCurly">
-      <property name="option" value="alone"/>
-    </module>
-    -->
-    <module name="AvoidInlineConditionals"/>
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
     <module name="HiddenField">
       <property name="ignoreSetter" value="true"/>
+      <property name="ignoreConstructorParameter" value="true"/>
     </module>
+    <!--
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
     <module name="MagicNumber"/>
@@ -100,21 +81,35 @@
     </module>
     <module name="TodoComment"/>
     <module name="UpperEll"/>
+    -->
+    <!--
+    <module name="NoWhitespaceAfter"/>
+    -->
+    <!-- We don't want spaces around binary operators
+    <module name="WhitespaceAround"/>
+    -->
+    <!-- sameline
+    <module name="LeftCurly">
+      <property name="option" value="nl"/>
+    </module>
+    -->
+    <!--
+    <module name="RightCurly">
+      <property name="option" value="alone"/>
+    </module>
+    <module name="AvoidInlineConditionals"/>
+    -->
+    <module name="RegexpSinglelineJava">
+      <property name="format" value="\s+$"/>
+      <property name="message" value="Line has trailing spaces."/>
+      <property name="ignoreComments" value="true"/>
+    </module>
   </module>
-  <!-- don't complain about missing package-info
+  <!-- Don't complain about missing package-info
   <module name="JavadocPackage"/>
   -->
-  <module name="NewlineAtEndOfFile">
-    <property name="severity" value="ignore"/>
-  </module>
+  <module name="NewlineAtEndOfFile"/>
   <module name="Translation"/>
   <module name="FileLength"/>
-  <module name="FileTabCharacter">
-    <property name="severity" value="ignore"/>
-  </module>
-  <module name="RegexpSingleline">
-    <property name="severity" value="ignore"/>
-    <property name="format" value="\s+$"/>
-    <property name="message" value="Line has trailing spaces."/>
-  </module>
+  <module name="FileTabCharacter"/>
 </module>
