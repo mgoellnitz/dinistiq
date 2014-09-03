@@ -35,61 +35,53 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-public class SomeTest {
+public class InjectorTest {
 
-    @Test
-    public void testFindImplementedInterface() {
-        Set<String> packages = new HashSet<String>();
+    private Dinistiq d;
+
+    private Set<String> packages = new HashSet<String>();
+
+
+    public InjectorTest() {
+        packages = new HashSet<String>();
         packages.add(TestInterface.class.getPackage().getName());
+        try {
+            d = new Dinistiq(packages, prepareInitialBeans());
+        } catch (Exception e) {
+            Assert.assertNotNull("DI container could not be initialized", d);
+            Assert.fail(e.toString());
+        } // try/catch
+    } // InjectorTest()
+
+
+    private Map<String, Object> prepareInitialBeans() {
         Map<String, Object> initialBeans = new HashMap<String, Object>();
         InitialBean initialBean = new InitialBean();
         initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
+        return initialBeans;
+    } // prepareInitialBeans()
+
+
+    @Test
+    public void testFindImplementedInterface() {
         Assert.assertNotNull("Cannot find instanciated component for interface", d.findTypedBean(TestInterface.class));
     } // testFindImplementedInterface()
 
 
     @Test
     public void testFindExplicitlyInstanciatedComponent() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         TestInterface ti = d.findTypedBean(TestInterface.class);
+        Assert.assertNotNull("Cannot find test interface instance just by type ", ti);
         TestInterface test = d.findBean(TestInterface.class, "test");
+        Assert.assertNull("Should not be able to find test interface instance by type and name", test);
         Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
+        Assert.assertNotNull("Cannot find test interface set", tis);
         Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
     } // testFindExplicitlyInstanciatedComponent()
 
 
     @Test
     public void testNamedInjection() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         TestComponentB testComponentB = d.findTypedBean(TestComponentB.class);
         Assert.assertNotNull("need TestComponentB instance", testComponentB);
         Assert.assertEquals("Cannot find string values as expection ", "stringValue", testComponentB.getHallo());
@@ -98,18 +90,6 @@ public class SomeTest {
 
     @Test
     public void testReferenceValue() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         // In this case in order to let the reference injection work, the bean MUST be named to find the correct properties file
         UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class, "unannotatedComponent");
         Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
@@ -121,21 +101,8 @@ public class SomeTest {
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void testMapBeans() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         Set<Map> maps = d.findTypedBeans(Map.class);
         Assert.assertTrue("no maps at all found", maps.size()>0);
-        System.err.println("Maps: "+maps);
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);
         Assert.assertEquals("default value not correct", "defaultValueA", map.get("keyA"));
@@ -145,18 +112,6 @@ public class SomeTest {
 
     @Test
     public void testStringValue() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         String stringValue = d.findBean(String.class, "stringTest");
         Assert.assertNotNull("not string with name 'stringTest' found", stringValue);
         Assert.assertEquals("unexpected string value", "stringValue", stringValue);
@@ -165,18 +120,6 @@ public class SomeTest {
 
     @Test
     public void testInitialBeans() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         InitialBean ib = d.findTypedBean(InitialBean.class);
         Assert.assertNotNull("Bean from externally provided initial map of beans not found", ib);
         TestInterface t = ib.getTest();
@@ -188,11 +131,7 @@ public class SomeTest {
 
     @Test
     public void testBooleans() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
+        Map<String, Object> initialBeans = prepareInitialBeans();
         initialBeans.put("booleanBasetypeValueTrue", true);
         initialBeans.put("booleanTypedValueTrue", Boolean.TRUE);
         initialBeans.put("booleanBasetypeValueFalse", false);
@@ -220,18 +159,6 @@ public class SomeTest {
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void testStringReplacement() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);
         // test if system properties can be used
@@ -243,60 +170,24 @@ public class SomeTest {
 
     @Test
     public void testStaticInjection() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
         Assert.assertNotNull("Static field not injected", StaticInjection.getTestInterface());
     } // testStaticInjection()
 
 
     @Test
     public void testNumericInjection() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
-        NumericInjection ni = d.findTypedBean(NumericInjection.class);
-        Assert.assertEquals("Failure in injection of numeric value", 42, ni.getIntValue());
-        Assert.assertEquals("Failure in injection of numeric value", 123456789, ni.getLongValue());
-        Assert.assertEquals("Failure in injection of numeric value", 3.14159, ni.getFloatValue(), ni.getFloatValue()-3.14159);
-        Assert.assertEquals("Failure in injection of numeric value", 2.7, ni.getDoubleValue(), ni.getDoubleValue()-2.7);
+        NumericInjection numerics = d.findTypedBean(NumericInjection.class);
+        Assert.assertEquals("Failure in injection of int value", 42, numerics.getIntValue());
+        Assert.assertEquals("Failure in injection of long value", 123456789, numerics.getLongValue());
+        Assert.assertEquals("Failure in injection of float value", 3.14159, numerics.getFloatValue(), numerics.getFloatValue()-3.14159);
+        Assert.assertEquals("Failure in injection of double value", 2.7, numerics.getDoubleValue(), numerics.getDoubleValue()-2.7);
     } // testNumericInjection()
 
 
     @Test
     public void testConstructorInjection() {
-        Set<String> packages = new HashSet<String>();
-        packages.add(TestInterface.class.getPackage().getName());
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
-        Dinistiq d = null;
-        try {
-            d = new Dinistiq(packages, initialBeans);
-        } catch (Exception e) {
-            Assert.fail(e.toString());
-        } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
-        ConstructorInjection ci = d.findTypedBean(ConstructorInjection.class);
-        Assert.assertEquals("Failure in injection of numeric value", "a string value", ci.getString());
+        ConstructorInjection constructorInjection = d.findTypedBean(ConstructorInjection.class);
+        Assert.assertEquals("Failure in injection of numeric value", "a string value", constructorInjection.getString());
     } // testConstructorInjection()
 
-} // SomeTest
+} // InjectorTest

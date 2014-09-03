@@ -67,10 +67,10 @@ public class SimpleClassResolver implements ClassResolver {
                 URL u = urlEnumeration.nextElement();
                 String url = u.toString();
                 int idx = url.indexOf('!');
-                url = (idx>0) ? url.substring(0, idx) : url;
+                url = idx>0 ? url.substring(0, idx) : url;
                 url = url.startsWith("jar:") ? url.substring(4) : url;
                 url = url.startsWith("vfs:/") ? "file"+url.substring(3, url.length()-packagePath.length()-2) : url;
-                url = (!url.endsWith(".jar")) ? url.substring(0, url.length()-packagePath.length()) : url;
+                url = !url.endsWith(".jar") ? url.substring(0, url.length()-packagePath.length()) : url;
                 if (LOG.isInfoEnabled()) {
                     LOG.info("addUrlsForPackage() resulting URL "+url);
                 } // if
@@ -83,13 +83,11 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
-     * Checks a set of class or properties names and adds them to the classNames collection.
-     * Check is performed against package name and file extension.
+     * Checks a file name if it needs to be considered for properties files or derive a class name from.
      *
-     * @param classNames
-     * @param name
+     * @param name name of a file to be scanned
      */
-    protected final void checkClassAndAdd(Set<String> classNames, String name) {
+    protected final void checkClassAndAdd(String name) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("checkClassAndAdd() name="+name);
         } // if
@@ -101,7 +99,7 @@ public class SimpleClassResolver implements ClassResolver {
             } // if
             boolean add = false;
             for (String packageName : packageNames) {
-                add = add||(className.startsWith(packageName));
+                add = add||className.startsWith(packageName);
             } // if
             if (add) {
                 if (LOG.isDebugEnabled()) {
@@ -119,7 +117,7 @@ public class SimpleClassResolver implements ClassResolver {
     } // checkClassAndAdd()
 
 
-    protected final void recurseSubDir(Set<String> classNames, File dir, int basePathLength) {
+    protected final void recurseSubDir(File dir, int basePathLength) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("recurseSubDir() scanning "+dir.getAbsolutePath());
         } // if
@@ -128,10 +126,10 @@ public class SimpleClassResolver implements ClassResolver {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("recurseSubDir() fileName="+fileName);
             } // if
-            if ((fileName.endsWith(".class"))||(fileName.endsWith(".properties"))) {
-                checkClassAndAdd(classNames, fileName);
+            if (fileName.endsWith(".class")||fileName.endsWith(".properties")) {
+                checkClassAndAdd(fileName);
             } else {
-                recurseSubDir(classNames, f, basePathLength);
+                recurseSubDir(f, basePathLength);
             } // if
         } // for
     } // recurseSubDir()
@@ -164,13 +162,13 @@ public class SimpleClassResolver implements ClassResolver {
                         if (LOG.isInfoEnabled()) {
                             LOG.info("(): entry "+entry.getName());
                         } // if
-                        checkClassAndAdd(classNames, entry.getName());
+                        checkClassAndAdd(entry.getName());
                     } // for
                     is.close();
                 } else {
                     File dir = new File(u.getPath());
                     int basePathLength = dir.getAbsolutePath().length()+1;
-                    recurseSubDir(classNames, dir, basePathLength);
+                    recurseSubDir(dir, basePathLength);
                 } // if
             } catch (IOException e) {
                 LOG.error("()", e);

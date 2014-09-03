@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 
 @Named
 @Singleton
-public class NumericInjection {
+public class NumericInjection extends TestComponentB {
 
     private int intValue;
 

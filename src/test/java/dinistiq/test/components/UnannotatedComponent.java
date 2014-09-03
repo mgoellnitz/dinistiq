@@ -33,6 +33,11 @@ public class UnannotatedComponent {
     private boolean basetypeBooleanValue;
 
 
+    public TestComponentB getB() {
+        return b;
+    }
+
+
     public TestInterface getAutoInjected() {
         return testInterface;
     } // getAutoInjected()

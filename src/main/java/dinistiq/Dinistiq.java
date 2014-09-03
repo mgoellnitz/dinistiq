@@ -411,6 +411,9 @@ public class Dinistiq {
      * class path into cosideration.
      */
     public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) throws Exception {
+        // measure time for init process
+        long start = System.currentTimeMillis();
+
         Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
 
         // Use all externally provided beans
@@ -421,7 +424,7 @@ public class Dinistiq {
             } // for
         } // if
 
-        // Add system properties to scaope and split potential URL values
+        // Add system properties to scope and split potential URL values
         for (Object keyObject : System.getProperties().keySet()) {
             String key = ""+keyObject;
             beans.put(key, System.getProperty(key));
@@ -434,9 +437,6 @@ public class Dinistiq {
         if (LOG.isDebugEnabled()) {
             LOG.debug("() initial beans "+beans);
         } // if
-
-        // measure time for init process
-        long start = System.currentTimeMillis();
 
         // Read bean list from properties files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
@@ -463,7 +463,7 @@ public class Dinistiq {
             } else {
                 // expect java.lang.Xyz("value")
                 int idx = className.indexOf('(');
-                if ((className.startsWith(JAVALANG_PREFIX))&&(idx>0)) {
+                if (className.startsWith(JAVALANG_PREFIX)&&(idx>0)) {
                     String value = ""+getReferenceValue(className.substring(idx+2, className.length()-2));
                     className = className.substring(0, idx);
                     if (LOG.isDebugEnabled()) {
@@ -635,10 +635,8 @@ public class Dinistiq {
                     } else {
                         isMet = orderedBeans.contains(dep);
                     } // if
-                    if (LOG.isDebugEnabled()) {
-                        if (!isMet) {
-                            LOG.debug("() "+key+" is missing "+dep+" :"+dep.getClass().getName());
-                        } // if
+                    if (LOG.isDebugEnabled()&&!isMet) {
+                        LOG.debug("() "+key+" is missing "+dep+" :"+dep.getClass().getName());
                     } // if
                     dependenciesMet = dependenciesMet&&isMet;
                 } // for
