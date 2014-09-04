@@ -48,9 +48,9 @@ public class SimpleClassResolver implements ClassResolver {
 
     private final Set<String> packageNames;
 
-    private final Set<String> properties = new HashSet<String>();
+    private final Set<String> properties;
 
-    private Set<String> classNames = null;
+    private final Set<String> classNames;
 
 
     /**
@@ -139,9 +139,10 @@ public class SimpleClassResolver implements ClassResolver {
         this.packageNames = packageNames;
         // to have the properties files in the path which we intend to use for configuration
         this.packageNames.add(this.getClass().getPackage().getName());
-
-        classNames = new HashSet<String>();
-        Set<URL> urls = new HashSet<URL>();
+        
+        properties = new HashSet<>();
+        classNames = new HashSet<>();
+        Set<URL> urls = new HashSet<>();
         for (String packageName : packageNames) {
             addUrlsForPackage(urls, packageName);
         } // if
@@ -183,7 +184,7 @@ public class SimpleClassResolver implements ClassResolver {
      * @see ClassResolver#getSubclasses(java.lang.Class)
      */
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
-        Set<Class<T>> result = new HashSet<Class<T>>();
+        Set<Class<T>> result = new HashSet<>();
         if (LOG.isDebugEnabled()) {
             LOG.debug("getSubclasses() checking "+classNames.size()+" classes");
         } // if
@@ -212,7 +213,7 @@ public class SimpleClassResolver implements ClassResolver {
      */
     @Override
     public <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation) {
-        Set<Class<T>> result = new HashSet<Class<T>>();
+        Set<Class<T>> result = new HashSet<>();
         if (LOG.isDebugEnabled()) {
             LOG.debug("getAnnotated() checking "+classNames.size()+" classes");
         } // if
@@ -242,7 +243,7 @@ public class SimpleClassResolver implements ClassResolver {
      */
     @Override
     public <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation) {
-        Set<Class<T>> result = new HashSet<Class<T>>();
+        Set<Class<T>> result = new HashSet<>();
         if (LOG.isDebugEnabled()) {
             LOG.debug("getAnnotatedSubclasses() checking "+classNames.size()+" classes");
         } // if
@@ -269,7 +270,7 @@ public class SimpleClassResolver implements ClassResolver {
      */
     @Override
     public SortedSet<String> getProperties(String path) {
-        SortedSet<String> result = new TreeSet<String>();
+        SortedSet<String> result = new TreeSet<>();
         for (String property : properties) {
             if (LOG.isInfoEnabled()) {
                 LOG.info("getProperties("+path+") checking "+property);

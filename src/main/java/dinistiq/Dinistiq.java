@@ -654,7 +654,7 @@ public class Dinistiq {
             } // for
         } // while
         if (dependencies.size()>0) {
-            throw new Exception("Circular bean injection and initialization dependencies. "+dependencies);
+            throw new Exception("Circular bean injection and initialization dependencies detected after "+(System.currentTimeMillis()-start)+"ms"+" "+dependencies);
         } // if
 
         // Call Post Construct
