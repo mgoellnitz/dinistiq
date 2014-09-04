@@ -39,11 +39,11 @@ public class InjectorTest {
 
     private Dinistiq d;
 
-    private Set<String> packages = new HashSet<String>();
+    private final Set<String> packages;
 
 
     public InjectorTest() {
-        packages = new HashSet<String>();
+        packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
         try {
             d = new Dinistiq(packages, prepareInitialBeans());

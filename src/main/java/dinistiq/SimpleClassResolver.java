@@ -62,7 +62,7 @@ public class SimpleClassResolver implements ClassResolver {
     private void addUrlsForPackage(Set<URL> urls, String packageName) {
         String packagePath = packageName.replace('.', '/');
         try {
-            Enumeration<URL> urlEnumeration = this.getClass().getClassLoader().getResources(packagePath);
+            Enumeration<URL> urlEnumeration = Thread.currentThread().getContextClassLoader().getResources(packagePath);
             while (urlEnumeration.hasMoreElements()) {
                 URL u = urlEnumeration.nextElement();
                 String url = u.toString();
@@ -197,7 +197,7 @@ public class SimpleClassResolver implements ClassResolver {
                 if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((c.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
                 } // if
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.error("getSubclasses()", e);
             } // try/catch
         } // if
@@ -226,7 +226,7 @@ public class SimpleClassResolver implements ClassResolver {
                 if ((!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
                 } // if
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.error("getAnnotated()", e);
             } // try/catch
         } // if
@@ -256,7 +256,7 @@ public class SimpleClassResolver implements ClassResolver {
                 if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
                     result.add(cls);
                 } // if
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.error("getAnnotatedSubclasses()", e);
             } // try/catch
         } // if

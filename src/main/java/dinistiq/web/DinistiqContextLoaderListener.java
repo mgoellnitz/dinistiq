@@ -104,6 +104,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        // Nothing to be clean up on context destruction
     } // contextDestroyed()
 
 } // DinistiqContextLoaderListener

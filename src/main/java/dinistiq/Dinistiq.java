@@ -66,11 +66,11 @@ public class Dinistiq {
 
     private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
 
-    private final Map<String, String> environment = new HashMap<String, String>(System.getenv());
+    private final Map<String, String> environment = new HashMap<>(System.getenv());
 
-    private List<Object> orderedBeans = new ArrayList<Object>();
+    private final List<Object> orderedBeans = new ArrayList<>();
 
-    private Map<String, Object> beans = new HashMap<String, Object>();
+    private final Map<String, Object> beans = new HashMap<>();
 
 
     /**
@@ -82,7 +82,7 @@ public class Dinistiq {
      */
     @SuppressWarnings("unchecked")
     public <T extends Object> Set<T> findTypedBeans(Class<T> type) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
                 if (LOG.isInfoEnabled()) {
@@ -105,7 +105,7 @@ public class Dinistiq {
      */
     public <T extends Object> T findTypedBean(Class<T> type) {
         Set<T> allBeans = findTypedBeans(type);
-        return allBeans.size()>0 ? allBeans.iterator().next() : null;
+        return (allBeans.size()>0) ? allBeans.iterator().next() : null;
     } // findTypedBean()
 
 
@@ -257,7 +257,7 @@ public class Dinistiq {
     private Properties getProperties(String key) throws IOException {
         Properties beanProperties = new Properties();
         final String defaultsName = PRODUCT_BASE_PATH+"/defaults/"+key+".properties";
-        final Enumeration<URL> resources = this.getClass().getClassLoader().getResources(defaultsName);
+        final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(defaultsName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getProperties("+key+") searching defaults "+defaultsName+" "+resources);
         } // if
@@ -269,7 +269,7 @@ public class Dinistiq {
             beanProperties.load(resource.openStream());
         } // while
         final String beanValuesName = PRODUCT_BASE_PATH+"/beans/"+key+".properties";
-        InputStream beanStream = this.getClass().getClassLoader().getResourceAsStream(beanValuesName);
+        InputStream beanStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(beanValuesName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getProperties("+key+") searching bean values "+beanValuesName+" "+beanStream);
         } // if
@@ -414,7 +414,7 @@ public class Dinistiq {
         // measure time for init process
         long start = System.currentTimeMillis();
 
-        Map<String, Set<Object>> dependencies = new HashMap<String, Set<Object>>();
+        Map<String, Set<Object>> dependencies = new HashMap<>();
 
         // Use all externally provided beans
         if (externalBeans!=null) {
@@ -426,7 +426,7 @@ public class Dinistiq {
 
         // Add system properties to scope and split potential URL values
         for (Object keyObject : System.getProperties().keySet()) {
-            String key = ""+keyObject;
+            String key = keyObject.toString();
             beans.put(key, System.getProperty(key));
             storeUrlParts(key, System.getProperty(key), beans);
         } // for
@@ -453,18 +453,18 @@ public class Dinistiq {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("() resource "+propertyResource);
                 } // if
-                beanlist.load(this.getClass().getClassLoader().getResourceAsStream(propertyResource));
+                beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
             } // if
         } // for
         for (String key : beanlist.stringPropertyNames()) {
             String className = beanlist.getProperty(key);
             if ("java.util.Map".equals(className)) {
-                beans.put(key, new HashMap<Object, Object>());
+                beans.put(key, new HashMap<>());
             } else {
                 // expect java.lang.Xyz("value")
                 int idx = className.indexOf('(');
                 if (className.startsWith(JAVALANG_PREFIX)&&(idx>0)) {
-                    String value = ""+getReferenceValue(className.substring(idx+2, className.length()-2));
+                    String value = getReferenceValue(className.substring(idx+2, className.length()-2)).toString();
                     className = className.substring(0, idx);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("() instanciating "+value+" :"+className);
@@ -475,7 +475,7 @@ public class Dinistiq {
                         LOG.info("() storing value "+key+" :"+instance.getClass().getName()+" - "+instance);
                     } // if
                     beans.put(key, instance);
-                    dependencies.put(key, new HashSet<Object>());
+                    dependencies.put(key, new HashSet<>());
                 } else {
                     Class<? extends Object> c = Class.forName(className);
                     createInstance(dependencies, c, key);
@@ -594,7 +594,7 @@ public class Dinistiq {
                                 parameters[0] = new Double(propertyValue);
                             } // if
                             if (isCollection) {
-                                Set<Object> valueSet = new HashSet<Object>();
+                                Set<Object> valueSet = new HashSet<>();
                                 for (String value : propertyValue.split(",")) {
                                     valueSet.add(getReferenceValue(value));
                                 } // for
@@ -614,7 +614,8 @@ public class Dinistiq {
             LOG.info("() sorting beans according to dependencies");
         } // if
         int ripCord = 10;
-        while ((ripCord-->0)&&(dependencies.size()>0)) {
+        while ((ripCord>0)&&(!dependencies.isEmpty())) {
+            ripCord--;
             if (LOG.isInfoEnabled()) {
                 LOG.info("() "+dependencies.size()+" beans left");
             } // if
