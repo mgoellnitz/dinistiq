@@ -38,7 +38,7 @@ import javax.servlet.ServletException;
 @SuppressWarnings("deprecation")
 public class MockServletContext implements ServletContext {
     
-    private Dinistiq dinistiq;
+    private final Dinistiq dinistiq;
 
 
     public MockServletContext(Dinistiq dinistiq) {

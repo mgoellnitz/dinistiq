@@ -16,7 +16,7 @@ import javax.servlet.ServletContext;
  */
 public class MockServletConfig implements ServletConfig {
 
-    private Dinistiq dinistiq;
+    private final Dinistiq dinistiq;
 
 
     public MockServletConfig(Dinistiq dinistiq) {
