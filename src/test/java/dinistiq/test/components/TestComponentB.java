@@ -18,7 +18,7 @@
  */
 package dinistiq.test.components;
 
-import java.util.Collection;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -35,7 +35,7 @@ public class TestComponentB {
     public TestInterface test;
 
     @Inject
-    private Collection<TestInterface> allInstances;
+    private List<TestInterface> allInstances;
 
     @Inject
     @Named("stringTest")
@@ -52,7 +52,7 @@ public class TestComponentB {
     }
 
 
-    public Collection<TestInterface> getAllInstances() {
+    public List<TestInterface> getAllInstances() {
         return allInstances;
     }
 

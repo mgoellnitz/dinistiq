@@ -26,10 +26,12 @@ import dinistiq.test.components.NumericInjection;
 import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.inject.Singleton;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -89,11 +91,16 @@ public class InjectorTest {
 
     @Test
     public void testReferenceValue() {
+        UnannotatedComponent withoutName = d.findBean(UnannotatedComponent.class);
+        Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", withoutName);
         // In this case in order to let the reference injection work, the bean MUST be named to find the correct properties file
         UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class, "unannotatedComponent");
         Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
         Assert.assertNotNull("Cannot find auto-injected value ", unannotatedComponent.getAutoInjected());
         Assert.assertNotNull("Cannot find value injected as a reference ", unannotatedComponent.getTestInterface());
+        // Check that bean cannot be found with different name
+        UnannotatedComponent notFound = d.findBean(UnannotatedComponent.class, "notFound");
+        Assert.assertNull("Bean should be not found by that name", notFound);
     } // testReferenceValue()
 
 
@@ -192,6 +199,13 @@ public class InjectorTest {
         Assert.assertNotNull("No collection of instances available", uac.getManuallyInjectedCollection());
         Assert.assertEquals("Wrong number of instaces in collection", 1, uac.getManuallyInjectedCollection().size());
     } // testConstructorInjection()
+
+
+    @Test
+    public void testAnnotationLookup() {
+        Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
+        Assert.assertEquals("Unexpected number of annotated beans in scope", 5, beans.size());
+    } // testAnnotationLookup()
 
 
     @Test
