@@ -81,18 +81,39 @@ public class Dinistiq {
      * @return Set of beans - may be empty but not null
      */
     @SuppressWarnings("unchecked")
-    public <T extends Object> Set<T> findTypedBeans(Class<T> type) {
+    public <T extends Object> Set<T> findBeans(Class<T> type) {
         Set<T> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("findTypedBeans() adding to result result "+bean+" :"+type.getName());
+                    LOG.info("findBeans() adding to result result "+bean+" :"+type.getName());
                 } // if
                 result.add((T) bean);
             } // if
         } // for
         return result;
-    } // findTypedBeans()
+    } // findBeans()
+
+
+    /**
+     * Find all beans with a given annotation.
+     *
+     * @param <A> type to check resulting beans for
+     * @param type instance of that type
+     * @return Set of beans - may be empty but not null
+     */
+    public <A extends Annotation> Set<Object> findAnnotatedBeans(Class<A> type) {
+        Set<Object> result = new HashSet<>();
+        for (Object bean : beans.values()) {
+            if (bean.getClass().getAnnotation(type)!=null) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("findAnnotatedBeans() adding to result result "+bean+" :"+type.getName());
+                } // if
+                result.add(bean);
+            } // if
+        } // for
+        return result;
+    } // findAnnotatedBeans()
 
 
     /**
@@ -103,10 +124,10 @@ public class Dinistiq {
      * @param type instance of that type
      * @return resulting bean or null
      */
-    public <T extends Object> T findTypedBean(Class<T> type) {
-        Set<T> allBeans = findTypedBeans(type);
+    public <T extends Object> T findBean(Class<T> type) {
+        Set<T> allBeans = findBeans(type);
         return (allBeans.size()>0) ? allBeans.iterator().next() : null;
-    } // findTypedBean()
+    } // findBean()
 
 
     /**
@@ -155,7 +176,7 @@ public class Dinistiq {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("getValue() inner type "+collectionType);
                 } // if
-                Set<? extends Object> resultCollection = findTypedBeans((Class<? extends Object>) collectionType);
+                Set<? extends Object> resultCollection = findBeans((Class<? extends Object>) collectionType);
                 if (List.class.isAssignableFrom(cls)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("getValue() transforming to list");
@@ -165,7 +186,7 @@ public class Dinistiq {
                 return resultCollection;
             } // if
         } // if
-        Object bean = findTypedBean(cls);
+        Object bean = findBean(cls);
         if (bean==null) {
             throw new Exception("for "+customer+": bean of type "+cls.getName()+" not found.");
         } // if
@@ -684,6 +705,9 @@ public class Dinistiq {
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
             if (!orderedBeans.contains(bean)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("() bean without dependencies to call post construct method on "+key);
+                } // if
                 for (Method m : bean.getClass().getMethods()) {
                     if (m.getAnnotation(PostConstruct.class)!=null) {
                         if (LOG.isDebugEnabled()) {
@@ -721,6 +745,5 @@ public class Dinistiq {
     public Dinistiq(Set<String> packages) throws Exception {
         this(packages, null);
     } // Dinistiq()
-
 
 } // Dinistiq

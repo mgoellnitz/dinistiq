@@ -94,7 +94,7 @@ public class DinistiqServlet extends HttpServlet {
         } // if
         try {
             Dinistiq dinistiq = (Dinistiq) (config.getServletContext().getAttribute(DinistiqContextLoaderListener.DINISTIQ_INSTANCE));
-            Collection<RegisterableServlet> servlets = dinistiq.findTypedBeans(RegisterableServlet.class);
+            Collection<RegisterableServlet> servlets = dinistiq.findBeans(RegisterableServlet.class);
             List<RegisterableServlet> orderedServlets = new ArrayList<RegisterableServlet>(servlets.size());
             for (RegisterableServlet servlet : servlets) {
                 if (LOG.isDebugEnabled()) {
