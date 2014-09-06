@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 public class TestComponent implements TestInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestComponent.class);
-
-
+    
     @PostConstruct
     public void afterPropertiesSet() {
         LOG.info("afterPropertiesSet() YEAH!");

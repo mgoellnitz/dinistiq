@@ -18,24 +18,42 @@
  */
 package dinistiq.test.components;
 
+import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 
 @Named
 @Singleton
 public class TestComponentB {
 
     @Inject
+    private static TestInterface testInterface;
+
+    @Inject
     public TestInterface test;
+
+    @Inject
+    private Collection<TestInterface> allInstances;
 
     @Inject
     @Named("stringTest")
     private String hallo;
 
 
+    public static TestInterface getTestInterface() {
+        return testInterface;
+    } // getTestInterface()
+
+
     public String getHallo() {
         return hallo;
+    }
+
+
+    public Collection<TestInterface> getAllInstances() {
+        return allInstances;
     }
 
 } // TestComponentB

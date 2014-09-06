@@ -23,7 +23,6 @@ import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.InitialBeanDependentComponent;
 import dinistiq.test.components.NumericInjection;
-import dinistiq.test.components.StaticInjection;
 import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
@@ -42,19 +41,7 @@ public class InjectorTest {
     private final Set<String> packages;
 
 
-    public InjectorTest() {
-        packages = new HashSet<>();
-        packages.add(TestInterface.class.getPackage().getName());
-        try {
-            d = new Dinistiq(packages, prepareInitialBeans());
-        } catch (Exception e) {
-            Assert.assertNotNull("DI container could not be initialized", d);
-            Assert.fail(e.toString());
-        } // try/catch
-    } // InjectorTest()
-
-
-    private Map<String, Object> prepareInitialBeans() {
+    public static Map<String, Object> prepareInitialBeans() {
         Map<String, Object> initialBeans = new HashMap<String, Object>();
         InitialBean initialBean = new InitialBean();
         initialBeans.put("initialBean", initialBean);
@@ -62,27 +49,39 @@ public class InjectorTest {
     } // prepareInitialBeans()
 
 
+    public InjectorTest() {
+        packages = new HashSet<>();
+        packages.add(TestInterface.class.getPackage().getName());
+        try {
+            d = new Dinistiq(packages, prepareInitialBeans());
+        } catch (Exception e) {
+            Assert.assertNotNull("DI container could not be initialized", d);
+            Assert.fail(e.getMessage());
+        } // try/catch
+    } // InjectorTest()
+
+
     @Test
     public void testFindImplementedInterface() {
-        Assert.assertNotNull("Cannot find instanciated component for interface", d.findTypedBean(TestInterface.class));
+        Assert.assertNotNull("Cannot find instanciated component for interface", d.findBean(TestInterface.class));
     } // testFindImplementedInterface()
 
 
     @Test
     public void testFindExplicitlyInstanciatedComponent() {
-        TestInterface ti = d.findTypedBean(TestInterface.class);
+        TestInterface ti = d.findBean(TestInterface.class);
         Assert.assertNotNull("Cannot find test interface instance just by type ", ti);
         TestInterface test = d.findBean(TestInterface.class, "test");
         Assert.assertNull("Should not be able to find test interface instance by type and name", test);
-        Set<TestInterface> tis = d.findTypedBeans(TestInterface.class);
+        Set<TestInterface> tis = d.findBeans(TestInterface.class);
         Assert.assertNotNull("Cannot find test interface set", tis);
-        Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findTypedBean(UnannotatedComponent.class));
+        Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", d.findBean(UnannotatedComponent.class));
     } // testFindExplicitlyInstanciatedComponent()
 
 
     @Test
     public void testNamedInjection() {
-        TestComponentB testComponentB = d.findTypedBean(TestComponentB.class);
+        TestComponentB testComponentB = d.findBean(TestComponentB.class);
         Assert.assertNotNull("need TestComponentB instance", testComponentB);
         Assert.assertEquals("Cannot find string values as expection ", "stringValue", testComponentB.getHallo());
     } // testNamedInjection()
@@ -101,7 +100,7 @@ public class InjectorTest {
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void testMapBeans() {
-        Set<Map> maps = d.findTypedBeans(Map.class);
+        Set<Map> maps = d.findBeans(Map.class);
         Assert.assertTrue("no maps at all found", maps.size()>0);
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);
@@ -120,11 +119,11 @@ public class InjectorTest {
 
     @Test
     public void testInitialBeans() {
-        InitialBean ib = d.findTypedBean(InitialBean.class);
+        InitialBean ib = d.findBean(InitialBean.class);
         Assert.assertNotNull("Bean from externally provided initial map of beans not found", ib);
         TestInterface t = ib.getTest();
         Assert.assertNotNull("Initial bean is missing injected dependency", t);
-        InitialBeanDependentComponent ibd = d.findTypedBean(InitialBeanDependentComponent.class);
+        InitialBeanDependentComponent ibd = d.findBean(InitialBeanDependentComponent.class);
         Assert.assertNotNull("Bean from depending on externally provided bean not found", ibd);
     } // testInitialBeans()
 
@@ -150,7 +149,7 @@ public class InjectorTest {
         Assert.assertTrue("Boolean typed value cannot be set to true", d.findBean(Boolean.class, "booleanTypedValueTrue"));
         Assert.assertFalse("Boolean typed value cannot be set to false", d.findBean(Boolean.class, "booleanTypedValueFalse"));
 
-        UnannotatedComponent unannotatedComponent = d.findTypedBean(UnannotatedComponent.class);
+        UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class);
         Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
         Assert.assertTrue("Boolean value could not be referenced in other bean", unannotatedComponent.isBasetypeBooleanValue());
     } // testBooleans()
@@ -170,13 +169,13 @@ public class InjectorTest {
 
     @Test
     public void testStaticInjection() {
-        Assert.assertNotNull("Static field not injected", StaticInjection.getTestInterface());
+        Assert.assertNotNull("Static field not injected", TestComponentB.getTestInterface());
     } // testStaticInjection()
 
 
     @Test
     public void testNumericInjection() {
-        NumericInjection numerics = d.findTypedBean(NumericInjection.class);
+        NumericInjection numerics = d.findBean(NumericInjection.class);
         Assert.assertEquals("Failure in injection of int value", 42, numerics.getIntValue());
         Assert.assertEquals("Failure in injection of long value", 123456789, numerics.getLongValue());
         Assert.assertEquals("Failure in injection of float value", 3.14159, numerics.getFloatValue(), numerics.getFloatValue()-3.14159);
@@ -185,8 +184,19 @@ public class InjectorTest {
 
 
     @Test
+    public void testCollectionInjection() {
+        TestComponentB cb = d.findBean(TestComponentB.class);
+        UnannotatedComponent uac = d.findBean(UnannotatedComponent.class);
+        Assert.assertNotNull("No collection of instances available", cb.getAllInstances());
+        Assert.assertEquals("Wrong number of instaces in collection", 1, cb.getAllInstances().size());
+        Assert.assertNotNull("No collection of instances available", uac.getManuallyInjectedCollection());
+        Assert.assertEquals("Wrong number of instaces in collection", 1, uac.getManuallyInjectedCollection().size());
+    } // testConstructorInjection()
+
+
+    @Test
     public void testConstructorInjection() {
-        ConstructorInjection constructorInjection = d.findTypedBean(ConstructorInjection.class);
+        ConstructorInjection constructorInjection = d.findBean(ConstructorInjection.class);
         Assert.assertEquals("Failure in injection of numeric value", "a string value", constructorInjection.getString());
     } // testConstructorInjection()
 
