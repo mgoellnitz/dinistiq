@@ -59,7 +59,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      // groupId 'dinistiq'
+      groupId 'dinistiq'
       from components.java
       artifact sourcesJar 
       artifact javadocJar 
