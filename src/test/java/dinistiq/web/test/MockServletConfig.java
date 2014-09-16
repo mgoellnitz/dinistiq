@@ -43,7 +43,7 @@ public class MockServletConfig implements ServletConfig {
 
 
     @Override
-    public Enumeration getInitParameterNames() {
+    public Enumeration<Object> getInitParameterNames() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

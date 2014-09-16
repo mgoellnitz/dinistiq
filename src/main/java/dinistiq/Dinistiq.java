@@ -74,13 +74,24 @@ public class Dinistiq {
 
 
     /**
+     * small helper method to keep areas with suppressed warnings small.
+     *
+     * @param <T>
+     * @param bean
+     */
+    @SuppressWarnings("unchecked")
+    private <T extends Object> T convert(Class<? extends T> cls, Object bean) {
+        return (T) bean;
+    } // convert()
+
+
+    /**
      * Find all beans of a given type.
      *
      * @param <T> type to check resulting beans for
      * @param type instance of that type
      * @return Set of beans - may be empty but not null
      */
-    @SuppressWarnings("unchecked")
     public <T extends Object> Set<T> findBeans(Class<T> type) {
         Set<T> result = new HashSet<>();
         for (Object bean : beans.values()) {
@@ -88,7 +99,7 @@ public class Dinistiq {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("findBeans() adding to result result "+bean+" :"+type.getName());
                 } // if
-                result.add((T) bean);
+                result.add(convert(type, bean));
             } // if
         } // for
         return result;
@@ -139,7 +150,6 @@ public class Dinistiq {
      * @param name name the search bean must have
      * @return resulting bean or null
      */
-    @SuppressWarnings("unchecked")
     public <T extends Object> T findBean(Class<? extends T> cls, String name) {
         T result = null;
         Object bean = beans.get(name);
@@ -148,7 +158,7 @@ public class Dinistiq {
                 LOG.info("findBean() "+name+" :"+bean.getClass().getName());
             } // if
             if (cls.isAssignableFrom(bean.getClass())) {
-                result = (T) bean;
+                result = convert(cls, bean);
             } // if
         } // if
         return result;
@@ -430,6 +440,10 @@ public class Dinistiq {
      * Add all the external named beans from thei given map for later lookup to the context as well
      * and be sure that your class resolver takes the resources in the dinistiq/ path of your
      * class path into cosideration.
+     *
+     * @param classResolver resolver to us when resolving all types of classes
+     * @param externalBeans map of beans with their id (name) as the key
+     * @throws java.lang.Exception thrown with a readable message if something goes wrong
      */
     public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) throws Exception {
         // measure time for init process
@@ -556,7 +570,7 @@ public class Dinistiq {
                             field.setAccessible(true);
                             field.set(bean, b);
                             dependencies.get(key).add(b);
-                        } catch (Exception e) {
+                        } catch (SecurityException|IllegalArgumentException|IllegalAccessException e) {
                             LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                         } finally {
                             field.setAccessible(accessible);
@@ -640,7 +654,7 @@ public class Dinistiq {
             if (LOG.isInfoEnabled()) {
                 LOG.info("() "+dependencies.size()+" beans left");
             } // if
-            Set<String> deletions = new HashSet<String>();
+            Set<String> deletions = new HashSet<>();
             for (String key : dependencies.keySet()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("() checking if "+key+" can be safely put into the ordered list");
@@ -730,8 +744,12 @@ public class Dinistiq {
 
     /**
      * Create a dinistiq context from the given packages set and the config files placed in the dinistiq/
-     * substructur of the resource path.
+     * substructure of the resource path.
      * Add all the external named beans from thei given map for later lookup to the context as well.
+     *
+     * @param packages set of java package names
+     * @param externalBeans Map of beans providded externally with their respective id (name) as the key
+     * @throws Exception thrown when anything goes wrong with a readable message
      */
     public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
         this(new SimpleClassResolver(packages), externalBeans);
@@ -740,7 +758,10 @@ public class Dinistiq {
 
     /**
      * Create a dinistiq context from the given packages set and the config files placed in the dinistiq/
-     * substructur of the resource path.
+     * substructure of the resource path.
+     *
+     * @param packages set of java package names
+     * @throws Exception thrown when anything goes wrong with a readable message
      */
     public Dinistiq(Set<String> packages) throws Exception {
         this(packages, null);

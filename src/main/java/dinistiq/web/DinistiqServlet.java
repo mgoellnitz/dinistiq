@@ -53,12 +53,12 @@ public class DinistiqServlet extends HttpServlet {
     /**
      * Maps URI pattern regular expressions to implementing servlets.
      */
-    private final Map<Pattern, Servlet> servletMap = new HashMap<Pattern, Servlet>();
+    private final Map<Pattern, Servlet> servletMap = new HashMap<>();
 
     /**
      * describes the order in which the uri pattern regular expressions should be checked.
      */
-    private final List<Pattern> patternOrder = new ArrayList<Pattern>();
+    private final List<Pattern> patternOrder = new ArrayList<>();
 
 
     @Override

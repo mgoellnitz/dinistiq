@@ -44,7 +44,7 @@ public class InjectorTest {
 
 
     public static Map<String, Object> prepareInitialBeans() {
-        Map<String, Object> initialBeans = new HashMap<String, Object>();
+        Map<String, Object> initialBeans = new HashMap<>();
         InitialBean initialBean = new InitialBean();
         initialBeans.put("initialBean", initialBean);
         return initialBeans;
@@ -105,11 +105,11 @@ public class InjectorTest {
 
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
     public void testMapBeans() {
         Set<Map> maps = d.findBeans(Map.class);
         Assert.assertTrue("no maps at all found", maps.size()>0);
-        Map<Object, Object> map = d.findBean(Map.class, "mapTest");
+        Map map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);
         Assert.assertEquals("default value not correct", "defaultValueA", map.get("keyA"));
         Assert.assertEquals("specialized value not correct", "overriddenValueB", map.get("keyB"));
@@ -142,28 +142,28 @@ public class InjectorTest {
         initialBeans.put("booleanTypedValueTrue", Boolean.TRUE);
         initialBeans.put("booleanBasetypeValueFalse", false);
         initialBeans.put("booleanTypedValueFalse", Boolean.FALSE);
-        Dinistiq d = null;
+        Dinistiq di = null;
         try {
-            d = new Dinistiq(packages, initialBeans);
+            di = new Dinistiq(packages, initialBeans);
         } catch (Exception e) {
             Assert.fail(e.toString());
         } // try/catch
-        Assert.assertNotNull("DI container could not be initialized", d);
-        Assert.assertTrue("Boolean string based value cannot be set to true", d.findBean(Boolean.class, "booleanStringValueTrue"));
-        Assert.assertFalse("Boolean string based value cannot be set to false", d.findBean(Boolean.class, "booleanStringValueFalse"));
-        Assert.assertTrue("Boolean base type value cannot be set to true", d.findBean(Boolean.class, "booleanBasetypeValueTrue"));
-        Assert.assertFalse("Boolean base type value cannot be set to false", d.findBean(Boolean.class, "booleanBasetypeValueFalse"));
-        Assert.assertTrue("Boolean typed value cannot be set to true", d.findBean(Boolean.class, "booleanTypedValueTrue"));
-        Assert.assertFalse("Boolean typed value cannot be set to false", d.findBean(Boolean.class, "booleanTypedValueFalse"));
+        Assert.assertNotNull("DI container could not be initialized", di);
+        Assert.assertTrue("Boolean string based value cannot be set to true", di.findBean(Boolean.class, "booleanStringValueTrue"));
+        Assert.assertFalse("Boolean string based value cannot be set to false", di.findBean(Boolean.class, "booleanStringValueFalse"));
+        Assert.assertTrue("Boolean base type value cannot be set to true", di.findBean(Boolean.class, "booleanBasetypeValueTrue"));
+        Assert.assertFalse("Boolean base type value cannot be set to false", di.findBean(Boolean.class, "booleanBasetypeValueFalse"));
+        Assert.assertTrue("Boolean typed value cannot be set to true", di.findBean(Boolean.class, "booleanTypedValueTrue"));
+        Assert.assertFalse("Boolean typed value cannot be set to false", di.findBean(Boolean.class, "booleanTypedValueFalse"));
 
-        UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class);
+        UnannotatedComponent unannotatedComponent = di.findBean(UnannotatedComponent.class);
         Assert.assertNotNull("Cannot find instance of un-annotated component mentioned in config file ", unannotatedComponent);
         Assert.assertTrue("Boolean value could not be referenced in other bean", unannotatedComponent.isBasetypeBooleanValue());
     } // testBooleans()
 
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     public void testStringReplacement() {
         Map<Object, Object> map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull("test map not found", map);

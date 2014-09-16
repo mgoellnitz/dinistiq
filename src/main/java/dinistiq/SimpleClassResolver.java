@@ -139,7 +139,7 @@ public class SimpleClassResolver implements ClassResolver {
         this.packageNames = packageNames;
         // to have the properties files in the path which we intend to use for configuration
         this.packageNames.add(this.getClass().getPackage().getName());
-        
+
         properties = new HashSet<>();
         classNames = new HashSet<>();
         Set<URL> urls = new HashSet<>();
@@ -179,10 +179,25 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
+     * Helper method to keep areas with suppressed warnings small.
+     * 
+     * @param <T>
+     * @param className
+     * @return
+     * @throws ClassNotFoundException 
+     */
+    @SuppressWarnings("unchecked")
+    private <T extends Object> Class<T> loadClass(String className) throws ClassNotFoundException {
+        return (Class<T>) Class.forName(className);
+    } // loadClass()
+
+
+    /**
      * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
      *
      * @see ClassResolver#getSubclasses(java.lang.Class)
      */
+    @Override
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
         Set<Class<T>> result = new HashSet<>();
         if (LOG.isDebugEnabled()) {
@@ -193,12 +208,11 @@ public class SimpleClassResolver implements ClassResolver {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("getSubclasses() className="+className);
                 } // if
-                @SuppressWarnings("unchecked")
-                Class<T> cls = (Class<T>) Class.forName(className);
+                Class<T> cls = loadClass(className);
                 if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((c.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
                 } // if
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
                 LOG.error("getSubclasses()", e);
             } // try/catch
         } // if
@@ -222,12 +236,11 @@ public class SimpleClassResolver implements ClassResolver {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("getAnnotated() className="+className);
                 } // if
-                @SuppressWarnings("unchecked")
-                Class<T> cls = (Class<T>) Class.forName(className);
+                Class<T> cls = loadClass(className);
                 if ((!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
                 } // if
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
                 LOG.error("getAnnotated()", e);
             } // try/catch
         } // if
@@ -252,12 +265,11 @@ public class SimpleClassResolver implements ClassResolver {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("getAnnotatedSubclasses() className="+className);
                 } // if
-                @SuppressWarnings("unchecked")
-                Class<T> cls = (Class<T>) Class.forName(className);
+                Class<T> cls = loadClass(className);
                 if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
                     result.add(cls);
                 } // if
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
                 LOG.error("getAnnotatedSubclasses()", e);
             } // try/catch
         } // if
