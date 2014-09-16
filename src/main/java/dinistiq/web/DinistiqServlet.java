@@ -66,7 +66,8 @@ public class DinistiqServlet extends HttpServlet {
         String contextPath = req.getContextPath();
         contextPath = (contextPath.length()==1) ? "" : contextPath;
         final String requestURI = req.getRequestURI();
-        String uri = requestURI.substring(requestURI.indexOf("/", contextPath.length()+1));
+        int slashIndex = requestURI.indexOf("/", contextPath.length()+1);
+        String uri = slashIndex < 0 ? "" : requestURI.substring(slashIndex);
         if (LOG.isDebugEnabled()) {
             LOG.debug("service() requestURI="+requestURI+" / "+uri);
         } // if
@@ -83,7 +84,7 @@ public class DinistiqServlet extends HttpServlet {
                 return;
             } // if
         } // for
-        resp.getWriter().write("URI cannot be resolved to any view or action on any model");
+        resp.sendError(HttpServletResponse.SC_NOT_FOUND, "URI cannot be resolved to any view or action on any model.");
     } // service()
 
 
@@ -95,7 +96,7 @@ public class DinistiqServlet extends HttpServlet {
         try {
             Dinistiq dinistiq = (Dinistiq) (config.getServletContext().getAttribute(DinistiqContextLoaderListener.DINISTIQ_INSTANCE));
             Collection<RegisterableServlet> servlets = dinistiq.findBeans(RegisterableServlet.class);
-            List<RegisterableServlet> orderedServlets = new ArrayList<RegisterableServlet>(servlets.size());
+            List<RegisterableServlet> orderedServlets = new ArrayList<>(servlets.size());
             for (RegisterableServlet servlet : servlets) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("init() "+servlet);
