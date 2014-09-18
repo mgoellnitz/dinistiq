@@ -204,7 +204,7 @@ public class InjectorTest {
     @Test
     public void testAnnotationLookup() {
         Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
-        Assert.assertEquals("Unexpected number of annotated beans in scope", 5, beans.size());
+        Assert.assertEquals("Unexpected number of annotated beans in scope", 6, beans.size());
     } // testAnnotationLookup()
 
 
