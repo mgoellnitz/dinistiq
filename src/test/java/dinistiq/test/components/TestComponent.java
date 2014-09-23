@@ -36,4 +36,11 @@ public class TestComponent implements TestInterface {
         LOG.info("afterPropertiesSet() YEAH!");
     } // afterPropertiesSet()
 
+    /**
+     * setUp mthethod - not a setter.
+     * @throws Exception 
+     */
+    public void setUp() throws Exception {
+    } // setUp()
+
 } // TestComponent

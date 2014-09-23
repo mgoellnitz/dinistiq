@@ -437,12 +437,15 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 Building
 --------
 
-The code for dinistiq is supposed to be written in Java 7 and prepared for building with gradle. Gradle versions 1.x up to 2.0-rc1 are tested to be working.
+The code for dinistiq is supposed to be written in Java 7 and prepared for building with gradle. 
+Gradle versions 1.x up to 2.1 are tested to be working.
 
 Comparison
 ----------
 
-The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an interesting comparison of some DI implementations done in Java and we want to add some values for dinistiq to this list:
+The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an interesting 
+comparison of some DI implementations done in Java and we want to add some  values for dinistiq 
+to this list:
 
 |Library|dinistiq|
 |:------|-------:|

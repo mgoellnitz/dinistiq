@@ -596,7 +596,7 @@ public class Dinistiq {
                         LOG.error("() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
                     } // try/catch
                 } // if
-                if (m.getName().startsWith("set")) {
+                if (m.getName().startsWith("set") && (m.getParameterTypes().length > 0)) {
                     String propertyName = Introspector.decapitalize(m.getName().substring(3));
                     final Class<?> parameterType = m.getParameterTypes()[0];
                     final Type genericType = m.getGenericParameterTypes()[0];
