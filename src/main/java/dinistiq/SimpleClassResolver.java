@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -151,12 +152,13 @@ public class SimpleClassResolver implements ClassResolver {
         } // if
         for (URL u : urls) {
             try {
+                String path = URLDecoder.decode(u.getPath(), "UTF-8");
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("(): path "+u.getPath());
+                    LOG.info("(): path "+path);
                 } // if
-                if (u.getPath().endsWith(".jar")) {
+                if (path.endsWith(".jar")) {
                     if (LOG.isInfoEnabled()) {
-                        LOG.info("(): scanning jar "+u.getPath());
+                        LOG.info("(): scanning jar "+path);
                     } // if
                     JarInputStream is = new JarInputStream(u.openStream());
                     for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
@@ -167,7 +169,7 @@ public class SimpleClassResolver implements ClassResolver {
                     } // for
                     is.close();
                 } else {
-                    File dir = new File(u.getPath());
+                    File dir = new File(path);
                     int basePathLength = dir.getAbsolutePath().length()+1;
                     recurseSubDir(dir, basePathLength);
                 } // if
@@ -180,11 +182,11 @@ public class SimpleClassResolver implements ClassResolver {
 
     /**
      * Helper method to keep areas with suppressed warnings small.
-     * 
+     *
      * @param <T>
      * @param className
      * @return
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")
     private <T extends Object> Class<T> loadClass(String className) throws ClassNotFoundException {
