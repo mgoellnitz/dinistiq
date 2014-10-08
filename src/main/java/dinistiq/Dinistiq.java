@@ -267,7 +267,7 @@ public class Dinistiq {
                     c = ctor;
                 } // if
             } // for
-            c = (c == null) ? cls.getConstructor() : c;
+            c = (c==null) ? cls.getConstructor() : c;
             dependencies.put(beanName, new HashSet<>());
             Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
             Object bean = c.newInstance(parameters);
@@ -662,15 +662,14 @@ public class Dinistiq {
                 } // if
                 boolean dependenciesMet = true;
                 for (Object dep : dependencies.get(key)) {
-                    boolean isMet = true;
-                    if (dep instanceof Collection) {
+                    boolean isMet = orderedBeans.contains(dep);
+                    if ((!isMet)&&(dep instanceof Collection)) {
+                        isMet = true;
                         @SuppressWarnings("unchecked")
                         Collection<Object> depCollection = (Collection<Object>) dep;
                         for (Object d : depCollection) {
                             isMet = isMet&&orderedBeans.contains(d);
                         } // for
-                    } else {
-                        isMet = orderedBeans.contains(dep);
                     } // if
                     if (LOG.isDebugEnabled()&&!isMet) {
                         LOG.debug("() "+key+" is missing "+dep+" :"+dep.getClass().getName());
