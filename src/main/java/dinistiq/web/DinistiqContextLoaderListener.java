@@ -89,7 +89,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         } // if
         classResolver = (classResolver==null) ? new SimpleClassResolver(packages) : classResolver;
         try {
-            Map<String, Object> externalBeans = new HashMap<String, Object>();
+            Map<String, Object> externalBeans = new HashMap<>();
             externalBeans.put("servletContext", context);
             Dinistiq dinistiq = new Dinistiq(classResolver, externalBeans);
             context.setAttribute(DINISTIQ_INSTANCE, dinistiq);

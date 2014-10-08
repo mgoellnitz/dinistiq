@@ -22,6 +22,7 @@ import dinistiq.Dinistiq;
 import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.InitialBeanDependentComponent;
+import dinistiq.test.components.NamedInjection;
 import dinistiq.test.components.NumericInjection;
 import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
@@ -57,8 +58,8 @@ public class InjectorTest {
         try {
             d = new Dinistiq(packages, prepareInitialBeans());
         } catch (Exception e) {
-            Assert.assertNotNull("DI container could not be initialized", d);
             Assert.fail(e.getMessage());
+            Assert.assertNotNull("DI container could not be initialized", d);
         } // try/catch
     } // InjectorTest()
 
@@ -136,6 +137,15 @@ public class InjectorTest {
 
 
     @Test
+    public void testNamedInjections() {
+        NamedInjection ni = d.findBean(NamedInjection.class);
+        Assert.assertNotNull("Named injection test component not found", ni);
+        Assert.assertEquals("Named inection with default name failed", "stringValue", ni.getStringTest());
+        Assert.assertEquals("Named inection with passed name failed", "a string value", ni.getStringValue());
+    } // testNamedInjections()
+
+
+    @Test
     public void testBooleans() {
         Map<String, Object> initialBeans = prepareInitialBeans();
         initialBeans.put("booleanBasetypeValueTrue", true);
@@ -204,7 +214,7 @@ public class InjectorTest {
     @Test
     public void testAnnotationLookup() {
         Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
-        Assert.assertEquals("Unexpected number of annotated beans in scope", 6, beans.size());
+        Assert.assertEquals("Unexpected number of annotated beans in scope", 7, beans.size());
     } // testAnnotationLookup()
 
 

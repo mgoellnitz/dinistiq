@@ -52,11 +52,35 @@ public class TestComponent implements TestInterface {
 } // TestComponent
 ```
 
-When no name is explicitly passed, the class name of the instanciated component with a lower case letter
-at the beginning is taken as the component's name. Thus in this example the instanciated bean of class 
-TestComponent will be available with the name testComponent. The term "name" is used in this document 
-since it is used as the parameter name in the JSR330 annotations. Since names must be unique they are 
-in this case in fact identifiers througout the whole process.
+Thus in this example the instanciated bean of class TestComponent will be available with the name 
+testComponent. The term "name" is used in this document since it is used as the parameter name in 
+the JSR330 annotations. Since names must be unique they are in this case in fact identifiers 
+througout the whole process.
+
+If you are dealing with components of the same type, not only the beans may be named but also the
+injection point might indicate to require a bean with a certain name.
+
+```Java
+public class ConfigStuff {
+
+    @Inject
+    @Named
+    public String filename;
+
+    @Inject
+    @Named("prefix")
+    public String somePrefix;
+
+} // ConfigStuff
+
+In this case, filename is search as a String component with the name "filename", while somePrefix
+has a specific named "prefix" annotated.
+
+This complete set-up is done without any configuration for dinistiq itself but only for the 
+components to be used.
+
+Optional Configuration with properties files
+--------------------------------------------
 
 If this is not enough, you can explicitly add some beans to be instanciated in properties files
 
@@ -148,9 +172,6 @@ stringValue=java.lang.String("string value")
 ```
 
 are some examples for this.
-
-This complete set-up is done without any configuration for dinistiq itself but 
-(optionally while common) onyl for the components to be used.
 
 How to use
 ----------

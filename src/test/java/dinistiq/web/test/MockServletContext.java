@@ -25,16 +25,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Set;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 
-@Named("servletContext")
-@Singleton
 @SuppressWarnings("deprecation")
 public class MockServletContext implements ServletContext {
     

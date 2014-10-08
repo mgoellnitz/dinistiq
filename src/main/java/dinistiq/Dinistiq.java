@@ -260,14 +260,15 @@ public class Dinistiq {
             if (StringUtils.isBlank(beanName)) {
                 beanName = Introspector.decapitalize(cls.getSimpleName());
             } // if
-            Constructor<?> c = cls.getConstructor();
+            Constructor<?> c = null;
             final Constructor<?>[] constructors = cls.getConstructors();
             for (Constructor<?> ctor : constructors) {
                 if (ctor.getAnnotation(Inject.class)!=null) {
                     c = ctor;
                 } // if
             } // for
-            dependencies.put(beanName, new HashSet<Object>());
+            c = (c == null) ? cls.getConstructor() : c;
+            dependencies.put(beanName, new HashSet<>());
             Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
             Object bean = c.newInstance(parameters);
             beans.put(beanName, bean);
@@ -560,7 +561,7 @@ public class Dinistiq {
                     } // if
                     if (field.getAnnotation(Inject.class)!=null) {
                         Named named = field.getAnnotation(Named.class);
-                        String name = (named==null) ? null : named.value();
+                        String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
                         if (LOG.isInfoEnabled()) {
                             LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
                         } // if
@@ -596,7 +597,7 @@ public class Dinistiq {
                         LOG.error("() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
                     } // try/catch
                 } // if
-                if (m.getName().startsWith("set") && (m.getParameterTypes().length > 0)) {
+                if (m.getName().startsWith("set")&&(m.getParameterTypes().length>0)) {
                     String propertyName = Introspector.decapitalize(m.getName().substring(3));
                     final Class<?> parameterType = m.getParameterTypes()[0];
                     final Type genericType = m.getGenericParameterTypes()[0];
