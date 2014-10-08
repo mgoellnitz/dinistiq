@@ -496,6 +496,7 @@ public class Dinistiq {
             String className = beanlist.getProperty(key);
             if ("java.util.Map".equals(className)) {
                 beans.put(key, new HashMap<>());
+                dependencies.put(key, new HashSet<>());
             } else {
                 // expect java.lang.Xyz("value")
                 int idx = className.indexOf('(');
