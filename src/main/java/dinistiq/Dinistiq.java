@@ -514,6 +514,9 @@ public class Dinistiq {
                     beans.put(key, instance);
                     dependencies.put(key, new HashSet<>());
                 } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("() instanciating "+className);
+                    } // if
                     Class<? extends Object> c = Class.forName(className);
                     createInstance(dependencies, c, key);
                 } // if
