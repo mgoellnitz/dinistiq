@@ -21,10 +21,12 @@ package dinistiq.web.test;
 import dinistiq.Dinistiq;
 import dinistiq.test.InjectorTest;
 import dinistiq.test.components.TestInterface;
+import dinistiq.web.DinistiqContextLoaderListener;
 import dinistiq.web.DinistiqServlet;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,5 +57,23 @@ public class ServletTest {
             Assert.fail("Exception while initializing servlet "+se.getMessage());
         } // try/catch
     } // testServlet()
+
+
+    @Test
+    public void testContextLoaderListener() {
+        Set<String> packages = new HashSet<>();
+        packages.add(TestInterface.class.getPackage().getName());
+        Dinistiq d = null;
+        try {
+            d = new Dinistiq(packages, InjectorTest.prepareInitialBeans());
+        } catch (Exception e) {
+            Assert.assertNotNull("DI container could not be initialized", d);
+            Assert.fail(e.getMessage());
+        } // try/catch
+
+        DinistiqContextLoaderListener dcll = new DinistiqContextLoaderListener();
+        ServletContextEvent sce = new ServletContextEvent(new MockServletContext(d));
+        dcll.contextInitialized(sce);
+    } // testContextLoaderListener()
 
 } // ServletTest

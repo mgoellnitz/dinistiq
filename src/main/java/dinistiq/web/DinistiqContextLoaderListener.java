@@ -47,6 +47,16 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 
     public static final String DINISTIQ_INSTANCE = "DINISTIQ_INSTANCE";
 
+    /**
+     * Init parameter name for the parameter holding the list of packages to scan for annotations.
+     */
+    public static final String DINISTIQ_PACKAGES = "dinistiq.packages";
+
+    /**
+     * Init parameter name for the parameter holding class resolver name.
+     */
+    public static final String DINISTIQ_CLASSRESOLVER = "dinistiq.class.resolver";
+
 
     /**
      * Web related dinistiq initialization with parameters taken from the web.xml.
@@ -65,14 +75,14 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         } // if
         ServletContext context = contextEnvironment.getServletContext();
         Set<String> packages = new HashSet<>();
-        final String packagNameString = context.getInitParameter("dinistiq.packages");
+        final String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
         if (StringUtils.isNotBlank(packagNameString)) {
             for (String packageName : packagNameString.split(",")) {
                 packageName = packageName.trim();
                 packages.add(packageName);
             } // for
         } // if
-        final String classResolverName = context.getInitParameter("dinistiq.class.resolver");
+        final String classResolverName = context.getInitParameter(DINISTIQ_CLASSRESOLVER);
         ClassResolver classResolver = null;
         if (StringUtils.isNotBlank(classResolverName)) {
             try {

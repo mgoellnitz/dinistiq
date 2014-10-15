@@ -19,6 +19,7 @@
 package dinistiq.web.test;
 
 import dinistiq.Dinistiq;
+import dinistiq.SimpleClassResolver;
 import dinistiq.web.DinistiqContextLoaderListener;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -155,6 +156,12 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public String getInitParameter(String string) {
+        if (DinistiqContextLoaderListener.DINISTIQ_PACKAGES.equals(string)) {
+            return "dummy";
+        } // if
+        if (DinistiqContextLoaderListener.DINISTIQ_CLASSRESOLVER.equals(string)) {
+            return SimpleClassResolver.class.getName();
+        } // if
         throw new UnsupportedOperationException("NYI");
     }
 
