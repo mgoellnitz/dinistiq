@@ -30,6 +30,7 @@ import dinistiq.test.components.UnannotatedComponent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Singleton;
@@ -115,6 +116,18 @@ public class InjectorTest {
         Assert.assertEquals("default value not correct", "defaultValueA", map.get("keyA"));
         Assert.assertEquals("specialized value not correct", "overriddenValueB", map.get("keyB"));
     } // testMapBeans()
+
+
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void testListBeans() {
+        Set<List> lists = d.findBeans(List.class);
+        Assert.assertTrue("no lists at all found", lists.size()>0);
+        List list = d.findBean(List.class, "listTest");
+        Assert.assertNotNull("test list not found", list);
+        Assert.assertEquals("first value not correct", "first", list.get(0));
+        Assert.assertEquals("second value not correct", "second", list.get(1));
+    } // testListBeans()
 
 
     @Test

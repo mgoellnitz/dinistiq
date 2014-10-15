@@ -30,6 +30,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -63,6 +64,10 @@ public class Dinistiq {
     private static final String PRODUCT_BASE_PATH = "dinistiq";
 
     private static final String JAVALANG_PREFIX = "java.lang.";
+
+    private static final String MAP_TYPE = "java.util.Map";
+
+    private static final String LIS_TYPE = "java.util.List";
 
     private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
 
@@ -494,7 +499,7 @@ public class Dinistiq {
         } // for
         for (String key : beanlist.stringPropertyNames()) {
             String className = beanlist.getProperty(key);
-            if ("java.util.Map".equals(className)) {
+            if (MAP_TYPE.equals(className)) {
                 beans.put(key, new HashMap<>());
                 dependencies.put(key, new HashSet<>());
             } else {
@@ -514,11 +519,18 @@ public class Dinistiq {
                     beans.put(key, instance);
                     dependencies.put(key, new HashSet<>());
                 } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("() instanciating "+className);
+                    if (className.startsWith(LIS_TYPE)&&(idx>0)) {
+                        String values[] = getReferenceValue(className.substring(idx+1, className.length()-1)).toString().split(",");
+                        List<String> instance = Arrays.asList(values);
+                        beans.put(key, instance);
+                        dependencies.put(key, new HashSet<>());
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("() instanciating "+className);
+                        } // if
+                        Class<? extends Object> c = Class.forName(className);
+                        createInstance(dependencies, c, key);
                     } // if
-                    Class<? extends Object> c = Class.forName(className);
-                    createInstance(dependencies, c, key);
                 } // if
             } // if
         } // for
