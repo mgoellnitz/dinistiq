@@ -185,7 +185,7 @@ public class SimpleClassResolver implements ClassResolver {
      *
      * @param <T>
      * @param className
-     * @return
+     * @return simply returns Class.forName(classname)
      * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")

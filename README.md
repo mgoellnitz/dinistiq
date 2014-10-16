@@ -195,7 +195,7 @@ How to use
 Extend your project with the dependency to the rather small dinistiq library file. 
 Dinisitq - releases and snapshots - are available from the tangram repository at
 
-http://repository-tangram.forge.cloudbees.com/snapshot
+https://raw.githubusercontent.com/mgoellnitz/artifacts/master
 
 The group id and artifact id are both 'dinistiq'.
 
@@ -203,7 +203,7 @@ Thus for projects built with gradle you will need to add to your repositories
 sections of the build file the line
 
 ```
-maven { url "http://repository-tangram.forge.cloudbees.com/snapshot" }
+maven { url "https://raw.githubusercontent.com/mgoellnitz/artifacts/master" }
 ```
 
 and the dependency to the artifact in the dependencies section.
@@ -246,7 +246,7 @@ base  pom.xml
   <repository>
     <id>tangram</id>
     <name>Tangram and Dinistiq</name>
-    <url>http://repository-tangram.forge.cloudbees.com/snapshot</url>
+    <url>https://raw.githubusercontent.com/mgoellnitz/artifacts/master</url>
     <layout>default</layout>
     <snapshots>
       <enabled>true</enabled>
