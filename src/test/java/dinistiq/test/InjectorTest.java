@@ -84,6 +84,15 @@ public class InjectorTest {
 
 
     @Test
+    public void testFindNames() {
+        Set<String> tis = d.findNames(TestInterface.class);
+        Assert.assertNotNull("Cannot obtain name set", tis);
+        Assert.assertEquals("Cannot find expected number of bean names", 1, tis.size());
+        Assert.assertEquals("Cannot find expected bean name", "testComponent", tis.iterator().next());
+    } // testFindNames()
+
+
+    @Test
     public void testNamedInjection() {
         TestComponentB testComponentB = d.findBean(TestComponentB.class);
         Assert.assertNotNull("need TestComponentB instance", testComponentB);

@@ -112,6 +112,28 @@ public class Dinistiq {
 
 
     /**
+     * Find all names of beans of a given type.
+     *
+     * @param <T> type to check resulting beans for
+     * @param type instance of that type
+     * @return Set of bean names - may be empty but not null
+     */
+    public <T extends Object> Set<String> findNames(Class<T> type) {
+        Set<String> result = new HashSet<>();
+        for (String name : beans.keySet()) {
+            Object bean = beans.get(name);
+            if (type.isAssignableFrom(bean.getClass())) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("findNames() adding to result result "+bean+" :"+type.getName());
+                } // if
+                result.add(name);
+            } // if
+        } // for
+        return result;
+    } // findNames()
+
+
+    /**
      * Find all beans with a given annotation.
      *
      * @param <A> type to check resulting beans for
