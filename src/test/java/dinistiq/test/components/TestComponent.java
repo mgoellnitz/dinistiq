@@ -37,10 +37,10 @@ public class TestComponent implements TestInterface {
     } // afterPropertiesSet()
 
     /**
-     * setUp mthethod - not a setter.
+     * setMeUp method - not a setter.
      * @throws Exception 
      */
-    public void setUp() throws Exception {
-    } // setUp()
+    public void setMeUp() throws Exception {
+    } // setMeUp()
 
 } // TestComponent
