@@ -275,34 +275,106 @@ public class Dinistiq {
     /**
      * creates an instance of the given type and registeres it with the container.
      *
+     * @param dependencies dependencies within the scope
+     * @param cls type to create an instance of
+     * @param beanName beans name in the scope using the given dependencies
+     */
+    private <T extends Object> T createInstance(Map<String, Set<Object>> dependencies, Class<T> cls, String beanName) throws Exception {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("createInstance("+cls.getSimpleName()+")");
+        } // if
+        dependencies.put(beanName, new HashSet<>());
+        Constructor<?> c = null;
+        Constructor<?>[] constructors = cls.getConstructors();
+        for (Constructor<?> ctor : constructors) {
+            if (ctor.getAnnotation(Inject.class)!=null) {
+                c = ctor;
+            } // if
+        } // for
+        c = (c==null) ? cls.getConstructor() : c;
+        Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
+        return convert(cls, c.newInstance(parameters));
+    } // createInstance()
+
+
+    /**
+     * Derives a bean name from an optional given name, the beans class and this classes annotations.
+     *
+     * @param name intended name - may be null
+     * @param cls type of the bean
+     * @return name to be used for the bean
+     */
+    private String getBeanName(Class<? extends Object> cls, String name) {
+        String beanName = (name==null) ? cls.getAnnotation(Named.class).value() : name;
+        if (StringUtils.isBlank(beanName)) {
+            beanName = Introspector.decapitalize(cls.getSimpleName());
+        } // if
+        return beanName;
+    } //  getBeanName()
+
+
+    /**
+     * creates an instance of the given type and registeres it with the container.
+     *
      * @param cls type to create an instance of
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
      */
-    private void createInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
+    private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
         if (LOG.isInfoEnabled()) {
-            LOG.info("createInstance("+name+") c="+cls);
+            LOG.info("createAndRegisterInstance("+name+") c="+cls);
         } // if
         try {
-            String beanName = (name==null) ? cls.getAnnotation(Named.class).value() : name;
-            if (StringUtils.isBlank(beanName)) {
-                beanName = Introspector.decapitalize(cls.getSimpleName());
-            } // if
-            Constructor<?> c = null;
-            final Constructor<?>[] constructors = cls.getConstructors();
-            for (Constructor<?> ctor : constructors) {
-                if (ctor.getAnnotation(Inject.class)!=null) {
-                    c = ctor;
-                } // if
-            } // for
-            c = (c==null) ? cls.getConstructor() : c;
-            dependencies.put(beanName, new HashSet<>());
-            Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
-            Object bean = c.newInstance(parameters);
+            String beanName = getBeanName(cls, name);
+            Object bean = createInstance(dependencies, cls, beanName);
             beans.put(beanName, bean);
         } catch (Exception e) {
-            LOG.error("createInstance() error instanciating bean of type "+cls.getName(), e);
+            LOG.error("createAndRegisterInstance() error instanciating bean of type "+cls.getName(), e);
         } // try/catch
-    } // createInstance()
+    } // createAndRegisterInstance()
+
+
+    /**
+     * Calls a method annotated as post construct on a given bean if available.
+     *
+     * @param bean bean to check and call post contruct annotated method on
+     * @throws SecurityException
+     */
+    private void callPostConstruct(Object bean) throws SecurityException {
+        for (Method m : bean.getClass().getMethods()) {
+            if (m.getAnnotation(PostConstruct.class)!=null) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("() post construct method on "+bean+": "+m.getName());
+                } // if
+                try {
+                    m.invoke(bean, new Object[0]);
+                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
+                    LOG.error("() error calling post constructor "+m.getName()+" at "+bean+" :"+bean.getClass().getName(), ex);
+                } // try/catch
+            } // if
+        } // for
+    } // callPostConstruct()
+
+
+    /**
+     * Create a fresh instance of a given class and inject all needed dependencies from the dinistiq scope.
+     *
+     * @param <T>
+     * @param cls
+     * @param name an optional name of the beans used for injection discovery - may be null
+     * @return fresh instance with dependencies filled in and post contruct method called if available
+     */
+    public <T extends Object> T createBean(Class<T> cls, String name) {
+        try {
+            String beanName = getBeanName(cls, name);
+            Map<String, Set<Object>> dependencies = new HashMap<>();
+            T bean = createInstance(dependencies, cls, beanName);
+            injectDependencies(dependencies, beanName, bean);
+            callPostConstruct(bean);
+            return bean;
+        } catch (Exception e) {
+            return null;
+        } // try/catch
+    } //  createBean()
 
 
     /**
@@ -464,6 +536,123 @@ public class Dinistiq {
 
 
     /**
+     * Injects all available dependencies into a given bean and records all dependencies.
+     *
+     * @param key key / name/ id of the bean
+     * @param bean bean instance
+     * @param dependencies dependencies map where the dependecies of the bean are recorded with the given key
+     * @throws Exception
+     */
+    private void injectDependencies(Map<String, Set<Object>> dependencies, String key, Object bean) throws Exception {
+        // Prepare values from properties files
+        Properties beanProperties = getProperties(key);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("("+key+") bean properties"+beanProperties.keySet());
+        } // if
+
+        // fill injected fields
+        Class<? extends Object> beanClass = bean.getClass();
+        String beanClassName = beanClass.getName();
+        while (beanClass!=Object.class) {
+            if (bean instanceof Map) {
+                Properties mapProperties = getProperties(key);
+                fillMap(bean, mapProperties);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("() filled map '"+key+"' "+bean);
+                } // if
+            } // if
+            for (Field field : beanClass.getDeclaredFields()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("("+key+") field "+field.getName());
+                } // if
+                if (field.getAnnotation(Inject.class)!=null) {
+                    Named named = field.getAnnotation(Named.class);
+                    String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
+                    } // if
+                    Object b = getValue(key, field.getType(), field.getGenericType(), name);
+                    final boolean accessible = field.isAccessible();
+                    try {
+                        field.setAccessible(true);
+                        field.set(bean, b);
+                        dependencies.get(key).add(b);
+                    } catch (SecurityException|IllegalArgumentException|IllegalAccessException e) {
+                        LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
+                    } finally {
+                        field.setAccessible(accessible);
+                    } // try/catch
+                } // if
+            } // for
+            beanClass = beanClass.getSuperclass();
+        } // while
+
+        // call injected setters
+        for (Method m : bean.getClass().getMethods()) {
+            if (m.getAnnotation(Inject.class)!=null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("("+key+") inject parameters on method "+m.getName());
+                } // if
+                Class<? extends Object>[] parameterTypes = m.getParameterTypes();
+                Type[] genericParameterTypes = m.getGenericParameterTypes();
+                final Annotation[][] parameterAnnotations = m.getParameterAnnotations();
+                Object[] parameters = getParameters(dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
+                try {
+                    m.invoke(bean, parameters);
+                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
+                    LOG.error("() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
+                } // try/catch
+            } // if
+            if (m.getName().startsWith("set")&&(m.getParameterTypes().length>0)) {
+                String propertyName = Introspector.decapitalize(m.getName().substring(3));
+                final Class<?> parameterType = m.getParameterTypes()[0];
+                final Type genericType = m.getGenericParameterTypes()[0];
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("("+key+") writable property found "+propertyName+" :"+parameterType+" "+genericType);
+                } // if
+                if (beanProperties.stringPropertyNames().contains(propertyName)) {
+                    final String propertyValue = beanProperties.getProperty(propertyName);
+                    boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
+                    boolean isCollection = Collection.class.isAssignableFrom(parameterType);
+                    Object[] parameters = new Object[1];
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("("+key+") trying to set value "+propertyName+" "+isBoolean+":"+isCollection+" "+propertyValue);
+                    } // if
+                    try {
+                        parameters[0] = getReferenceValue(propertyValue);
+                        if (isBoolean&&(parameters[0] instanceof String)) {
+                            parameters[0] = "true".equals(propertyValue);
+                        } // if
+                        if ("long".equals(parameterType.getName())) {
+                            parameters[0] = new Long(propertyValue);
+                        } // if
+                        if ("int".equals(parameterType.getName())) {
+                            parameters[0] = new Integer(propertyValue);
+                        } // if
+                        if ("float".equals(parameterType.getName())) {
+                            parameters[0] = new Float(propertyValue);
+                        } // if
+                        if ("double".equals(parameterType.getName())) {
+                            parameters[0] = new Double(propertyValue);
+                        } // if
+                        if (isCollection) {
+                            Set<Object> valueSet = new HashSet<>();
+                            for (String value : propertyValue.split(",")) {
+                                valueSet.add(getReferenceValue(value));
+                            } // for
+                            parameters[0] = valueSet;
+                        } // if
+                        m.invoke(bean, parameters);
+                    } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
+                        LOG.error("() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
+                    } // try/catch
+                } // if
+            } // if
+        } // for
+    }  // injectDependencies()
+
+
+    /**
      * Create a dinistiq context from the given class resolver and optional external beans.
      * Add all the external named beans from thei given map for later lookup to the context as well
      * and be sure that your class resolver takes the resources in the dinistiq/ path of your
@@ -551,7 +740,7 @@ public class Dinistiq {
                             LOG.debug("() instanciating "+className);
                         } // if
                         Class<? extends Object> c = Class.forName(className);
-                        createInstance(dependencies, c, key);
+                        createAndRegisterInstance(dependencies, c, key);
                     } // if
                 } // if
             } // if
@@ -566,7 +755,7 @@ public class Dinistiq {
             LOG.info("() number of annotated beans "+classes.size());
         } // if
         for (Class<? extends Object> c : classes) {
-            createInstance(dependencies, c, null);
+            createAndRegisterInstance(dependencies, c, null);
         } // for
         if (LOG.isDebugEnabled()) {
             LOG.debug("() beans "+beans.keySet());
@@ -574,113 +763,7 @@ public class Dinistiq {
 
         // Fill in injections and note needed dependencies
         for (String key : beans.keySet()) {
-            Object bean = beans.get(key);
-
-            // Prepare values from properties files
-            Properties beanProperties = getProperties(key);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("("+key+") bean properties"+beanProperties.keySet());
-            } // if
-
-            // fill injected fields
-            Class<? extends Object> beanClass = bean.getClass();
-            String beanClassName = beanClass.getName();
-            while (beanClass!=Object.class) {
-                if (bean instanceof Map) {
-                    Properties mapProperties = getProperties(key);
-                    fillMap(bean, mapProperties);
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("() filled map '"+key+"' "+bean);
-                    } // if
-                } // if
-                for (Field field : beanClass.getDeclaredFields()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("("+key+") field "+field.getName());
-                    } // if
-                    if (field.getAnnotation(Inject.class)!=null) {
-                        Named named = field.getAnnotation(Named.class);
-                        String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
-                        } // if
-                        Object b = getValue(key, field.getType(), field.getGenericType(), name);
-                        final boolean accessible = field.isAccessible();
-                        try {
-                            field.setAccessible(true);
-                            field.set(bean, b);
-                            dependencies.get(key).add(b);
-                        } catch (SecurityException|IllegalArgumentException|IllegalAccessException e) {
-                            LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
-                        } finally {
-                            field.setAccessible(accessible);
-                        } // try/catch
-                    } // if
-                } // for
-                beanClass = beanClass.getSuperclass();
-            } // while
-
-            // call injected setters
-            for (Method m : bean.getClass().getMethods()) {
-                if (m.getAnnotation(Inject.class)!=null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("("+key+") inject parameters on method "+m.getName());
-                    } // if
-                    Class<? extends Object>[] parameterTypes = m.getParameterTypes();
-                    Type[] genericParameterTypes = m.getGenericParameterTypes();
-                    final Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-                    Object[] parameters = getParameters(dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
-                    try {
-                        m.invoke(bean, parameters);
-                    } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                        LOG.error("() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
-                    } // try/catch
-                } // if
-                if (m.getName().startsWith("set")&&(m.getParameterTypes().length>0)) {
-                    String propertyName = Introspector.decapitalize(m.getName().substring(3));
-                    final Class<?> parameterType = m.getParameterTypes()[0];
-                    final Type genericType = m.getGenericParameterTypes()[0];
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("("+key+") writable property found "+propertyName+" :"+parameterType+" "+genericType);
-                    } // if
-                    if (beanProperties.stringPropertyNames().contains(propertyName)) {
-                        final String propertyValue = beanProperties.getProperty(propertyName);
-                        boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
-                        boolean isCollection = Collection.class.isAssignableFrom(parameterType);
-                        Object[] parameters = new Object[1];
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("("+key+") trying to set value "+propertyName+" "+isBoolean+":"+isCollection+" "+propertyValue);
-                        } // if
-                        try {
-                            parameters[0] = getReferenceValue(propertyValue);
-                            if (isBoolean&&(parameters[0] instanceof String)) {
-                                parameters[0] = "true".equals(propertyValue);
-                            } // if
-                            if ("long".equals(parameterType.getName())) {
-                                parameters[0] = new Long(propertyValue);
-                            } // if
-                            if ("int".equals(parameterType.getName())) {
-                                parameters[0] = new Integer(propertyValue);
-                            } // if
-                            if ("float".equals(parameterType.getName())) {
-                                parameters[0] = new Float(propertyValue);
-                            } // if
-                            if ("double".equals(parameterType.getName())) {
-                                parameters[0] = new Double(propertyValue);
-                            } // if
-                            if (isCollection) {
-                                Set<Object> valueSet = new HashSet<>();
-                                for (String value : propertyValue.split(",")) {
-                                    valueSet.add(getReferenceValue(value));
-                                } // for
-                                parameters[0] = valueSet;
-                            } // if
-                            m.invoke(bean, parameters);
-                        } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                            LOG.error("() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
-                        } // try/catch
-                    } // if
-                } // if
-            } // for
+            injectDependencies(dependencies, key, beans.get(key));
         } // for
 
         // sort beans according to dependencies
@@ -738,18 +821,7 @@ public class Dinistiq {
             if (LOG.isInfoEnabled()) {
                 LOG.info("() bean "+bean);
             } // if
-            for (Method m : bean.getClass().getMethods()) {
-                if (m.getAnnotation(PostConstruct.class)!=null) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("() post construct method on "+bean+": "+m.getName());
-                    } // if
-                    try {
-                        m.invoke(bean, new Object[0]);
-                    } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                        LOG.error("() error calling post constructor "+m.getName()+" at "+bean+" :"+bean.getClass().getName(), ex);
-                    } // try/catch
-                } // if
-            } // for
+            callPostConstruct(bean);
         } // for
         if (LOG.isInfoEnabled()) {
             LOG.info("() calling post construct for the rest of the beans");
@@ -757,21 +829,10 @@ public class Dinistiq {
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
             if (!orderedBeans.contains(bean)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("() bean without dependencies to call post construct method on "+key);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("() bean without dependencies to call post construct method on "+key);
                 } // if
-                for (Method m : bean.getClass().getMethods()) {
-                    if (m.getAnnotation(PostConstruct.class)!=null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("() post construct method on "+key+": "+m.getName());
-                        } // if
-                        try {
-                            m.invoke(bean, new Object[0]);
-                        } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                            LOG.error("() error calling post constructor "+m.getName()+" at '"+key+"' :"+bean.getClass().getName(), ex);
-                        } // try/catch
-                    } // if
-                } // for
+                callPostConstruct(bean);
             } // if
         } // for
         if (LOG.isInfoEnabled()) {

@@ -14,6 +14,10 @@ Minimalistic component to use dependency injection for the wire-up of software c
 It thus mostly deals with singletons - some of them implementing interfaces - which should 
 be injected as dependencies into one another.
 
+As the only other option besides the single scope managed by Dinistiq it allows for the 
+creation of fresh instances with all dependencies filled in from the scope of all beans
+collected.
+
 Fire up the wire up
 -------------------
 
@@ -471,6 +475,19 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 } // DinistiqContextLoaderListener
 ```
 
+Besides the one managed Scope
+-----------------------------
+
+Dinistiq defines just one scope of beans you can grab beans from. If you need fresh instances
+of beans where the members of this scope should be injected on creation and optional post
+construct methods should be called just following the same rules as the beans from the dinistiq
+scope, you will find a createBeans method besides all the options to find existing beans
+in the scope.
+
+```Java
+My myNewInstance = dinistiq.createBean(My.class, null);
+```
+
 Building
 --------
 
@@ -486,7 +503,7 @@ to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.1|
+|Version|0.3|
 |Archive size|<25kB|
 |Further dependencies|<=5|
 |API||
