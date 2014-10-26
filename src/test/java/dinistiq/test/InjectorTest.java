@@ -29,6 +29,7 @@ import dinistiq.test.components.TestComponent;
 import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
+import dinistiq.web.test.MockServletContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,8 +50,8 @@ public class InjectorTest {
 
     public static Map<String, Object> prepareInitialBeans() {
         Map<String, Object> initialBeans = new HashMap<>();
-        InitialBean initialBean = new InitialBean();
-        initialBeans.put("initialBean", initialBean);
+        initialBeans.put("initialBean", new InitialBean());
+        initialBeans.put("servetContext", new MockServletContext(null));
         return initialBeans;
     } // prepareInitialBeans()
 

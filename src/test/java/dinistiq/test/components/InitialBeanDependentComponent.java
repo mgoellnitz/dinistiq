@@ -8,6 +8,7 @@ package dinistiq.test.components;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.servlet.ServletContext;
 
 
 @Named
@@ -15,11 +16,11 @@ import javax.inject.Singleton;
 public class InitialBeanDependentComponent {
 
     @Inject
-    private InitialBean initialBean;
+    private ServletContext servletContext;
 
 
-    public InitialBean getInitialBean() {
-        return initialBean;
+    public ServletContext getServletContext() {
+        return servletContext;
     }
 
 } // InitialBeanDependentComponent

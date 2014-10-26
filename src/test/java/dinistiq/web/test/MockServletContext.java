@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
@@ -34,15 +36,13 @@ import javax.servlet.ServletException;
 
 @SuppressWarnings("deprecation")
 public class MockServletContext implements ServletContext {
-    
-    private final Dinistiq dinistiq;
+
+    private final Map<String, Object> attributes = new HashMap<>();
 
 
     public MockServletContext(Dinistiq dinistiq) {
-        this.dinistiq = dinistiq;
+        attributes.put(DinistiqContextLoaderListener.DINISTIQ_INSTANCE, dinistiq);
     }
-    
-    
 
 
     @Override
@@ -173,8 +173,8 @@ public class MockServletContext implements ServletContext {
 
 
     @Override
-    public Object getAttribute(String string) {
-        return (string.equals(DinistiqContextLoaderListener.DINISTIQ_INSTANCE)) ? dinistiq : null;
+    public Object getAttribute(String name) {
+        return attributes.get(name);
     }
 
 
@@ -185,14 +185,14 @@ public class MockServletContext implements ServletContext {
 
 
     @Override
-    public void setAttribute(String string, Object o) {
-        throw new UnsupportedOperationException("NYI");
+    public void setAttribute(String name, Object value) {
+        attributes.put(name, value);
     }
 
 
     @Override
-    public void removeAttribute(String string) {
-        throw new UnsupportedOperationException("NYI");
+    public void removeAttribute(String name) {
+        attributes.remove(name);
     }
 
 

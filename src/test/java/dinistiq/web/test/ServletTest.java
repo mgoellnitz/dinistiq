@@ -74,6 +74,7 @@ public class ServletTest {
         DinistiqContextLoaderListener dcll = new DinistiqContextLoaderListener();
         ServletContextEvent sce = new ServletContextEvent(new MockServletContext(d));
         dcll.contextInitialized(sce);
+        dcll.contextDestroyed(sce);
     } // testContextLoaderListener()
 
 } // ServletTest
