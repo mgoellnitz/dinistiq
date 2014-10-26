@@ -76,6 +76,7 @@ public class ConfigStuff {
     public String somePrefix;
 
 } // ConfigStuff
+```
 
 In this case, filename is search as a String component with the name "filename", while somePrefix
 has a specific named "prefix" annotated.
