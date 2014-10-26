@@ -34,6 +34,8 @@ public class NumericInjection extends TestComponentB {
 
     private double doubleValue;
 
+    private boolean booleanValue;
+
 
     public int getIntValue() {
         return intValue;
@@ -72,6 +74,16 @@ public class NumericInjection extends TestComponentB {
 
     public void setDoubleValue(double doubleValue) {
         this.doubleValue = doubleValue;
+    }
+
+
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
+
+
+    public void setBooleanValue(boolean booleanValue) {
+        this.booleanValue = booleanValue;
     }
 
 } // NumericInjection

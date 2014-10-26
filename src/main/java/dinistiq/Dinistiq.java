@@ -102,7 +102,7 @@ public class Dinistiq {
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("findBeans() adding to result result "+bean+" :"+type.getName());
+                    LOG.info("findBeans() adding to result "+bean+" :"+type.getName());
                 } // if
                 result.add(convert(type, bean));
             } // if

@@ -22,8 +22,10 @@ import dinistiq.Dinistiq;
 import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.InitialBeanDependentComponent;
+import dinistiq.test.components.MultiInstanceComponent;
 import dinistiq.test.components.NamedInjection;
 import dinistiq.test.components.NumericInjection;
+import dinistiq.test.components.TestComponent;
 import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
@@ -219,6 +221,7 @@ public class InjectorTest {
         Assert.assertEquals("Failure in injection of long value", 123456789, numerics.getLongValue());
         Assert.assertEquals("Failure in injection of float value", 3.14159, numerics.getFloatValue(), numerics.getFloatValue()-3.14159);
         Assert.assertEquals("Failure in injection of double value", 2.7, numerics.getDoubleValue(), numerics.getDoubleValue()-2.7);
+        Assert.assertEquals("Failure in injection of boolean value", true, numerics.isBooleanValue());
     } // testNumericInjection()
 
 
@@ -245,5 +248,19 @@ public class InjectorTest {
         ConstructorInjection constructorInjection = d.findBean(ConstructorInjection.class);
         Assert.assertEquals("Failure in injection of numeric value", "a string value", constructorInjection.getString());
     } // testConstructorInjection()
+
+
+    @Test
+    public void testInstanceCreation() {
+        MultiInstanceComponent instance = d.createBean(MultiInstanceComponent.class, null);
+        TestComponent testComponent = d.findBean(TestComponent.class);
+        Assert.assertNotNull("Component didn't get injected", instance.getTestComponent());
+        Assert.assertEquals("Non expected instance injected", testComponent, instance.getTestComponent());
+        Assert.assertEquals("Non expected name of fresh instance", "default", instance.getName());
+        MultiInstanceComponent secondInstance = d.createBean(MultiInstanceComponent.class, "fresh");
+        Assert.assertNotNull("Component didn't get injected", secondInstance.getTestComponent());
+        Assert.assertEquals("Non expected instance injected", testComponent, secondInstance.getTestComponent());
+        Assert.assertEquals("Non expected name of fresh instance", "overridden", secondInstance.getName());
+    } // testInstanceCreation()
 
 } // InjectorTest
