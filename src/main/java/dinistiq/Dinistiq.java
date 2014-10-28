@@ -850,9 +850,9 @@ public class Dinistiq {
         } // if
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
-            if (!orderedBeans.contains(bean) && !String.class.isAssignableFrom(bean.getClass())) {
+            if (!orderedBeans.contains(bean)&&!String.class.isAssignableFrom(bean.getClass())) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("() bean without dependencies to call post construct method on "+key);
+                    LOG.warn("() bean without dependencies to call post construct method on "+key+" :"+bean.getClass().getSimpleName());
                 } // if
                 callPostConstruct(bean);
             } // if
