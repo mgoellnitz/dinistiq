@@ -489,6 +489,14 @@ in the scope.
 My myNewInstance = dinistiq.createBean(My.class, null);
 ```
 
+If this is still no option, you can - like with external beans - provide instances externally and
+let dinistiq still handler their injections and post construct methods.
+
+```Java
+My myNewInstance = new My();
+dinistiq.initBean(myNewInstance, null);
+```
+
 Building
 --------
 

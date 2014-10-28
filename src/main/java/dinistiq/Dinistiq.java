@@ -305,6 +305,9 @@ public class Dinistiq {
      * @return name to be used for the bean
      */
     private String getBeanName(Class<? extends Object> cls, String name) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getBeanName("+name+") cls="+cls);
+        } // if
         String beanName = (name==null) ? cls.getAnnotation(Named.class).value() : name;
         if (StringUtils.isBlank(beanName)) {
             beanName = Introspector.decapitalize(cls.getSimpleName());
@@ -321,7 +324,7 @@ public class Dinistiq {
      */
     private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
         if (LOG.isInfoEnabled()) {
-            LOG.info("createAndRegisterInstance("+name+") c="+cls);
+            LOG.info("createAndRegisterInstance("+name+") cls="+cls);
         } // if
         try {
             String beanName = getBeanName(cls, name);
@@ -375,6 +378,25 @@ public class Dinistiq {
             return null;
         } // try/catch
     } //  createBean()
+
+
+    /**
+     * Initialize a fresh instance by injecting all needed dependencies from the dinistiq scope.
+     *
+     * @param bean externally created bean with missing dependencies
+     * @param name an optional name of the bean used for injection discovery - may be null
+     */
+    public void initBean(Object bean, String name) {
+        try {
+            String beanName = getBeanName(bean.getClass(), name);
+            Map<String, Set<Object>> dependencies = new HashMap<>();
+            dependencies.put(beanName, new HashSet<>());
+            injectDependencies(dependencies, beanName, bean);
+            callPostConstruct(bean);
+        } catch (Exception e) {
+            LOG.error("initBean() "+bean.getClass(), e);
+        } // try/catch
+    } //  initBean()
 
 
     /**
@@ -828,7 +850,7 @@ public class Dinistiq {
         } // if
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
-            if (!orderedBeans.contains(bean)) {
+            if (!orderedBeans.contains(bean) && !String.class.isAssignableFrom(bean.getClass())) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("() bean without dependencies to call post construct method on "+key);
                 } // if

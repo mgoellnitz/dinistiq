@@ -264,4 +264,15 @@ public class InjectorTest {
         Assert.assertEquals("Non expected name of fresh instance", "overridden", secondInstance.getName());
     } // testInstanceCreation()
 
+
+    @Test
+    public void testInstanceInit() {
+        MultiInstanceComponent instance = new MultiInstanceComponent();
+        d.initBean(instance, null);
+        Assert.assertEquals("Non expected name of fresh instance", "default", instance.getName());
+        Assert.assertNotNull("Component didn't get injected", instance.getTestComponent());
+        TestComponent testComponent = d.findBean(TestComponent.class);
+        Assert.assertEquals("Non expected instance injected", testComponent, instance.getTestComponent());
+    } // testInstanceInit()
+
 } // InjectorTest
