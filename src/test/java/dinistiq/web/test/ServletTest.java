@@ -23,13 +23,17 @@ import dinistiq.test.InjectorTest;
 import dinistiq.test.components.TestInterface;
 import dinistiq.web.DinistiqContextLoaderListener;
 import dinistiq.web.DinistiqServlet;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
 /**
@@ -48,13 +52,25 @@ public class ServletTest {
             Assert.assertNotNull("DI container could not be initialized", d);
             Assert.fail(e.getMessage());
         } // try/catch
-
-        DinistiqServlet ds = new DinistiqServlet();
-        final ServletConfig servletConfig = new MockServletConfig(d);
         try {
+            DinistiqServlet ds = new DinistiqServlet();
+            ServletConfig servletConfig = Mockito.mock(ServletConfig.class);
+            Mockito.when(servletConfig.getServletContext()).thenReturn(new MockServletContext(d));
+
             ds.init(servletConfig);
-        } catch (ServletException se) {
-            Assert.fail("Exception while initializing servlet "+se.getMessage());
+            HttpServletRequest request1 = Mockito.mock(HttpServletRequest.class);
+            Mockito.when(request1.getContextPath()).thenReturn("/context");
+            Mockito.when(request1.getRequestURI()).thenReturn("/context/servlet/testing");
+            HttpServletResponse response1 = Mockito.mock(HttpServletResponse.class);
+            ds.service(request1, response1);
+
+            HttpServletRequest request2 = Mockito.mock(HttpServletRequest.class);
+            Mockito.when(request2.getContextPath()).thenReturn("/");
+            Mockito.when(request2.getRequestURI()).thenReturn("/servlet/nothing");
+            HttpServletResponse response2 = Mockito.mock(HttpServletResponse.class);
+            ds.service(request2, response2);
+        } catch (IOException|ServletException e) {
+            Assert.fail("Exception while testing servlet "+e.getMessage());
         } // try/catch
     } // testServlet()
 

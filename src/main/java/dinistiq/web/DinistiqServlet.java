@@ -65,11 +65,11 @@ public class DinistiqServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String contextPath = req.getContextPath();
         contextPath = (contextPath.length()==1) ? "" : contextPath;
-        final String requestURI = req.getRequestURI();
+        String requestURI = req.getRequestURI();
         int slashIndex = requestURI.indexOf("/", contextPath.length()+1);
         String uri = slashIndex < 0 ? "" : requestURI.substring(slashIndex);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("service() requestURI="+requestURI+" / "+uri);
+            LOG.debug("service("+contextPath+":"+slashIndex+") requestURI="+requestURI+" / "+uri);
         } // if
         for (Pattern uriPattern : patternOrder) {
             if (LOG.isDebugEnabled()) {
