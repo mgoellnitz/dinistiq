@@ -67,19 +67,13 @@ public class DinistiqServlet extends HttpServlet {
         contextPath = (contextPath.length()==1) ? "" : contextPath;
         String requestURI = req.getRequestURI();
         int slashIndex = requestURI.indexOf("/", contextPath.length()+1);
-        String uri = slashIndex < 0 ? "" : requestURI.substring(slashIndex);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("service("+contextPath+":"+slashIndex+") requestURI="+requestURI+" / "+uri);
-        } // if
+        String uri = slashIndex<0 ? "" : requestURI.substring(slashIndex);
+        LOG.debug("service({}:{}) requestURI={} / {}", contextPath, slashIndex, requestURI, uri);
         for (Pattern uriPattern : patternOrder) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("service() "+uriPattern);
-            } // if
+            LOG.debug("service() {}", uriPattern);
             Matcher matcher = uriPattern.matcher(uri);
             if (matcher.matches()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("service() match! "+req.getParameterMap().size());
-                } // if
+                LOG.debug("service() match! {}", req.getParameterMap().size());
                 servletMap.get(uriPattern).service(req, resp);
                 return;
             } // if
@@ -90,26 +84,20 @@ public class DinistiqServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        if (LOG.isWarnEnabled()) {
-            LOG.warn("init() ("+LOG.getClass().getName()+")");
-        } // if
+        LOG.warn("init() ({})", LOG.getClass().getName());
         try {
             Dinistiq dinistiq = (Dinistiq) (config.getServletContext().getAttribute(DinistiqContextLoaderListener.DINISTIQ_INSTANCE));
             Collection<RegisterableServlet> servlets = dinistiq.findBeans(RegisterableServlet.class);
             List<RegisterableServlet> orderedServlets = new ArrayList<>(servlets.size());
             for (RegisterableServlet servlet : servlets) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("init() "+servlet);
-                } // if
+                LOG.debug("init() {}", servlet);
                 orderedServlets.add(servlet);
             } // for
             Collections.sort(orderedServlets);
             for (RegisterableServlet servlet : orderedServlets) {
                 Set<String> uriRegexes = servlet.getUriRegex();
                 for (String uriRegex : uriRegexes) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("init() * "+uriRegex);
-                    } // if
+                    LOG.debug("init() * {}", uriRegex);
                     Pattern uriPattern = Pattern.compile(uriRegex.replace("/", "\\/"));
                     patternOrder.add(uriPattern);
                     servletMap.put(uriPattern, servlet);

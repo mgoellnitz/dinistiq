@@ -33,12 +33,16 @@ public interface RegisterableServlet extends Servlet, Comparable<RegisterableSer
 
     /**
      * Returns a set of regular expression of which the calling URI must adhere one so that this servlet should handle it.
+     * 
+     * @return set regular expressions where matching URLs should be serviced by this servlet
      */
     Set<String> getUriRegex();
 
     /**
-     * returns an integer indicating if the implementing instance should be considered earlier or later in
+     * Indicator if the implementing instance should be considered earlier or later in
      * the servlet selection process.
+     * 
+     * @return integer indicator of order, the higher the later
      */
     int getOrder();
 

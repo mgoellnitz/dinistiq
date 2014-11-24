@@ -70,9 +70,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent contextEnvironment) {
         // just to check what our log instance looks like
-        if (LOG.isWarnEnabled()) {
-            LOG.warn("contextInitialized() log: "+LOG.getClass().getName());
-        } // if
+        LOG.warn("contextInitialized() log: {}", LOG.getClass().getName());
         ServletContext context = contextEnvironment.getServletContext();
         Set<String> packages = new HashSet<>();
         final String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
@@ -94,9 +92,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
                 LOG.error("contextInitialized() cannot obtain custom class resolver", e);
             } // try/catch
         } // if
-        if (LOG.isInfoEnabled()) {
-            LOG.info("contextInitialized() classResolver: "+classResolver+" :"+classResolverName);
-        } // if
+        LOG.info("contextInitialized() classResolver: {} :{}", classResolver, classResolverName);
         classResolver = (classResolver==null) ? new SimpleClassResolver(packages) : classResolver;
         try {
             Map<String, Object> externalBeans = new HashMap<>();

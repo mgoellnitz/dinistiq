@@ -101,9 +101,7 @@ public class Dinistiq {
         Set<T> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("findBeans() adding to result "+bean+" :"+type.getName());
-                } // if
+                LOG.info("findBeans() adding to result {}:{}", bean, type.getName());
                 result.add(convert(type, bean));
             } // if
         } // for
@@ -123,9 +121,7 @@ public class Dinistiq {
         for (String name : beans.keySet()) {
             Object bean = beans.get(name);
             if (type.isAssignableFrom(bean.getClass())) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("findNames() adding to result result "+bean+" :"+type.getName());
-                } // if
+                LOG.info("findNames() adding to result {} :{}", bean, type.getName());
                 result.add(name);
             } // if
         } // for
@@ -144,9 +140,7 @@ public class Dinistiq {
         Set<Object> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (bean.getClass().getAnnotation(type)!=null) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("findAnnotatedBeans() adding to result result "+bean+" :"+type.getName());
-                } // if
+                LOG.info("findAnnotatedBeans() adding to result {} :{}", bean, type.getName());
                 result.add(bean);
             } // if
         } // for
@@ -181,9 +175,7 @@ public class Dinistiq {
         T result = null;
         Object bean = beans.get(name);
         if (bean!=null) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("findBean() "+name+" :"+bean.getClass().getName());
-            } // if
+            LOG.info("findBean() {} :{}", name, bean.getClass().getName());
             if (cls.isAssignableFrom(bean.getClass())) {
                 result = convert(cls, bean);
             } // if
@@ -204,20 +196,14 @@ public class Dinistiq {
 
     private Object getValue(String customer, Class<? extends Object> cls, Type type) throws Exception {
         if (Collection.class.isAssignableFrom(cls)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("getValue() collection: "+type);
-            } // if
+            LOG.debug("getValue() collection: {}", type);
             if (type instanceof ParameterizedType) {
                 ParameterizedType pType = (ParameterizedType) type;
                 final Type collectionType = pType.getActualTypeArguments()[0];
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("getValue() inner type "+collectionType);
-                } // if
+                LOG.debug("getValue() inner type {}", collectionType);
                 Set<? extends Object> resultCollection = findBeans((Class<? extends Object>) collectionType);
                 if (List.class.isAssignableFrom(cls)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("getValue() transforming to list");
-                    } // if
+                    LOG.debug("getValue() transforming to list");
                     return new ArrayList<>(resultCollection);
                 } // if
                 return resultCollection;
@@ -280,9 +266,7 @@ public class Dinistiq {
      * @param beanName beans name in the scope using the given dependencies
      */
     private <T extends Object> T createInstance(Map<String, Set<Object>> dependencies, Class<T> cls, String beanName) throws Exception {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("createInstance("+cls.getSimpleName()+")");
-        } // if
+        LOG.info("createInstance({})", cls.getSimpleName());
         dependencies.put(beanName, new HashSet<>());
         Constructor<?> c = null;
         Constructor<?>[] constructors = cls.getConstructors();
@@ -305,9 +289,7 @@ public class Dinistiq {
      * @return name to be used for the bean
      */
     private String getBeanName(Class<? extends Object> cls, String name) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getBeanName("+name+") cls="+cls);
-        } // if
+        LOG.debug("getBeanName({}= cls={}", name, cls);
         String beanName = (name==null) ? cls.getAnnotation(Named.class).value() : name;
         if (StringUtils.isBlank(beanName)) {
             beanName = Introspector.decapitalize(cls.getSimpleName());
@@ -323,9 +305,7 @@ public class Dinistiq {
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
      */
     private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("createAndRegisterInstance("+name+") cls="+cls);
-        } // if
+        LOG.info("createAndRegisterInstance({}= cls={}", name, cls);
         try {
             String beanName = getBeanName(cls, name);
             Object bean = createInstance(dependencies, cls, beanName);
@@ -345,9 +325,7 @@ public class Dinistiq {
     private void callPostConstruct(Object bean) throws SecurityException {
         for (Method m : bean.getClass().getMethods()) {
             if (m.getAnnotation(PostConstruct.class)!=null) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("() post construct method on "+bean+": "+m.getName());
-                } // if
+                LOG.info("() post construct method on {}: {}", bean, m.getName());
                 try {
                     m.invoke(bean, new Object[0]);
                 } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
@@ -411,25 +389,17 @@ public class Dinistiq {
         Properties beanProperties = new Properties();
         final String defaultsName = PRODUCT_BASE_PATH+"/defaults/"+key+".properties";
         final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(defaultsName);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getProperties("+key+") searching defaults "+defaultsName+" "+resources);
-        } // if
+        LOG.debug("getProperties({}) searching defaults {} {}", key, defaultsName, resources);
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("getProperties("+key+") loading defaults from "+defaultsName);
-            } // if
+            LOG.debug("getProperties({}) loading defaults from {}", key, defaultsName);
             beanProperties.load(resource.openStream());
         } // while
         final String beanValuesName = PRODUCT_BASE_PATH+"/beans/"+key+".properties";
         InputStream beanStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(beanValuesName);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getProperties("+key+") searching bean values "+beanValuesName+" "+beanStream);
-        } // if
+        LOG.debug("getProperties({}) searching bean values {} {}", key, beanValuesName, beanStream);
         if (beanStream!=null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("getProperties("+key+") loading bean values from "+beanValuesName);
-            } // if
+            LOG.debug("getProperties({}) loading bean values from {}", key, beanValuesName);
             beanProperties.load(beanStream);
         } // if
         return beanProperties;
@@ -446,9 +416,7 @@ public class Dinistiq {
         Object result = propertyValue;
         if (propertyValue.startsWith("${")) {
             String referenceName = propertyValue.substring(2, propertyValue.length()-1);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("getReferenceValue("+propertyValue+") "+referenceName);
-            } // if
+            LOG.debug("getReferenceValue({}) {}", propertyValue, referenceName);
             result = beans.containsKey(referenceName) ? beans.get(referenceName) : result;
         } // if
         if (result instanceof String) {
@@ -456,14 +424,10 @@ public class Dinistiq {
             Pattern p = REPLACEMENT_PATTERN;
             Matcher m = p.matcher(stringValue);
             while (m.find()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("getReferenceValue("+propertyValue+") string replacement in "+stringValue);
-                } // if
+                LOG.debug("getReferenceValue({}) string replacement in {}", propertyValue, stringValue);
                 String name = m.group();
                 name = name.substring(2, name.length()-1);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("getReferenceValue("+propertyValue+") replacing "+name);
-                } // if
+                LOG.debug("getReferenceValue({}) replacingn {}", propertyValue, name);
                 String replacement = beans.containsKey(name) ? ""+beans.get(name) : (environment.containsKey(name) ? environment.get(name) : "__UNKNOWN__");
                 stringValue = stringValue.replace("${"+name+"}", replacement);
                 m = p.matcher(stringValue);
@@ -487,9 +451,7 @@ public class Dinistiq {
         if ((idx>0)&&(value.length()>idx+5)) {
             // Might be a URL
             try {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("storeUrlParts() splitting "+value+"("+name+")");
-                } // if
+                LOG.info("storeUrlParts() splitting {} ({})", value, name);
                 String protocol = value.substring(0, idx);
                 if (StringUtils.isNotBlank(protocol)) {
                     values.put(name+".protocol", protocol);
@@ -568,9 +530,7 @@ public class Dinistiq {
     private void injectDependencies(Map<String, Set<Object>> dependencies, String key, Object bean) throws Exception {
         // Prepare values from properties files
         Properties beanProperties = getProperties(key);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("("+key+") bean properties"+beanProperties.keySet());
-        } // if
+        LOG.debug("({}) bean properties {}", key, beanProperties.keySet());
 
         // fill injected fields
         Class<? extends Object> beanClass = bean.getClass();
@@ -579,20 +539,14 @@ public class Dinistiq {
             if (bean instanceof Map) {
                 Properties mapProperties = getProperties(key);
                 fillMap(bean, mapProperties);
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("() filled map '"+key+"' "+bean);
-                } // if
+                LOG.info("() filled map '{}' {}", key, bean);
             } // if
             for (Field field : beanClass.getDeclaredFields()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("("+key+") field "+field.getName());
-                } // if
+                LOG.debug("({}) field {}", key, field.getName());
                 if (field.getAnnotation(Inject.class)!=null) {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("("+field.getName()+" :"+field.getGenericType()+") needs injection with name "+name);
-                    } // if
+                    LOG.info("({} :{}) needs injection with name {}", field.getName(), field.getGenericType(), name);
                     Object b = getValue(key, field.getType(), field.getGenericType(), name);
                     final boolean accessible = field.isAccessible();
                     try {
@@ -612,9 +566,7 @@ public class Dinistiq {
         // call injected setters
         for (Method m : bean.getClass().getMethods()) {
             if (m.getAnnotation(Inject.class)!=null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("("+key+") inject parameters on method "+m.getName());
-                } // if
+                LOG.debug("({}) inject parameters on method {}", key, m.getName());
                 Class<? extends Object>[] parameterTypes = m.getParameterTypes();
                 Type[] genericParameterTypes = m.getGenericParameterTypes();
                 final Annotation[][] parameterAnnotations = m.getParameterAnnotations();
@@ -629,17 +581,13 @@ public class Dinistiq {
                 String propertyName = Introspector.decapitalize(m.getName().substring(3));
                 final Class<?> parameterType = m.getParameterTypes()[0];
                 final Type genericType = m.getGenericParameterTypes()[0];
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("("+key+") writable property found "+propertyName+" :"+parameterType+" "+genericType);
-                } // if
+                LOG.debug("({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
                 if (beanProperties.stringPropertyNames().contains(propertyName)) {
                     final String propertyValue = beanProperties.getProperty(propertyName);
                     boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
                     boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                     Object[] parameters = new Object[1];
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("("+key+") trying to set value "+propertyName+" "+isBoolean+":"+isCollection+" "+propertyValue);
-                    } // if
+                    LOG.debug("({}) trying to set value {} {}:{} {}", key, propertyName, isBoolean, isCollection, propertyValue);
                     try {
                         parameters[0] = getReferenceValue(propertyValue);
                         if (isBoolean&&(parameters[0] instanceof String)) {
@@ -708,25 +656,17 @@ public class Dinistiq {
         for (String key : environment.keySet()) {
             storeUrlParts(key, environment.get(key), beans);
         } // for
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("() initial beans "+beans);
-        } // if
+        LOG.debug("() initial beans {}", beans);
 
         // Read bean list from properties files mapping names to names of the classes to be instanciated
         Properties beanlist = new Properties();
         SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("() checking "+propertiesFilenames.size()+" files for properties");
-        } // if
+        LOG.debug("() checking {} files for properties", propertiesFilenames.size());
         for (String propertyResource : propertiesFilenames) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("() check "+propertyResource);
-            } // if
+            LOG.debug("() check {}", propertyResource);
             // ignore subfolders!
             if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("() resource "+propertyResource);
-                } // if
+                LOG.debug("() resource {}", propertyResource);
                 beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
             } // if
         } // for
@@ -741,14 +681,10 @@ public class Dinistiq {
                 if (className.startsWith(JAVALANG_PREFIX)&&(idx>0)) {
                     String value = getReferenceValue(className.substring(idx+2, className.length()-2)).toString();
                     className = className.substring(0, idx);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("() instanciating "+value+" :"+className);
-                    } // if
+                    LOG.debug("() instanciating {} :{}", value, className);
                     Class<? extends Object> c = Class.forName(className.substring(0, idx));
                     Object instance = c.getConstructor(String.class).newInstance(value);
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("() storing value "+key+" :"+instance.getClass().getName()+" - "+instance);
-                    } // if
+                    LOG.info("() storing value {} :{} - {}", key, instance.getClass().getName(), instance);
                     beans.put(key, instance);
                     dependencies.put(key, new HashSet<>());
                 } else {
@@ -758,30 +694,22 @@ public class Dinistiq {
                         beans.put(key, instance);
                         dependencies.put(key, new HashSet<>());
                     } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("() instanciating "+className);
-                        } // if
+                        LOG.debug("() instanciating {}", className);
                         Class<? extends Object> c = Class.forName(className);
                         createAndRegisterInstance(dependencies, c, key);
                     } // if
                 } // if
             } // if
         } // for
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() beanlist "+beanlist);
-        } // if
+        LOG.info("() beanlist {}", beanlist);
 
         // Instanciate annotated beans
         final Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() number of annotated beans "+classes.size());
-        } // if
+        LOG.info("() number of annotated beans {}", classes.size());
         for (Class<? extends Object> c : classes) {
             createAndRegisterInstance(dependencies, c, null);
         } // for
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("() beans "+beans.keySet());
-        } // if
+        LOG.debug("() beans {}", beans.keySet());
 
         // Fill in injections and note needed dependencies
         for (String key : beans.keySet()) {
@@ -789,20 +717,14 @@ public class Dinistiq {
         } // for
 
         // sort beans according to dependencies
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() sorting beans according to dependencies");
-        } // if
+        LOG.info("() sorting beans according to dependencies");
         int ripCord = 10;
         while ((ripCord>0)&&(!dependencies.isEmpty())) {
             ripCord--;
-            if (LOG.isInfoEnabled()) {
-                LOG.info("() "+dependencies.size()+" beans left");
-            } // if
+            LOG.info("() {} beans left", dependencies.size());
             Set<String> deletions = new HashSet<>();
             for (String key : dependencies.keySet()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("() checking if "+key+" can be safely put into the ordered list");
-                } // if
+                LOG.debug("() checking if {} can be safely put into the ordered list", key);
                 boolean dependenciesMet = true;
                 for (Object dep : dependencies.get(key)) {
                     boolean isMet = orderedBeans.contains(dep);
@@ -814,15 +736,11 @@ public class Dinistiq {
                             isMet = isMet&&orderedBeans.contains(d);
                         } // for
                     } // if
-                    if (LOG.isDebugEnabled()&&!isMet) {
-                        LOG.debug("() "+key+" is missing "+dep+" :"+dep.getClass().getName());
-                    } // if
+                    LOG.debug("() {} is missing {} :{}", key, dep, dep.getClass().getName());
                     dependenciesMet = dependenciesMet&&isMet;
                 } // for
                 if (dependenciesMet) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("() adding "+key+" to the list "+orderedBeans);
-                    } // if
+                    LOG.info("() adding {} to the list {}", key, orderedBeans);
                     orderedBeans.add(beans.get(key));
                     deletions.add(key);
                 } // if
@@ -836,30 +754,20 @@ public class Dinistiq {
         } // if
 
         // Call Post Construct
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() calling post construct on ordered beans "+orderedBeans);
-        } // if
+        LOG.info("() calling post construct on ordered beans {}", orderedBeans);
         for (Object bean : orderedBeans) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("() bean "+bean);
-            } // if
+            LOG.info("() bean {}", bean);
             callPostConstruct(bean);
         } // for
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() calling post construct for the rest of the beans");
-        } // if
+        LOG.info("() calling post construct for the rest of the beans");
         for (String key : beans.keySet()) {
             Object bean = beans.get(key);
             if (!orderedBeans.contains(bean)&&!String.class.isAssignableFrom(bean.getClass())) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("() bean without dependencies to call post construct method on "+key+" :"+bean.getClass().getSimpleName());
-                } // if
+                LOG.warn("() bean without dependencies to call post construct method on {} :{}", key, bean.getClass().getSimpleName());
                 callPostConstruct(bean);
             } // if
         } // for
-        if (LOG.isInfoEnabled()) {
-            LOG.info("() setup completed after "+(System.currentTimeMillis()-start)+"ms");
-        } // if
+        LOG.info("() setup completed after {}ms", (System.currentTimeMillis()-start));
     } // Dinistiq()
 
 

@@ -72,9 +72,7 @@ public class SimpleClassResolver implements ClassResolver {
                 url = url.startsWith("jar:") ? url.substring(4) : url;
                 url = url.startsWith("vfs:/") ? "file"+url.substring(3, url.length()-packagePath.length()-2) : url;
                 url = !url.endsWith(".jar") ? url.substring(0, url.length()-packagePath.length()) : url;
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("addUrlsForPackage() resulting URL "+url);
-                } // if
+                LOG.info("addUrlsForPackage() resulting URL {}", url);
                 urls.add(new URL(url));
             } // while
         } catch (IOException e) {
@@ -89,44 +87,32 @@ public class SimpleClassResolver implements ClassResolver {
      * @param name name of a file to be scanned
      */
     protected final void checkClassAndAdd(String name) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("checkClassAndAdd() name="+name);
-        } // if
+        LOG.debug("checkClassAndAdd() name={}", name);
         if (name.endsWith(".class")&&(name.indexOf('$')<0)) {
             name = name.replace(File.separatorChar, '/').replace('/', '.');
             String className = name.substring(0, name.length()-6);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("checkClassAndAdd() class name "+className);
-            } // if
+            LOG.debug("checkClassAndAdd() class name {}", className);
             boolean add = false;
             for (String packageName : packageNames) {
                 add = add||className.startsWith(packageName);
             } // if
             if (add) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("checkClassAndAdd(): "+className);
-                } // if
+                LOG.debug("checkClassAndAdd(): {}", className);
                 classNames.add(className);
             } // if
         } // if
         if (name.endsWith(".properties")) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("checkClassAndAdd() properties "+name);
-            } // if
+            LOG.info("checkClassAndAdd() properties {}", name);
             properties.add(name.replace(File.separatorChar, '/'));
         } // if
     } // checkClassAndAdd()
 
 
     protected final void recurseSubDir(File dir, int basePathLength) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("recurseSubDir() scanning "+dir.getAbsolutePath());
-        } // if
+        LOG.debug("recurseSubDir() scanning {}", dir.getAbsolutePath());
         for (File f : (dir.isDirectory() ? dir.listFiles() : new File[0])) {
             String fileName = f.getAbsolutePath().substring(basePathLength);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("recurseSubDir() fileName="+fileName);
-            } // if
+            LOG.debug("recurseSubDir() fileName={}", fileName);
             if (fileName.endsWith(".class")||fileName.endsWith(".properties")) {
                 checkClassAndAdd(fileName);
             } else {
@@ -147,24 +133,16 @@ public class SimpleClassResolver implements ClassResolver {
         for (String packageName : packageNames) {
             addUrlsForPackage(urls, packageName);
         } // if
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("() url # "+urls.size());
-        } // if
+        LOG.debug("() url # {}", urls.size());
         for (URL u : urls) {
             try {
                 String path = URLDecoder.decode(u.getPath(), "UTF-8");
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("(): path "+path);
-                } // if
+                LOG.info("(): path {}", path);
                 if (path.endsWith(".jar")) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("(): scanning jar "+path);
-                    } // if
+                    LOG.info("(): scanning jar {}", path);
                     JarInputStream is = new JarInputStream(u.openStream());
                     for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("(): entry "+entry.getName());
-                        } // if
+                        LOG.info("(): entry {}", entry.getName());
                         checkClassAndAdd(entry.getName());
                     } // for
                     is.close();
@@ -202,14 +180,10 @@ public class SimpleClassResolver implements ClassResolver {
     @Override
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
         Set<Class<T>> result = new HashSet<>();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getSubclasses() checking "+classNames.size()+" classes");
-        } // if
+        LOG.debug("getSubclasses() checking {} classes", classNames.size());
         for (String className : classNames) {
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("getSubclasses() className="+className);
-                } // if
+                LOG.debug("getSubclasses() className={}", className);
                 Class<T> cls = loadClass(className);
                 if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((c.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
@@ -230,14 +204,10 @@ public class SimpleClassResolver implements ClassResolver {
     @Override
     public <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<>();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getAnnotated() checking "+classNames.size()+" classes");
-        } // if
+        LOG.debug("getAnnotated() checking {} classes", classNames.size());
         for (String className : classNames) {
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("getAnnotated() className="+className);
-                } // if
+                LOG.debug("getAnnotated() className={}", className);
                 Class<T> cls = loadClass(className);
                 if ((!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
@@ -259,14 +229,10 @@ public class SimpleClassResolver implements ClassResolver {
     @Override
     public <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<>();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getAnnotatedSubclasses() checking "+classNames.size()+" classes");
-        } // if
+        LOG.debug("getAnnotatedSubclasses() checking {} classes", classNames.size());
         for (String className : classNames) {
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("getAnnotatedSubclasses() className="+className);
-                } // if
+                LOG.debug("getAnnotatedSubclasses() className={}", className);
                 Class<T> cls = loadClass(className);
                 if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
                     result.add(cls);
@@ -286,9 +252,7 @@ public class SimpleClassResolver implements ClassResolver {
     public SortedSet<String> getProperties(String path) {
         SortedSet<String> result = new TreeSet<>();
         for (String property : properties) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("getProperties("+path+") checking "+property);
-            } // if
+            LOG.info("getProperties({}) checking {}", path, property);
             if (property.startsWith(path)) {
                 result.add(property);
             } // if
