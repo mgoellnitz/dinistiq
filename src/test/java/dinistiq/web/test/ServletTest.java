@@ -69,6 +69,12 @@ public class ServletTest {
             Mockito.when(request2.getRequestURI()).thenReturn("/servlet/nothing");
             HttpServletResponse response2 = Mockito.mock(HttpServletResponse.class);
             ds.service(request2, response2);
+
+            HttpServletRequest request3 = Mockito.mock(HttpServletRequest.class);
+            Mockito.when(request3.getContextPath()).thenReturn("/");
+            Mockito.when(request3.getRequestURI()).thenReturn("/");
+            HttpServletResponse response3 = Mockito.mock(HttpServletResponse.class);
+            ds.service(request3, response3);
         } catch (IOException|ServletException e) {
             Assert.fail("Exception while testing servlet "+e.getMessage());
         } // try/catch

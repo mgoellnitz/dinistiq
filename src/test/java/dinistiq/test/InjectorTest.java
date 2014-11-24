@@ -92,7 +92,22 @@ public class InjectorTest {
         Assert.assertNotNull("Cannot obtain name set", tis);
         Assert.assertEquals("Cannot find expected number of bean names", 1, tis.size());
         Assert.assertEquals("Cannot find expected bean name", "testComponent", tis.iterator().next());
+        Set<String> negative = d.findNames(InjectorTest.class);
+        Assert.assertNotNull("Cannot obtain name set", negative);
+        Assert.assertEquals("Cannot find expected number of bean names", 0, negative.size());
     } // testFindNames()
+
+
+    @Test
+    public void testDontFind() {
+        String negativeTest = d.findBean(String.class, "unannotatedComponent");
+        Assert.assertNull("Type conversion should not have been possible", negativeTest);
+        Set<InjectorTest> negative = d.findBeans(InjectorTest.class);
+        Assert.assertNotNull("Cannot obtain instance set", negative);
+        Assert.assertEquals("Found unexpected instances", 0, negative.size());
+        InjectorTest notAvailable = d.findBean(InjectorTest.class);
+        Assert.assertNull("Cannot obtain instance set", notAvailable);
+    } // testDontFind()
 
 
     @Test
