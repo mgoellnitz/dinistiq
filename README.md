@@ -214,7 +214,7 @@ maven { url "https://raw.githubusercontent.com/mgoellnitz/artifacts/master" }
 and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.3"
+compile "dinistiq:dinistiq:0.4-SNAPSHOT"
 ```
 
 Projects built with legacy tool Apache Maven need the following steps:
@@ -240,7 +240,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.3</version>
+    <versions>0.4-SNAPSHOT</version>
   </dependency>
 ...
 </dependencyManagement>
