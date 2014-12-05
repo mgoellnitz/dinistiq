@@ -20,7 +20,7 @@ defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.3-SNAPSHOT'
+version = '0.3'
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
