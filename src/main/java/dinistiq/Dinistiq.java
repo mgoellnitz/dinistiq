@@ -225,7 +225,6 @@ public class Dinistiq {
 
             };
             String beanName = ""+bean;
-            LOG.error("getValue() {} :{}", beanName, bean.getClass().getName());
             if (dependencies!=null) {
                 dependencies.put(beanName, new HashSet<>());
             } // if
@@ -281,7 +280,6 @@ public class Dinistiq {
         LOG.info("createInstance({})", cls.getSimpleName());
         dependencies.put(beanName, new HashSet<>());
         Constructor<?> c = null;
-        // Constructor<?>[] constructors = cls.getConstructors();
         Constructor<?>[] constructors = cls.getDeclaredConstructors();
         LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
         for (Constructor<?> ctor : constructors) {
@@ -555,8 +553,7 @@ public class Dinistiq {
         String beanClassName = beanClass.getName();
         while (beanClass!=Object.class) {
             if (bean instanceof Map) {
-                Properties mapProperties = getProperties(key);
-                fillMap(bean, mapProperties);
+                fillMap(bean, getProperties(key));
                 LOG.info("() filled map '{}' {}", key, bean);
             } // if
             for (Field field : beanClass.getDeclaredFields()) {
@@ -587,7 +584,7 @@ public class Dinistiq {
                 LOG.debug("({}) inject parameters on method {}", key, m.getName());
                 Class<? extends Object>[] parameterTypes = m.getParameterTypes();
                 Type[] genericParameterTypes = m.getGenericParameterTypes();
-                final Annotation[][] parameterAnnotations = m.getParameterAnnotations();
+                Annotation[][] parameterAnnotations = m.getParameterAnnotations();
                 Object[] parameters = getParameters(dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
                 try {
                     m.invoke(bean, parameters);
@@ -597,11 +594,11 @@ public class Dinistiq {
             } // if
             if (m.getName().startsWith("set")&&(m.getParameterTypes().length>0)) {
                 String propertyName = Introspector.decapitalize(m.getName().substring(3));
-                final Class<?> parameterType = m.getParameterTypes()[0];
-                final Type genericType = m.getGenericParameterTypes()[0];
+                Class<?> parameterType = m.getParameterTypes()[0];
+                Type genericType = m.getGenericParameterTypes()[0];
                 LOG.debug("({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
                 if (beanProperties.stringPropertyNames().contains(propertyName)) {
-                    final String propertyValue = beanProperties.getProperty(propertyName);
+                    String propertyValue = beanProperties.getProperty(propertyName);
                     boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
                     boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                     Object[] parameters = new Object[1];
