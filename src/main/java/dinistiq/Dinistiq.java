@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class Dinistiq {
 
     private static final String MAP_TYPE = "java.util.Map";
 
-    private static final String LIS_TYPE = "java.util.List";
+    private static final String LIST_TYPE = "java.util.List";
 
     private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
 
@@ -150,8 +151,8 @@ public class Dinistiq {
 
 
     /**
-     * Find exactly one beans of a given type.
-     * If there are more beans of that type just one of them is returned. This is fairly randon by design.
+     * Find exactly one bean of a given type.
+     * If there are more beans of that type just one of them is returned. This is fairly random by design.
      *
      * @param <T> type to check resulting bean for
      * @param type instance of that type
@@ -169,7 +170,7 @@ public class Dinistiq {
      *
      * @param <T> type to check resulting bean for
      * @param cls instance of that type
-     * @param name name the search bean must have
+     * @param name name the searched bean must have
      * @return resulting bean or null
      */
     public <T extends Object> T findBean(Class<? extends T> cls, String name) {
@@ -190,17 +191,17 @@ public class Dinistiq {
      *
      * @return collection of all bean names
      */
-    public Collection<String> getAllBeansNames() {
+    public Collection<String> getAllBeanNames() {
         return beans.keySet();
     } // getAllBeanNames()
 
 
-    private Object getValue(String customer, Class<? extends Object> cls, Type type) throws Exception {
-        if (Collection.class.isAssignableFrom(cls)) {
+    private Object getValue(Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
+        ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
+        if ((name == null) && Collection.class.isAssignableFrom(cls)) {
             LOG.debug("getValue() collection: {}", type);
-            if (type instanceof ParameterizedType) {
-                ParameterizedType pType = (ParameterizedType) type;
-                final Type collectionType = pType.getActualTypeArguments()[0];
+            if (parameterizedType!=null) {
+                Type collectionType = parameterizedType.getActualTypeArguments()[0];
                 LOG.debug("getValue() inner type {}", collectionType);
                 Set<? extends Object> resultCollection = findBeans((Class<? extends Object>) collectionType);
                 if (List.class.isAssignableFrom(cls)) {
@@ -210,19 +211,26 @@ public class Dinistiq {
                 return resultCollection;
             } // if
         } // if
-        Object bean = findBean(cls);
-        if (bean==null) {
-            throw new Exception("for "+customer+": bean of type "+cls.getName()+" not found.");
-        } // if
-        return bean;
-    } // getValue()
+        Object bean = name == null ? findBean(cls) : beans.get(name);
+        if (Provider.class.equals(cls)) {
+            final Dinistiq d = this;
+            final Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            LOG.info("getValue() Provider for {} :{}", name, c);
+            bean = new Provider() {
 
+                @Override
+                public Object get() {
+                    return name == null ? d.findBean(c): d.findBean(c, name);
+                }
 
-    private Object getValue(String customer, Class<?> cls, Type type, String name) throws Exception {
-        if (name==null) {
-            return getValue(customer, cls, type);
+            };
+            String beanName = ""+bean;
+            LOG.error("getValue() {} :{}", beanName, bean.getClass().getName());
+            if (dependencies!=null) {
+                dependencies.put(beanName, new HashSet<>());
+            } // if
+            beans.put(beanName, bean);
         } // if
-        Object bean = beans.get(name);
         if (bean==null) {
             throw new Exception("for "+customer+": no bean with name '"+name+"' found.");
         } // if
@@ -236,6 +244,7 @@ public class Dinistiq {
     /**
      * Obtain a parameter array to call a method with injections or a constructor with injections
      *
+     * @param dependencies map of dependencies for beans - pass null if you don't want to record needed dependencies
      * @param beanName name of the bean
      * @param types types array for the call
      * @param genericTypes generic type array for the call
@@ -252,8 +261,10 @@ public class Dinistiq {
                     name = ((Named) a).value();
                 } // if
             } // for
-            parameters[i] = getValue(beanName, types[i], genericTypes[i], name);
-            dependencies.get(beanName).add(parameters[i]);
+            parameters[i] = getValue(dependencies, beanName, types[i], genericTypes[i], name);
+            if (dependencies!=null) {
+                dependencies.get(beanName).add(parameters[i]);
+            } // if
         } // for
         return parameters;
     } // getParameters()
@@ -270,15 +281,23 @@ public class Dinistiq {
         LOG.info("createInstance({})", cls.getSimpleName());
         dependencies.put(beanName, new HashSet<>());
         Constructor<?> c = null;
-        Constructor<?>[] constructors = cls.getConstructors();
+        // Constructor<?>[] constructors = cls.getConstructors();
+        Constructor<?>[] constructors = cls.getDeclaredConstructors();
+        LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
         for (Constructor<?> ctor : constructors) {
-            if (ctor.getAnnotation(Inject.class)!=null) {
-                c = ctor;
-            } // if
+            LOG.debug("createInstance({}) {}", cls.getSimpleName(), ctor);
+            c = (ctor.getAnnotation(Inject.class)!=null) ? ctor : c;
         } // for
         c = (c==null) ? cls.getConstructor() : c;
-        Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
-        return convert(c.newInstance(parameters));
+        // Don't record constructor dependencies - they MUST be already fulfilled
+        Object[] parameters = getParameters(null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
+        boolean accessible = c.isAccessible();
+        try {
+            c.setAccessible(true);
+            return convert(c.newInstance(parameters));
+        } finally {
+            c.setAccessible(accessible);
+        } // try/finally
     } // createInstance()
 
 
@@ -290,8 +309,9 @@ public class Dinistiq {
      * @return name to be used for the bean
      */
     private String getBeanName(Class<? extends Object> cls, String name) {
-        LOG.debug("getBeanName({}= cls={}", name, cls);
-        String beanName = (name==null) ? cls.getAnnotation(Named.class).value() : name;
+        LOG.debug("getBeanName({}) cls={}", name, cls);
+        Named annotation = cls.getAnnotation(Named.class);
+        String beanName = (name==null) ? (annotation==null ? null : annotation.value()) : name;
         if (StringUtils.isBlank(beanName)) {
             beanName = Introspector.decapitalize(cls.getSimpleName());
         } // if
@@ -304,16 +324,13 @@ public class Dinistiq {
      *
      * @param cls type to create an instance of
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
+     * @throws Exception when instanciation is not possible for whatever reason
      */
-    private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
-        LOG.info("createAndRegisterInstance({}= cls={}", name, cls);
-        try {
-            String beanName = getBeanName(cls, name);
-            Object bean = createInstance(dependencies, cls, beanName);
-            beans.put(beanName, bean);
-        } catch (Exception e) {
-            LOG.error("createAndRegisterInstance() error instanciating bean of type "+cls.getName(), e);
-        } // try/catch
+    private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) throws Exception {
+        LOG.info("createAndRegisterInstance({}) cls={}", name, cls);
+        String beanName = getBeanName(cls, name);
+        Object bean = createInstance(dependencies, cls, beanName);
+        beans.put(beanName, bean);
     } // createAndRegisterInstance()
 
 
@@ -548,7 +565,7 @@ public class Dinistiq {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
                     LOG.info("({} :{}) needs injection with name {}", field.getName(), field.getGenericType(), name);
-                    Object b = getValue(key, field.getType(), field.getGenericType(), name);
+                    Object b = getValue(dependencies, key, field.getType(), field.getGenericType(), name);
                     final boolean accessible = field.isAccessible();
                     try {
                         field.setAccessible(true);
@@ -671,6 +688,8 @@ public class Dinistiq {
                 beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
             } // if
         } // for
+        List<Class<?>> classList = new ArrayList<>();
+        List<String> nameList = new ArrayList<>();
         for (String key : beanlist.stringPropertyNames()) {
             String className = beanlist.getProperty(key);
             if (MAP_TYPE.equals(className)) {
@@ -689,37 +708,59 @@ public class Dinistiq {
                     beans.put(key, instance);
                     dependencies.put(key, new HashSet<>());
                 } else {
-                    if (className.startsWith(LIS_TYPE)&&(idx>0)) {
+                    if (className.startsWith(LIST_TYPE)&&(idx>0)) {
                         String values[] = getReferenceValue(className.substring(idx+1, className.length()-1)).toString().split(",");
                         List<String> instance = Arrays.asList(values);
                         beans.put(key, instance);
                         dependencies.put(key, new HashSet<>());
                     } else {
-                        LOG.debug("() instanciating {}", className);
+                        LOG.debug("() listing {}", className);
                         Class<? extends Object> c = Class.forName(className);
-                        createAndRegisterInstance(dependencies, c, key);
+                        classList.add(c);
+                        nameList.add(key);
                     } // if
                 } // if
             } // if
         } // for
         LOG.info("() beanlist {}", beanlist);
 
-        // Instanciate annotated beans
+        // List annotated beans
         final Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
         LOG.info("() number of annotated beans {}", classes.size());
         for (Class<? extends Object> c : classes) {
-            createAndRegisterInstance(dependencies, c, null);
+            classList.add(c);
+            nameList.add(null);
         } // for
         LOG.debug("() beans {}", beans.keySet());
 
+        // Instanciate beans from the properties files and from annotations taking constructor injection dependencies into account
+        int ripCord = 10;
+        while ((ripCord>0)&&(!classList.isEmpty())) {
+            LOG.debug("() trying {} beans: {}", nameList.size(), classList);
+            ripCord--;
+            List<Class<?>> restClassList = new ArrayList<>();
+            List<String> restNameList = new ArrayList<>();
+            for (int i = 0; i<classList.size(); i++) {
+                try {
+                    createAndRegisterInstance(dependencies, classList.get(i), nameList.get(i));
+                } catch (Exception e) {
+                    LOG.warn("() will retry {} later ", classList.get(i), e);
+                    restClassList.add(classList.get(i));
+                    restNameList.add(nameList.get(i));
+                } // try/catch
+            } // for
+            classList = restClassList;
+            nameList = restNameList;
+        } // while
+
         // Fill in injections and note needed dependencies
-        for (String key : beans.keySet()) {
+        for (String key : new HashSet<>(beans.keySet())) {
             injectDependencies(dependencies, key, beans.get(key));
         } // for
 
         // sort beans according to dependencies
         LOG.info("() sorting beans according to dependencies");
-        int ripCord = 10;
+        ripCord = 10;
         while ((ripCord>0)&&(!dependencies.isEmpty())) {
             ripCord--;
             LOG.info("() {} beans left", dependencies.size());

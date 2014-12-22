@@ -490,7 +490,7 @@ My myNewInstance = dinistiq.createBean(My.class, null);
 ```
 
 If this is still no option, you can - like with external beans - provide instances externally and
-let dinistiq still handler their injections and post construct methods.
+let dinistiq still handle their injections and post construct methods.
 
 ```Java
 My myNewInstance = new My();
@@ -530,13 +530,13 @@ to this list:
 |Type link|-|
 |Injection||
 |Annotation guidance|only JSR330|
-|Constructor injection|yes (limited)|
+|Constructor injection|yes|
 |Field injection|yes|
 |Setter injection|yes|
 |Factory methods|no|
 |Static injection|no|
 |Method interception|no|
-|Providers|no|
+|Providers|(limited)|
 |Optional injection|no|
 |Mixed injection|?|
 |Post construction hook|yes|

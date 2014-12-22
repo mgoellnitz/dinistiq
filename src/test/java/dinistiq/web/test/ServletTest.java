@@ -31,6 +31,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.atinject.tck.auto.Car;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -45,6 +46,7 @@ public class ServletTest {
     public void testServlet() {
         Set<String> packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
+        packages.add(Car.class.getPackage().getName());
         Dinistiq d = null;
         try {
             d = new Dinistiq(packages, InjectorTest.prepareInitialBeans());
@@ -85,6 +87,7 @@ public class ServletTest {
     public void testContextLoaderListener() {
         Set<String> packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
+        packages.add(Car.class.getPackage().getName());
         Dinistiq d = null;
         try {
             d = new Dinistiq(packages, InjectorTest.prepareInitialBeans());

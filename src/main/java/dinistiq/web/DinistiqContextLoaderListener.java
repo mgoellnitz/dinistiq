@@ -99,7 +99,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             externalBeans.put("servletContext", context);
             Dinistiq dinistiq = new Dinistiq(classResolver, externalBeans);
             context.setAttribute(DINISTIQ_INSTANCE, dinistiq);
-            for (String name : dinistiq.getAllBeansNames()) {
+            for (String name : dinistiq.getAllBeanNames()) {
                 context.setAttribute(name, dinistiq.findBean(Object.class, name));
             } // for
         } catch (Exception ex) {
@@ -110,7 +110,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // Nothing to be clean up on context destruction
+        // Nothing to be cleaned up on context destruction
     } // contextDestroyed()
 
 } // DinistiqContextLoaderListener

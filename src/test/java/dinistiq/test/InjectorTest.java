@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Singleton;
+import org.atinject.tck.Tck;
+import org.atinject.tck.auto.Car;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,10 +61,11 @@ public class InjectorTest {
     public InjectorTest() {
         packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
+        packages.add(Car.class.getPackage().getName());
         try {
             d = new Dinistiq(packages, prepareInitialBeans());
         } catch (Exception e) {
-            Assert.fail(e.getMessage());
+            Assert.fail(e.getClass().getSimpleName()+": "+e.getMessage());
             Assert.assertNotNull("DI container could not be initialized", d);
         } // try/catch
     } // InjectorTest()
@@ -255,7 +258,7 @@ public class InjectorTest {
     @Test
     public void testAnnotationLookup() {
         Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
-        Assert.assertEquals("Unexpected number of annotated beans in scope", 7, beans.size());
+        Assert.assertEquals("Unexpected number of annotated beans in scope", 9, beans.size());
     } // testAnnotationLookup()
 
 
@@ -289,5 +292,13 @@ public class InjectorTest {
         TestComponent testComponent = d.findBean(TestComponent.class);
         Assert.assertEquals("Non expected instance injected", testComponent, instance.getTestComponent());
     } // testInstanceInit()
+
+
+    @Test
+    public void testUsingTck() {
+        Car car = d.findBean(Car.class);
+        Assert.assertNotNull("Tck's car should have been instanciated", car);
+        Tck.testsFor(car, true, true);
+    } // testUsingTck()
 
 } // InjectorTest
