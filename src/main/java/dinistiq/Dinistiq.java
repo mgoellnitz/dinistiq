@@ -85,7 +85,7 @@ public class Dinistiq {
      * @param bean
      */
     @SuppressWarnings("unchecked")
-    private <T extends Object> T convert(Class<? extends T> cls, Object bean) {
+    private <T extends Object> T convert(Object bean) {
         return (T) bean;
     } // convert()
 
@@ -102,7 +102,8 @@ public class Dinistiq {
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
                 LOG.info("findBeans() adding to result {}:{}", bean, type.getName());
-                result.add(convert(type, bean));
+                T b = convert(bean);
+                result.add(b);
             } // if
         } // for
         return result;
@@ -177,7 +178,7 @@ public class Dinistiq {
         if (bean!=null) {
             LOG.info("findBean() {} :{}", name, bean.getClass().getName());
             if (cls.isAssignableFrom(bean.getClass())) {
-                result = convert(cls, bean);
+                result = convert(bean);
             } // if
         } // if
         return result;
@@ -277,7 +278,7 @@ public class Dinistiq {
         } // for
         c = (c==null) ? cls.getConstructor() : c;
         Object[] parameters = getParameters(dependencies, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
-        return convert(cls, c.newInstance(parameters));
+        return convert(c.newInstance(parameters));
     } // createInstance()
 
 
