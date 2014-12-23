@@ -198,7 +198,7 @@ public class Dinistiq {
 
     private Object getValue(Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
-        if ((name == null) && Collection.class.isAssignableFrom(cls)) {
+        if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
             LOG.debug("getValue() collection: {}", type);
             if (parameterizedType!=null) {
                 Type collectionType = parameterizedType.getActualTypeArguments()[0];
@@ -211,7 +211,7 @@ public class Dinistiq {
                 return resultCollection;
             } // if
         } // if
-        Object bean = name == null ? findBean(cls) : beans.get(name);
+        Object bean = (name==null) ? findBean(cls) : beans.get(name);
         if (Provider.class.equals(cls)) {
             final Dinistiq d = this;
             final Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
@@ -220,7 +220,7 @@ public class Dinistiq {
 
                 @Override
                 public Object get() {
-                    return name == null ? d.findBean(c): d.findBean(c, name);
+                    return (name==null) ? d.findBean(c) : d.findBean(c, name);
                 }
 
             };
@@ -230,13 +230,10 @@ public class Dinistiq {
             } // if
             beans.put(beanName, bean);
         } // if
-        if (bean==null) {
-            throw new Exception("for "+customer+": no bean with name '"+name+"' found.");
-        } // if
         if (cls.isAssignableFrom(bean.getClass())) {
             return bean;
         } // if
-        throw new Exception("for "+customer+": "+name+" :"+cls.getName()+" not found.");
+        throw new Exception("for "+customer+": no bean "+(name != null ? name+" :" : "of type ")+cls.getSimpleName()+" found.");
     } // getValue()
 
 
@@ -278,7 +275,6 @@ public class Dinistiq {
      */
     private <T extends Object> T createInstance(Map<String, Set<Object>> dependencies, Class<T> cls, String beanName) throws Exception {
         LOG.info("createInstance({})", cls.getSimpleName());
-        dependencies.put(beanName, new HashSet<>());
         Constructor<?> c = null;
         Constructor<?>[] constructors = cls.getDeclaredConstructors();
         LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
@@ -289,6 +285,7 @@ public class Dinistiq {
         c = (c==null) ? cls.getConstructor() : c;
         // Don't record constructor dependencies - they MUST be already fulfilled
         Object[] parameters = getParameters(null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
+        dependencies.put(beanName, new HashSet<>());
         boolean accessible = c.isAccessible();
         try {
             c.setAccessible(true);

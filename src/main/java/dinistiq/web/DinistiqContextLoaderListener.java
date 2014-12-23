@@ -65,13 +65,13 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
      * Exposes any bean from the dinistiq scope to the application scope (servlet context) of the web
      * layer including an instance of dinistiq itself.
      *
-     * @param contextEnvironment
+     * @param contextEvent
      */
     @Override
-    public void contextInitialized(ServletContextEvent contextEnvironment) {
+    public void contextInitialized(ServletContextEvent contextEvent) {
         // just to check what our log instance looks like
         LOG.warn("contextInitialized() log: {}", LOG.getClass().getName());
-        ServletContext context = contextEnvironment.getServletContext();
+        ServletContext context = contextEvent.getServletContext();
         Set<String> packages = new HashSet<>();
         final String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
         if (StringUtils.isNotBlank(packagNameString)) {
