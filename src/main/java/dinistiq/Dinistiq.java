@@ -741,7 +741,7 @@ public class Dinistiq {
                 try {
                     createAndRegisterInstance(dependencies, classList.get(i), nameList.get(i));
                 } catch (Exception e) {
-                    LOG.warn("() will retry {} later ", classList.get(i), e);
+                    LOG.warn("() will retry {} later: {} - {}", classList.get(i), e.getClass().getName(), e.getMessage());
                     restClassList.add(classList.get(i));
                     restNameList.add(nameList.get(i));
                 } // try/catch
