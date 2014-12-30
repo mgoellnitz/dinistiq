@@ -216,7 +216,7 @@ public class Dinistiq {
             final Dinistiq d = this;
             final Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
             LOG.info("getValue() Provider for {} :{}", name, c);
-            bean = new Provider() {
+            bean = new Provider<Object>() {
 
                 @Override
                 public Object get() {
