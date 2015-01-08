@@ -73,18 +73,18 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         LOG.warn("contextInitialized() log: {}", LOG.getClass().getName());
         ServletContext context = contextEvent.getServletContext();
         Set<String> packages = new HashSet<>();
-        final String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
+        String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
         if (StringUtils.isNotBlank(packagNameString)) {
             for (String packageName : packagNameString.split(",")) {
                 packageName = packageName.trim();
                 packages.add(packageName);
             } // for
         } // if
-        final String classResolverName = context.getInitParameter(DINISTIQ_CLASSRESOLVER);
+        String classResolverName = context.getInitParameter(DINISTIQ_CLASSRESOLVER);
         ClassResolver classResolver = null;
         if (StringUtils.isNotBlank(classResolverName)) {
             try {
-                final Class<?> forName = Class.forName(classResolverName);
+                Class<?> forName = Class.forName(classResolverName);
                 Object[] args = new Object[1];
                 args[0] = packages;
                 classResolver = (ClassResolver) forName.getConstructors()[0].newInstance(args);

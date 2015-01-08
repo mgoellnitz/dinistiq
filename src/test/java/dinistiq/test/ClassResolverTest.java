@@ -32,7 +32,7 @@ public class ClassResolverTest {
 
     @Test
     public void testClassLoader() {
-        Set<String> packages = new HashSet<String>();
+        Set<String> packages = new HashSet<>();
         packages.add(SimpleClassResolver.class.getPackage().getName());
         packages.add("javax");
         ClassResolver resolver = new SimpleClassResolver(packages);

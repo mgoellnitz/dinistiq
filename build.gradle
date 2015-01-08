@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-  compile "org.slf4j:slf4j-api:1.7.7"
+  compile "org.slf4j:slf4j-api:1.7.9"
   compile "commons-lang:commons-lang:2.6"
   compile "javax.inject:javax.inject:1"
   
