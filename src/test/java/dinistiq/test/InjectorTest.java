@@ -19,6 +19,7 @@
 package dinistiq.test;
 
 import dinistiq.Dinistiq;
+import dinistiq.test.components.CollectionReferences;
 import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.InitialBeanDependentComponent;
@@ -150,14 +151,26 @@ public class InjectorTest {
 
     @Test
     @SuppressWarnings("rawtypes")
-    public void testListBeans() {
+    public void testLiteralCollections() {
         Set<List> lists = d.findBeans(List.class);
         Assert.assertTrue("no lists at all found", lists.size()>0);
         List list = d.findBean(List.class, "listTest");
         Assert.assertNotNull("test list not found", list);
         Assert.assertEquals("first value not correct", "first", list.get(0));
         Assert.assertEquals("second value not correct", "second", list.get(1));
-    } // testListBeans()
+        
+        Set<Set> sets = d.findBeans(Set.class);
+        Assert.assertTrue("no sets at all found", sets.size()>0);
+        Set set = d.findBean(Set.class, "setTest");
+        Assert.assertNotNull("test set not found", set);
+        Assert.assertEquals("set should contain two elements", 2, set.size());
+        Assert.assertEquals("first value not correct", "second", set.iterator().next());
+        
+        CollectionReferences cr = d.findBean(CollectionReferences.class);
+        Assert.assertNotNull("no collection references object found", cr);
+        Assert.assertEquals("referenced set should contain two elements", 2, cr.getStringSet().size());
+        Assert.assertEquals("first value not correct in referenced set", "second", cr.getStringSet().iterator().next());
+    } // testLiteralCollections()
 
 
     @Test
@@ -258,7 +271,7 @@ public class InjectorTest {
     @Test
     public void testAnnotationLookup() {
         Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
-        Assert.assertEquals("Unexpected number of annotated beans in scope", 9, beans.size());
+        Assert.assertEquals("Unexpected number of annotated beans in scope", 10, beans.size());
     } // testAnnotationLookup()
 
 

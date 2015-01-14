@@ -70,6 +70,8 @@ public class Dinistiq {
 
     private static final String LIST_TYPE = "java.util.List";
 
+    private static final String SET_TYPE = "java.util.Set";
+
     private static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{[a-zA-Z0-9_\\.]*\\}");
 
     private final Map<String, String> environment = new HashMap<>(System.getenv());
@@ -196,6 +198,7 @@ public class Dinistiq {
     } // getAllBeanNames()
 
 
+    // TODO: Must use bean property values.
     private Object getValue(Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
@@ -233,7 +236,7 @@ public class Dinistiq {
         if (cls.isAssignableFrom(bean.getClass())) {
             return bean;
         } // if
-        throw new Exception("for "+customer+": no bean "+(name != null ? name+" :" : "of type ")+cls.getSimpleName()+" found.");
+        throw new Exception("for "+customer+": no bean "+(name!=null ? name+" :" : "of type ")+cls.getSimpleName()+" found.");
     } // getValue()
 
 
@@ -440,7 +443,7 @@ public class Dinistiq {
                 LOG.debug("getReferenceValue({}) string replacement in {}", propertyValue, stringValue);
                 String name = m.group();
                 name = name.substring(2, name.length()-1);
-                LOG.debug("getReferenceValue({}) replacingn {}", propertyValue, name);
+                LOG.debug("getReferenceValue({}) replacing {}", propertyValue, name);
                 String replacement = beans.containsKey(name) ? ""+beans.get(name) : (environment.containsKey(name) ? environment.get(name) : "__UNKNOWN__");
                 stringValue = stringValue.replace("${"+name+"}", replacement);
                 m = p.matcher(stringValue);
@@ -519,6 +522,7 @@ public class Dinistiq {
 
     /**
      * Fill bean as a map.
+     * Replaces object references but does not split compound values like sets or lists.
      *
      * @param bean must be of type Map<Object, Object>
      * @param mapProperties properties map with the values to be added to the map bean
@@ -543,7 +547,7 @@ public class Dinistiq {
     private void injectDependencies(Map<String, Set<Object>> dependencies, String key, Object bean) throws Exception {
         // Prepare values from properties files
         Properties beanProperties = getProperties(key);
-        LOG.debug("({}) bean properties {}", key, beanProperties.keySet());
+        LOG.debug("injectDependencies({}) bean properties {}", key, beanProperties.keySet());
 
         // fill injected fields
         Class<? extends Object> beanClass = bean.getClass();
@@ -551,14 +555,15 @@ public class Dinistiq {
         while (beanClass!=Object.class) {
             if (bean instanceof Map) {
                 fillMap(bean, getProperties(key));
-                LOG.info("() filled map '{}' {}", key, bean);
+                LOG.info("injectDependencies() filled map '{}' {}", key, bean);
+                return; // If it's a map we don't need to inject anything beyond some map properties files.
             } // if
             for (Field field : beanClass.getDeclaredFields()) {
-                LOG.debug("({}) field {}", key, field.getName());
+                LOG.debug("injectDependencies({}) field {}", key, field.getName());
                 if (field.getAnnotation(Inject.class)!=null) {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
-                    LOG.info("({} :{}) needs injection with name {}", field.getName(), field.getGenericType(), name);
+                    LOG.info("injectDependencies({} :{}) needs injection with name {}", field.getName(), field.getGenericType(), name);
                     Object b = getValue(dependencies, key, field.getType(), field.getGenericType(), name);
                     final boolean accessible = field.isAccessible();
                     try {
@@ -566,7 +571,7 @@ public class Dinistiq {
                         field.set(bean, b);
                         dependencies.get(key).add(b);
                     } catch (SecurityException|IllegalArgumentException|IllegalAccessException e) {
-                        LOG.error("() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
+                        LOG.error("injectDependencies() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                     } finally {
                         field.setAccessible(accessible);
                     } // try/catch
@@ -575,10 +580,10 @@ public class Dinistiq {
             beanClass = beanClass.getSuperclass();
         } // while
 
-        // call injected setters
+        // call methods with annotated injections
         for (Method m : bean.getClass().getMethods()) {
             if (m.getAnnotation(Inject.class)!=null) {
-                LOG.debug("({}) inject parameters on method {}", key, m.getName());
+                LOG.debug("injectDependencies({}) inject parameters on method {}", key, m.getName());
                 Class<? extends Object>[] parameterTypes = m.getParameterTypes();
                 Type[] genericParameterTypes = m.getGenericParameterTypes();
                 Annotation[][] parameterAnnotations = m.getParameterAnnotations();
@@ -586,20 +591,35 @@ public class Dinistiq {
                 try {
                     m.invoke(bean, parameters);
                 } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                    LOG.error("() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
+                    LOG.error("injectDependencies() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
                 } // try/catch
             } // if
-            if (m.getName().startsWith("set")&&(m.getParameterTypes().length>0)) {
+        } // for
+
+        // Fill in manually set values from properties file
+        for (String property : beanProperties.stringPropertyNames()) {
+            String methodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
+            LOG.debug("injectDependencies({}) {} -> {}", key, property, methodName);
+            Method m = null;
+            // Have to find it just by name
+            for (Method me : bean.getClass().getMethods()) {
+                if (me.getName().equals(methodName)&&(me.getParameterTypes().length>0)) {
+                    m = me;
+                } // if
+            } // for
+            if (m==null) {
+                LOG.warn("injectDependencies({}) no setter method found for property {}", key, property);
+            } else {
                 String propertyName = Introspector.decapitalize(m.getName().substring(3));
                 Class<?> parameterType = m.getParameterTypes()[0];
                 Type genericType = m.getGenericParameterTypes()[0];
-                LOG.debug("({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
+                LOG.debug("injectDependencies({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
                 if (beanProperties.stringPropertyNames().contains(propertyName)) {
                     String propertyValue = beanProperties.getProperty(propertyName);
                     boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
                     boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                     Object[] parameters = new Object[1];
-                    LOG.debug("({}) trying to set value {} {}:{} {}", key, propertyName, isBoolean, isCollection, propertyValue);
+                    LOG.debug("injectDependencies({}) trying to set value {} (bool {}) (collection {}) {}", key, propertyName, isBoolean, isCollection, propertyValue);
                     try {
                         parameters[0] = getReferenceValue(propertyValue);
                         if (isBoolean&&(parameters[0] instanceof String)) {
@@ -617,8 +637,8 @@ public class Dinistiq {
                         if ("double".equals(parameterType.getName())) {
                             parameters[0] = new Double(propertyValue);
                         } // if
-                        if (isCollection) {
-                            Set<Object> valueSet = new HashSet<>();
+                        if (isCollection&&(!Collection.class.isAssignableFrom(parameters[0].getClass()))) {
+                            Collection<Object> valueSet = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
                             for (String value : propertyValue.split(",")) {
                                 valueSet.add(getReferenceValue(value));
                             } // for
@@ -626,7 +646,7 @@ public class Dinistiq {
                         } // if
                         m.invoke(bean, parameters);
                     } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                        LOG.error("() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
+                        LOG.error("injectDependencies() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
                     } // try/catch
                 } // if
             } // if
@@ -702,9 +722,11 @@ public class Dinistiq {
                     beans.put(key, instance);
                     dependencies.put(key, new HashSet<>());
                 } else {
-                    if (className.startsWith(LIST_TYPE)&&(idx>0)) {
+                    boolean setType = className.startsWith(SET_TYPE);
+                    if ((setType||className.startsWith(LIST_TYPE))&&(idx>0)) {
                         String values[] = getReferenceValue(className.substring(idx+1, className.length()-1)).toString().split(",");
-                        List<String> instance = Arrays.asList(values);
+                        Collection<String> instance = setType ? new HashSet<>(Arrays.asList(values)) : Arrays.asList(values);
+                        LOG.debug("() collection {} (set {}): {}", key, setType, instance);
                         beans.put(key, instance);
                         dependencies.put(key, new HashSet<>());
                     } else {
