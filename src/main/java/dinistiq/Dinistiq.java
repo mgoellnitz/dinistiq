@@ -619,7 +619,7 @@ public class Dinistiq {
                     boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
                     boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                     Object[] parameters = new Object[1];
-                    LOG.debug("injectDependencies({}) trying to set value {} (bool {}) (collection {}) {}", key, propertyName, isBoolean, isCollection, propertyValue);
+                    LOG.debug("injectDependencies({}) trying to set value {} (bool {}) (collection {}) '{}'", key, propertyName, isBoolean, isCollection, propertyValue);
                     try {
                         parameters[0] = getReferenceValue(propertyValue);
                         if (isBoolean&&(parameters[0] instanceof String)) {
@@ -638,12 +638,13 @@ public class Dinistiq {
                             parameters[0] = new Double(propertyValue);
                         } // if
                         if (isCollection&&(!Collection.class.isAssignableFrom(parameters[0].getClass()))) {
-                            Collection<Object> valueSet = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
+                            Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
                             for (String value : propertyValue.split(",")) {
-                                valueSet.add(getReferenceValue(value));
+                                values.add(getReferenceValue(value));
                             } // for
-                            parameters[0] = valueSet;
+                            parameters[0] = values;
                         } // if
+                        LOG.debug("injectDependencies({}) setting value {} '{}' :{}", key, propertyName, parameters[0], parameters[0].getClass());
                         m.invoke(bean, parameters);
                     } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
                         LOG.error("injectDependencies() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
