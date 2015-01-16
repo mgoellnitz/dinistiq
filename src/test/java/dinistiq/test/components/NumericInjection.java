@@ -47,6 +47,11 @@ public class NumericInjection extends TestComponentB {
     }
 
 
+    public void setIntValue() {
+        // This method should not be consired on injection
+    }
+
+
     public long getLongValue() {
         return longValue;
     }

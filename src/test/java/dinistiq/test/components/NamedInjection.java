@@ -32,11 +32,21 @@ public class NamedInjection {
 
     @Inject
     @Named
-    private String stringTest ;
+    private String stringTest;
 
     @Inject
     @Named("b")
     private String stringValue;
+
+    @Inject
+    @Named
+    private String directValue;
+
+    @Inject
+    @Named("another")
+    private String namedValue;
+
+    private String someValue;
 
 
     public String getStringTest() {
@@ -46,6 +56,27 @@ public class NamedInjection {
 
     public String getStringValue() {
         return stringValue;
+    }
+
+
+    public String getDirectValue() {
+        return directValue;
+    }
+
+
+    public String getNamedValue() {
+        return namedValue;
+    }
+
+
+    public String getSomeValue() {
+        return someValue;
+    }
+
+
+    @Inject
+    public void setSomeValue(@Named("another") String someValue) {
+        this.someValue = someValue;
     }
 
 } // NamedInjection

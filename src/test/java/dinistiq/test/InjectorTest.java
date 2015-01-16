@@ -198,6 +198,9 @@ public class InjectorTest {
         Assert.assertNotNull("Named injection test component not found", ni);
         Assert.assertEquals("Named inection with default name failed", "stringValue", ni.getStringTest());
         Assert.assertEquals("Named inection with passed name failed", "a string value", ni.getStringValue());
+        Assert.assertEquals("Named inection with default name failed", "This is a direct value", ni.getDirectValue());
+        Assert.assertEquals("Named inection with passed name failed", "a string value", ni.getNamedValue());
+        Assert.assertEquals("Named inection with passed name failed", "a string value", ni.getSomeValue());
     } // testNamedInjections()
 
 

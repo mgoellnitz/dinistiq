@@ -198,23 +198,19 @@ public class Dinistiq {
     } // getAllBeanNames()
 
 
-    // TODO: Must use bean property values.
-    private Object getValue(Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
+    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
             LOG.debug("getValue() collection: {}", type);
             if (parameterizedType!=null) {
                 Type collectionType = parameterizedType.getActualTypeArguments()[0];
                 LOG.debug("getValue() inner type {}", collectionType);
-                Set<? extends Object> resultCollection = findBeans((Class<? extends Object>) collectionType);
-                if (List.class.isAssignableFrom(cls)) {
-                    LOG.debug("getValue() transforming to list");
-                    return new ArrayList<>(resultCollection);
-                } // if
+                Collection<? extends Object> resultCollection = findBeans((Class<? extends Object>) collectionType);
+                resultCollection = List.class.isAssignableFrom(cls) ? new ArrayList<>(resultCollection) : resultCollection;
                 return resultCollection;
             } // if
         } // if
-        Object bean = (name==null) ? findBean(cls) : beans.get(name);
+        Object bean = (name==null) ? findBean(cls) : (beanProperties.containsKey(name) ? getReferenceValue(beanProperties.getProperty(name)) : beans.get(name));
         if (Provider.class.equals(cls)) {
             final Dinistiq d = this;
             final Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
@@ -234,6 +230,9 @@ public class Dinistiq {
             beans.put(beanName, bean);
         } // if
         if (cls.isAssignableFrom(bean.getClass())) {
+            if ((dependencies!=null)&&beans.containsValue(bean)) {
+                dependencies.get(customer).add(bean);
+            } // if
             return bean;
         } // if
         throw new Exception("for "+customer+": no bean "+(name!=null ? name+" :" : "of type ")+cls.getSimpleName()+" found.");
@@ -251,7 +250,8 @@ public class Dinistiq {
      * @return array suitable as parameter for invoke or newInstance calls
      * @throws Exception
      */
-    private Object[] getParameters(Map<String, Set<Object>> dependencies, String beanName, Class<? extends Object>[] types, Type[] genericTypes, Annotation[][] annotations) throws Exception {
+    private Object[] getParameters(Properties beanProperties, Map<String, Set<Object>> dependencies, String beanName, Class<? extends Object>[] types, Type[] genericTypes, Annotation[][] annotations) throws Exception {
+        beanProperties = beanProperties==null ? new Properties() : beanProperties;
         Object[] parameters = new Object[types.length];
         for (int i = 0; i<types.length; i++) {
             String name = null;
@@ -260,10 +260,7 @@ public class Dinistiq {
                     name = ((Named) a).value();
                 } // if
             } // for
-            parameters[i] = getValue(dependencies, beanName, types[i], genericTypes[i], name);
-            if (dependencies!=null) {
-                dependencies.get(beanName).add(parameters[i]);
-            } // if
+            parameters[i] = getValue(beanProperties, dependencies, beanName, types[i], genericTypes[i], name);
         } // for
         return parameters;
     } // getParameters()
@@ -287,7 +284,7 @@ public class Dinistiq {
         } // for
         c = (c==null) ? cls.getConstructor() : c;
         // Don't record constructor dependencies - they MUST be already fulfilled
-        Object[] parameters = getParameters(null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
+        Object[] parameters = getParameters(null, null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
         dependencies.put(beanName, new HashSet<>());
         boolean accessible = c.isAccessible();
         try {
@@ -489,13 +486,10 @@ public class Dinistiq {
                     username = host.substring(0, idx);
                     host = host.substring(idx+1);
                 } // if
-                idx = username.indexOf(':');
-                if (idx>0) {
-                    String[] userinfos = username.split(":");
-                    if (userinfos.length>1) {
-                        username = userinfos[0];
-                        values.put(name+".password", userinfos[1]);
-                    } // if
+                String[] userinfos = username.split(":");
+                if (userinfos.length>1) {
+                    username = userinfos[0];
+                    values.put(name+".password", userinfos[1]);
                 } // if
                 if (StringUtils.isNotBlank(username)) {
                     values.put(name+".username", username);
@@ -563,13 +557,12 @@ public class Dinistiq {
                 if (field.getAnnotation(Inject.class)!=null) {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
-                    LOG.info("injectDependencies({} :{}) needs injection with name {}", field.getName(), field.getGenericType(), name);
-                    Object b = getValue(dependencies, key, field.getType(), field.getGenericType(), name);
+                    LOG.info("injectDependencies({}) {} :{} needs injection with name {}", key, field.getName(), field.getGenericType(), name);
+                    Object b = getValue(beanProperties, dependencies, key, field.getType(), field.getGenericType(), name);
                     final boolean accessible = field.isAccessible();
                     try {
                         field.setAccessible(true);
                         field.set(bean, b);
-                        dependencies.get(key).add(b);
                     } catch (SecurityException|IllegalArgumentException|IllegalAccessException e) {
                         LOG.error("injectDependencies() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                     } finally {
@@ -587,7 +580,7 @@ public class Dinistiq {
                 Class<? extends Object>[] parameterTypes = m.getParameterTypes();
                 Type[] genericParameterTypes = m.getGenericParameterTypes();
                 Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-                Object[] parameters = getParameters(dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
+                Object[] parameters = getParameters(beanProperties, dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
                 try {
                     m.invoke(bean, parameters);
                 } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
@@ -623,7 +616,7 @@ public class Dinistiq {
                     try {
                         parameters[0] = getReferenceValue(propertyValue);
                         if (isBoolean&&(parameters[0] instanceof String)) {
-                            parameters[0] = "true".equals(propertyValue);
+                            parameters[0] = new Boolean(propertyValue);
                         } // if
                         if ("long".equals(parameterType.getName())) {
                             parameters[0] = new Long(propertyValue);

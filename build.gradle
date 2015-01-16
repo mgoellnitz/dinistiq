@@ -34,6 +34,12 @@ repositories {
   mavenCentral()
 }
 
+tasks.withType(Test) {
+  systemProperty 'firstUrl', 'http://user:password@github.com:80/'
+  systemProperty 'secondUrl', 'http://:password@github.com'
+  systemProperty 'thirdUrl', '://:80'
+}
+
 dependencies {
   compile "org.slf4j:slf4j-api:1.7.9"
   compile "commons-lang:commons-lang:2.6"
