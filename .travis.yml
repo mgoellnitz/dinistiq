@@ -1,1 +1,9 @@
 language: java
+
+addons:
+  coverity_scan:
+    project:
+    name: "mgoellnitz/dinistiq"
+  description: "Minimalistic Java JSR-330 Dependency Injection"
+  branch_pattern: master
+  
