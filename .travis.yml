@@ -11,5 +11,6 @@ addons:
     project:
       name: "mgoellnitz/dinistiq"
       description: "Minimalistic Java JSR-330 Dependency Injection"
-    branch_pattern: coverity_scan
-    build_command:   "gradle clean build"
+    build_command:   "gradle check"
+    build_command_prepend: "gradle clean"
+    branch_pattern: master
