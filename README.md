@@ -4,6 +4,7 @@ Minimalistic Dependency Injection
 =================================
 
 [![Build Status](https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master)](https://travis-ci.org/mgoellnitz/dinistiq)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/3953/badge.svg)](https://scan.coverity.com/projects/3953)
 
 A small footprint approach to dependency injection with a framework or container 
 implemented in Java.

@@ -616,7 +616,7 @@ public class Dinistiq {
                     try {
                         parameters[0] = getReferenceValue(propertyValue);
                         if (isBoolean&&(parameters[0] instanceof String)) {
-                            parameters[0] = new Boolean(propertyValue);
+                            parameters[0] = Boolean.valueOf(propertyValue);
                         } // if
                         if ("long".equals(parameterType.getName())) {
                             parameters[0] = new Long(propertyValue);
@@ -693,7 +693,9 @@ public class Dinistiq {
             // ignore subfolders!
             if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
                 LOG.debug("() resource {}", propertyResource);
-                beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
+                InputStream resource = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource);
+                beanlist.load(resource);
+                resource.close();
             } // if
         } // for
         List<Class<?>> classList = new ArrayList<>();
