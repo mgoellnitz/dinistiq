@@ -84,4 +84,16 @@ public class MockRegisterableServlet implements RegisterableServlet {
         return 0;
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof MockRegisterableServlet;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return 13;
+    }
+
 } // MockRegisterableServlet
