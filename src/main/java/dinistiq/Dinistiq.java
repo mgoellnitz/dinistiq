@@ -693,9 +693,7 @@ public class Dinistiq {
             // ignore subfolders!
             if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
                 LOG.debug("() resource {}", propertyResource);
-                InputStream resource = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource);
-                beanlist.load(resource);
-                resource.close();
+                beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
             } // if
         } // for
         List<Class<?>> classList = new ArrayList<>();
