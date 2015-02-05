@@ -96,8 +96,21 @@ public class ServletTest {
             Assert.fail(e.getMessage());
         } // try/catch
 
+        // Test with some init values for the servlet
         DinistiqContextLoaderListener dcll = new DinistiqContextLoaderListener();
         ServletContextEvent sce = new ServletContextEvent(new MockServletContext(d));
+        dcll.contextInitialized(sce);
+        dcll.contextDestroyed(sce);
+
+        // Test with no init values for the servlet to trigger default paths
+        dcll = new DinistiqContextLoaderListener();
+        sce = new ServletContextEvent(new MockServletContext(true, null, d));
+        dcll.contextInitialized(sce);
+        dcll.contextDestroyed(sce);
+
+        // Test with partially wrong init values for the servlet to trigger exception handling
+        dcll = new DinistiqContextLoaderListener();
+        sce = new ServletContextEvent(new MockServletContext(true, "X", d));
         dcll.contextInitialized(sce);
         dcll.contextDestroyed(sce);
     } // testContextLoaderListener()

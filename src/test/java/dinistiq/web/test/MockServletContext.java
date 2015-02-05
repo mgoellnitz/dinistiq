@@ -38,10 +38,21 @@ import javax.servlet.ServletException;
 public class MockServletContext implements ServletContext {
 
     private final Map<String, Object> attributes = new HashMap<>();
+    
+    private boolean emptyInit;
+
+    private String resolverClassName;
+
+
+    public MockServletContext(boolean emptyInit, String resolverClassName, Dinistiq dinistiq) {
+        this.emptyInit = emptyInit;
+        this.resolverClassName = resolverClassName;
+        attributes.put(DinistiqContextLoaderListener.DINISTIQ_INSTANCE, dinistiq);
+    }
 
 
     public MockServletContext(Dinistiq dinistiq) {
-        attributes.put(DinistiqContextLoaderListener.DINISTIQ_INSTANCE, dinistiq);
+        this(false, null, dinistiq);
     }
 
 
@@ -157,10 +168,10 @@ public class MockServletContext implements ServletContext {
     @Override
     public String getInitParameter(String string) {
         if (DinistiqContextLoaderListener.DINISTIQ_PACKAGES.equals(string)) {
-            return "dummy";
+            return emptyInit ? null : "dummy";
         } // if
         if (DinistiqContextLoaderListener.DINISTIQ_CLASSRESOLVER.equals(string)) {
-            return SimpleClassResolver.class.getName();
+            return emptyInit ? resolverClassName : SimpleClassResolver.class.getName();
         } // if
         throw new UnsupportedOperationException("NYI");
     }
