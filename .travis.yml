@@ -1,9 +1,10 @@
 language: java
-  
+
+after_success:
+  - gradle jacocoTestReport coveralls  
+
 env:
   global:
-   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
    - secure: "bhO39dfznhtM1svs5XIwZTyMRQ7qrk72FnsvCC6AGTXat8V5fNfbxF0xXX2nLscBI92Fu8zhZbdlod+SihefeYrSIaYZoaRjb+jJpJ1ogQK+Np3CiFwGwXAAF+MHFp1PvoKP0cQJsBX1Q2oTUlKWLkcMZR6WeqHPUM3R3LWW3FE="
 
 addons:
