@@ -37,10 +37,24 @@ repositories {
   mavenCentral()
 }
 
-tasks.withType(Test) {
-  systemProperty 'firstUrl', 'http://user:password@github.com:80/'
-  systemProperty 'secondUrl', 'http://:password@github.com'
-  systemProperty 'thirdUrl', '://:80'
+// Code coverage reporting
+apply plugin: 'com.github.kt3k.coveralls'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
 }
 
 dependencies {
@@ -59,6 +73,14 @@ dependencies {
   testCompile "org.mockito:mockito-all:1.10.8" // 1.10.14 available from jcenter()
 }
 
+// Triggers some unit test elements
+tasks.withType(Test) {
+  systemProperty 'firstUrl', 'http://user:password@github.com:80/'
+  systemProperty 'secondUrl', 'http://:password@github.com'
+  systemProperty 'thirdUrl', '://:80'
+}
+
+// maven artifact publication stuff
 task sourcesJar(type: Jar, dependsOn: classes) {
   classifier = 'sources'
   from sourceSets.main.allSource
