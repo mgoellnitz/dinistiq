@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,14 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import groovy.util.Node;
+
 defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.4-SNAPSHOT'
+version = '0.3'
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.7
@@ -41,7 +44,7 @@ tasks.withType(Test) {
 }
 
 dependencies {
-  compile "org.slf4j:slf4j-api:1.7.9"
+  compile "org.slf4j:slf4j-api:1.7.10"
   compile "commons-lang:commons-lang:2.6"
   compile "javax.inject:javax.inject:1"
   
@@ -66,12 +69,48 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
   from "${buildDir}/docs/javadoc"
 }
 
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+publishing {
+    publications {
+        mavenCustom(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      if (gradle.gradleVersion != '1.6') {
-        groupId 'dinistiq'
-      }
+      pom.withXml {
+        def pom = asNode()
+        def first = pom.children().get(0)
+        first.plus {
+          new Node(pom, 'name', 'Dinistiq')
+          new Node(pom, 'description', 'JSR 330 based Java  minimal footprint Dependency Injection framework')
+          new Node(pom, 'url', 'https://github.com/mgoellnitz/dinistiq/')
+          def scm = new Node(pom, 'scm')
+          scm.appendNode('connection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
+          scm.appendNode('developerConnection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
+          scm.appendNode('url', 'git@github.com:mgoellnitz/dinistiq.git')
+          def license = new Node(pom, 'licenses').appendNode('license')
+          license.appendNode('name', 'LGPL-3.0')
+          license.appendNode('url', 'http://opensource.org/licenses/LGPL-3.0')
+          license
+        }
+        def developer = pom.appendNode('developers').appendNode('developer')
+        developer.appendNode('name', 'Martin Goellnitz')
+        developer.appendNode('organization', 'Provocon')
+        developer.appendNode('organizationUrl', 'http://www.provocon.de/')
+      }  
+      groupId 'dinistiq'
       from components.java
       artifact sourcesJar 
       artifact javadocJar 
