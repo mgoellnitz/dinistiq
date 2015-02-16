@@ -22,7 +22,7 @@ defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.3'
+version = '0.4-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
@@ -44,7 +44,6 @@ buildscript {
     repositories {
         mavenCentral()
     }
-
     dependencies {
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
     }
