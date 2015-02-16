@@ -2,17 +2,3 @@ language: java
 
 after_success:
   - gradle jacocoTestReport coveralls  
-
-env:
-  global:
-   - secure: "bhO39dfznhtM1svs5XIwZTyMRQ7qrk72FnsvCC6AGTXat8V5fNfbxF0xXX2nLscBI92Fu8zhZbdlod+SihefeYrSIaYZoaRjb+jJpJ1ogQK+Np3CiFwGwXAAF+MHFp1PvoKP0cQJsBX1Q2oTUlKWLkcMZR6WeqHPUM3R3LWW3FE="
-
-addons:
-  coverity_scan:
-    project:
-      name: "mgoellnitz/dinistiq"
-      description: "Minimalistic Java JSR-330 Dependency Injection"
-    build_command:   "gradle check"
-    build_command_prepend: "gradle clean"
-    notification_email: scan_notifications@example.com
-    branch_pattern: master
