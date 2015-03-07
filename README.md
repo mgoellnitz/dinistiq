@@ -79,8 +79,8 @@ public class ConfigStuff {
 } // ConfigStuff
 ```
 
-In this case, filename is search as a String component with the name "filename", while somePrefix
-has a specific named "prefix" annotated.
+In this case, filename is searched as a String component with the name "filename", while somePrefix
+has a specific named annotation with value "prefix".
 
 This complete set-up is done without any configuration for dinistiq itself but only for the 
 components to be used.
@@ -187,7 +187,7 @@ mapTest=java.util.Map
 
 creates and empty map instance. Like any other beans the contents of this map can be
 modified by a properties file. In this case the contents of the properties file's
-key / value pairs will for the contents of the map.
+key / value pairs will be used as content for the whole map.
 
 Lists of string can be created by
 
