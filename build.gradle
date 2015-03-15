@@ -69,7 +69,7 @@ dependencies {
   // tests are logging at debug level through special log4j.properties
   testCompile "org.slf4j:slf4j-log4j12:1.7.10"
   // Some servlet API elements
-  testCompile "org.mockito:mockito-all:1.10.8" // 1.10.14 available from jcenter()
+  testCompile "org.mockito:mockito-all:1.10.19"
 }
 
 // Triggers some unit test elements
