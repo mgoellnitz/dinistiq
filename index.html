@@ -1,0 +1,697 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Dinistiq by mgoellnitz</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Dinistiq</h1>
+        <p class="header">Minimalistic Dependency Injection - Or: what I got wrong about dependency injection. dinistiq is a minimalistic approach to component based application setup done in Java. With only few external dependencies and a very small footprint it is based on the JSR 330 annotations for the Java SE using only one scope with mostly singletons.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/mgoellnitz/dinistiq/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/mgoellnitz/dinistiq/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/mgoellnitz/dinistiq">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/mgoellnitz">mgoellnitz</a></p>
+
+
+      </header>
+      <section>
+        <p><img src="https://raw.github.com/mgoellnitz/dinistiq/master/doc/dinistiq.png" alt="dinistiq"></p>
+
+<h1>
+<a id="minimalistic-dependency-injection" class="anchor" href="#minimalistic-dependency-injection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Minimalistic Dependency Injection</h1>
+
+<p><a href="https://travis-ci.org/mgoellnitz/dinistiq"><img src="https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/r/mgoellnitz/dinistiq"><img src="https://coveralls.io/repos/mgoellnitz/dinistiq/badge.svg" alt="Coverage Status"></a></p>
+
+<p>A small footprint approach to dependency injection with a framework or container 
+implemented in Java.</p>
+
+<p>Or: What I got wrong about DI</p>
+
+<p>Minimalistic component to use dependency injection for the wire-up of software components. 
+It thus mostly deals with singletons - some of them implementing interfaces - which should 
+be injected as dependencies into one another.</p>
+
+<p>As the only other option besides the single scope managed by Dinistiq it allows for the 
+creation of fresh instances with all dependencies filled in from the scope of all beans
+collected.</p>
+
+<h2>
+<a id="fire-up-the-wire-up" class="anchor" href="#fire-up-the-wire-up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fire up the wire up</h2>
+
+<p>Dinistiq scans a given portion of the classpath for classes annotated with JSR330 Annotations. 
+It does not introduce any custom annotations.</p>
+
+<p>The missing bits can be configured by a set of property files, describing</p>
+
+<ul>
+<li>additional components that should be instancianted</li>
+<li>additional values that should be injected into the instancianted components but cannot be derived from the autoscanned parts</li>
+</ul>
+
+<h2>
+<a id="convention-over-configuration" class="anchor" href="#convention-over-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration</h2>
+
+<p>First of all the most important thing to use dinistiq is to annotate you dependencies with 
+JSR <a href="https://github.com/Inject" class="user-mention">@Inject</a> so that dinistiq can find out which components are needed.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TestComponentB</span> {
+
+    <span class="pl-k">@Inject</span>
+    <span class="pl-k">public</span> <span class="pl-smi">TestInterface</span> test;
+
+} <span class="pl-c">// TestComponentB</span></pre></div>
+
+<p>It then resolves those components from the auto-scanned portion of the classpath where it instanciates 
+all classes annotated with <a href="https://github.com/Singleton" class="user-mention">@Singleton</a>. Optionally these components may be named with <a href="https://github.com/Named" class="user-mention">@Named</a> (with an 
+optional name as the value parameter). Without a name given as a parameter, components are always named
+after their class name without the package name and a decapitalized first letter.</p>
+
+<div class="highlight highlight-Java"><pre>@<span class="pl-smi">Singleton</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TestComponent</span> <span class="pl-k">implements</span> <span class="pl-e">TestInterface</span> {
+
+} <span class="pl-c">// TestComponent</span></pre></div>
+
+<p>Thus in this example the instanciated bean of class TestComponent will be available with the name 
+testComponent. The term "name" is used in this document since it is used as the parameter name in 
+the JSR330 annotations. Since names must be unique they are in this case in fact identifiers 
+througout the whole process.</p>
+
+<p>If you are dealing with components of the same type, not only the beans may be named but also the
+injection point might indicate to require a bean with a certain name.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ConfigStuff</span> {
+
+    <span class="pl-k">@Inject</span>
+    <span class="pl-k">@Named</span>
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> filename;
+
+    <span class="pl-k">@Inject</span>
+    <span class="pl-k">@Named</span>(<span class="pl-s"><span class="pl-pds">"</span>prefix<span class="pl-pds">"</span></span>)
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> somePrefix;
+
+} <span class="pl-c">// ConfigStuff</span></pre></div>
+
+<p>In this case, filename is searched as a String component with the name "filename", while somePrefix
+has a specific named annotation with value "prefix".</p>
+
+<p>This complete set-up is done without any configuration for dinistiq itself but only for the 
+components to be used.</p>
+
+<h2>
+<a id="optional-configuration-with-properties-files" class="anchor" href="#optional-configuration-with-properties-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Optional Configuration with properties files</h2>
+
+<p>If this is not enough, you can explicitly add some beans to be instanciated in properties files</p>
+
+<pre><code>unannotatedComponent=dinistiq.test.components.UnannotatedComponent
+</code></pre>
+
+<p>Those files must simply be put in the folder dinistiq/ anywhere on your classpath. This example 
+will instanciate the class dinistiq.test.components.UnannotatedComponent and store this bean with 
+the name uannotatedComponent in the set of available beans.</p>
+
+<p>The properties files are scanned in alphabetical order, so you can override the class for e.g. 
+unannotatedComponent in a latter properties file, so classes given for bean names used in mybeans.properties
+can be overridden in override-mybeans.properties.</p>
+
+<p>For any of the instanciated beans you can provide more values to explicitly inject - again 
+by the use of properties files.</p>
+
+<p>After instanciation of the bean a properties file with the bean's name as its base filename 
+is searched - first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the 
+classpath. Thus you can deliver your components with a reasonable default and necessary 
+overrides for the specific application.</p>
+
+<p>file dinistiq/beans/example.properties</p>
+
+<pre><code>activateCaching=true
+</code></pre>
+
+<p>This will call the property setter setActivateCaching() on the bean named example. The grammar of
+the properties files describing the explicit injection supports, collections, boolean values, numeric
+value, strings, and references.</p>
+
+<p>file dinistiq/beans/example.properties</p>
+
+<pre><code># numerics
+intValue=42
+longValue=123456789
+floatValue=3.14159
+doubleValue=2.7
+# references
+testInterface=${testComponent}
+# strings and references in compound strings
+replacement=a string
+replacementTest=here comes ${replacement}
+</code></pre>
+
+<p>The bean named example is either a result of the automatic discovery of a class named Example</p>
+
+<div class="highlight highlight-Java"><pre>@<span class="pl-smi">Named</span>
+@<span class="pl-smi">Singleton</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Example</span> {
+
+} <span class="pl-c">// Example</span></pre></div>
+
+<p>a name declaration from the scanned class</p>
+
+<div class="highlight highlight-Java"><pre>@Named(<span class="pl-s"><span class="pl-pds">"</span>example<span class="pl-pds">"</span></span>)
+@<span class="pl-smi">Singleton</span>
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ExampleComponent</span>  {
+
+} <span class="pl-c">// ExampleComponent</span></pre></div>
+
+<p>or taken from the naming in a configuration properties file</p>
+
+<p>file dinistiq/demo.properties</p>
+
+<pre><code>example=some.package.ExampleComponent
+</code></pre>
+
+<p>At the top level, the types of the beans cannot be inferred, as the example</p>
+
+<pre><code>unannotatedComponent=dinistiq.test.components.UnannotatedComponent
+</code></pre>
+
+<p>showed. If you need some typical configuration types at this level - like e.g. Strings, 
+Booleans, Lists, and Maps some extensions of this mere class based syntax had to be 
+introduced. Any simple type found in the java.lang package can be intanciated with a 
+value set since these values are immutable and there are thus no modifiable fields or 
+setters in these classes.</p>
+
+<p>So</p>
+
+<pre><code>booleanValue=java.lang.Boolean("false")
+stringValue=java.lang.String("string value")
+</code></pre>
+
+<p>are some examples for this. While</p>
+
+<pre><code>mapTest=java.util.Map
+</code></pre>
+
+<p>creates and empty map instance. Like any other beans the contents of this map can be
+modified by a properties file. In this case the contents of the properties file's
+key / value pairs will be used as content for the whole map.</p>
+
+<p>Lists of string can be created by</p>
+
+<pre><code>listTest=java.util.List(first,second)
+</code></pre>
+
+<h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
+
+<p>Extend your project with the dependency to the rather small dinistiq library file. 
+Dinisitq - releases and snapshots - are available from the tangram repository at</p>
+
+<p><a href="https://raw.githubusercontent.com/mgoellnitz/artifacts/master">https://raw.githubusercontent.com/mgoellnitz/artifacts/master</a></p>
+
+<p>The group id and artifact id are both 'dinistiq'.</p>
+
+<p>Thus for projects built with gradle you will need to add to your repositories 
+sections of the build file the line</p>
+
+<pre><code>maven { url "https://raw.githubusercontent.com/mgoellnitz/artifacts/master" }
+</code></pre>
+
+<p>and the dependency to the artifact in the dependencies section.</p>
+
+<pre><code>compile "dinistiq:dinistiq:0.4-SNAPSHOT"
+</code></pre>
+
+<p>Projects built with legacy tool Apache Maven need the following steps:</p>
+
+<p>module pom.xml</p>
+
+<div class="highlight highlight-xml"><pre>...
+&lt;<span class="pl-ent">dependencies</span>&gt;
+  ...
+  &lt;<span class="pl-ent">dependency</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;dinistiq&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;dinistiq&lt;/<span class="pl-ent">artifactId</span>&gt;
+  &lt;/<span class="pl-ent">dependency</span>&gt;
+  ...
+&lt;/<span class="pl-ent">dependencies</span>&gt;</pre></div>
+
+<p>base  pom.xml</p>
+
+<div class="highlight highlight-xml"><pre>...
+&lt;<span class="pl-ent">dependencyManagement</span>&gt;
+  ...
+  &lt;<span class="pl-ent">dependency</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;dinistiq&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;dinistiq&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">versions</span>&gt;0.4-SNAPSHOT&lt;/<span class="pl-ent">version</span>&gt;
+  &lt;/<span class="pl-ent">dependency</span>&gt;
+...
+&lt;/<span class="pl-ent">dependencyManagement</span>&gt;
+
+...
+
+&lt;<span class="pl-ent">repositories</span>&gt;
+  &lt;<span class="pl-ent">repository</span>&gt;
+    &lt;<span class="pl-ent">id</span>&gt;tangram&lt;/<span class="pl-ent">id</span>&gt;
+    &lt;<span class="pl-ent">name</span>&gt;Tangram and Dinistiq&lt;/<span class="pl-ent">name</span>&gt;
+    &lt;<span class="pl-ent">url</span>&gt;https://raw.githubusercontent.com/mgoellnitz/artifacts/master&lt;/<span class="pl-ent">url</span>&gt;
+    &lt;<span class="pl-ent">layout</span>&gt;default&lt;/<span class="pl-ent">layout</span>&gt;
+    &lt;<span class="pl-ent">snapshots</span>&gt;
+      &lt;<span class="pl-ent">enabled</span>&gt;true&lt;/<span class="pl-ent">enabled</span>&gt;
+    &lt;/<span class="pl-ent">snapshots</span>&gt;
+  &lt;/<span class="pl-ent">repository</span>&gt;
+&lt;/<span class="pl-ent">repositories</span>&gt;
+...</pre></div>
+
+<p>Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.</p>
+
+<p>Apart from optional configuration files to be placed somehere on your classpath, you simply 
+have to tell dinistiq which portion of the classpath to scan for annotations.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
+
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span class="pl-v">args</span>) {
+        <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
+        packages<span class="pl-k">.</span>add(<span class="pl-smi">Test</span><span class="pl-k">.</span>class<span class="pl-k">.</span>getPackage()<span class="pl-k">.</span>getName());
+        <span class="pl-smi">Dinistiq</span> d <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Dinistiq</span>(packages);
+    } <span class="pl-c">// main()</span>
+
+} <span class="pl-c">// Test</span></pre></div>
+
+<p>Make this portion of the classpath as small as ever possible or point to some invented and thus 
+empty package, if you want to avoid scanning.</p>
+
+<p>After this step you can ask dinistiq for instances of the components it created and injected.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
+
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span class="pl-v">args</span>) {
+        <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
+        packages<span class="pl-k">.</span>add(<span class="pl-smi">Test</span><span class="pl-k">.</span>class<span class="pl-k">.</span>getPackage()<span class="pl-k">.</span>getName());
+        <span class="pl-smi">Dinistiq</span> d <span class="pl-k">=</span> <span class="pl-c1">null</span>;
+        <span class="pl-k">try</span> {
+            d <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Dinistiq</span>(packages);
+        } <span class="pl-k">catch</span> (<span class="pl-smi">Exception</span> e) {
+            <span class="pl-c">//</span>
+        } <span class="pl-c">// try/catch</span>
+        <span class="pl-smi">TestInterface</span> ti <span class="pl-k">=</span> d<span class="pl-k">.</span>findTypedBean(<span class="pl-smi">TestInterface</span><span class="pl-k">.</span>class);
+        <span class="pl-smi">TestInterface</span> test <span class="pl-k">=</span> d<span class="pl-k">.</span>findBean(<span class="pl-smi">TestInterface</span><span class="pl-k">.</span>class, <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>);
+        <span class="pl-k">Set&lt;<span class="pl-smi">TestInterface</span>&gt;</span> tis <span class="pl-k">=</span> d<span class="pl-k">.</span>findTypedBeans(<span class="pl-smi">TestInterface</span><span class="pl-k">.</span>class);
+    } <span class="pl-c">// main()</span>
+
+} <span class="pl-c">// Test</span></pre></div>
+
+<h2>
+<a id="web-embedding" class="anchor" href="#web-embedding" aria-hidden="true"><span class="octicon octicon-link"></span></a>Web embedding</h2>
+
+<p>dinistiq comes with a very lean web integration. A small servlet is used as a front controller 
+with which other servlets implemented as components can be registered.</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"&gt;
+
+  &lt;display-name&gt;dinistiq.web&lt;/display-name&gt;
+
+  &lt;listener&gt;
+    &lt;listener-class&gt;dinistiq.web.DinistiqContextLoaderListener&lt;/listener-class&gt;
+  &lt;/listener&gt;
+  &lt;context-param&gt;
+    &lt;param-name&gt;dinistiq.packages&lt;/param-name&gt;
+    &lt;param-value&gt;com.example.components,org.example.components&lt;/param-value&gt;
+  &lt;/context-param&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;dinistiq&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;dinistiq.web.DinistiqServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;dinistiq&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/d/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+
+&lt;/web-app&gt;
+</code></pre>
+
+<p>This front controller servlet tries to find the other servlets from the dinistiq context by asking 
+for registrable servlets. </p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * Servlets which should handle requests fulfilling a certain regular expression for their uris.</span>
+<span class="pl-c"> */</span>
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-en">RegisterableServlet</span> <span class="pl-k">extends</span> <span class="pl-e">Servlet</span>, <span class="pl-e">Comparable&lt;<span class="pl-smi">RegisterableServlet</span>&gt;</span> {
+
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * Returns a set of regular expression of which the calling URI must adhere one so that this servlet should handle it.</span>
+<span class="pl-c">     */</span>
+    <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> <span class="pl-en">getUriRegex</span>();
+
+    <span class="pl-c">/**</span>
+<span class="pl-c">     * returns an integer indicating if the implementing instance should be considered earlier or later in</span>
+<span class="pl-c">     * the servlet selection process.</span>
+<span class="pl-c">     */</span>
+    <span class="pl-k">int</span> <span class="pl-en">getOrder</span>();
+
+} <span class="pl-c">// RegisterableServlet</span></pre></div>
+
+<p>So a servlet has to tell which regular expressions its request should meet to be able to handle them. 
+Additionally it tells an order number to sort all available servlets to provide a certain precedency 
+rule for them.</p>
+
+<p>Note: Since / is such a common character in URLs and regular exressions need to escape exactly this 
+character, you must pass the / unescaped as it gets auto-escaped by dinistiq.</p>
+
+<h2>
+<a id="custom-class-resolver" class="anchor" href="#custom-class-resolver" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Class Resolver</h2>
+
+<p>It is perfectly possible that you will find our class resolving pretty dumb. So we provide the 
+option to pass over a class resolver instance to dinistiq instead of the set of package names.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
+
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span class="pl-v">args</span>) {
+        <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
+        packages<span class="pl-k">.</span>add(<span class="pl-smi">Test</span><span class="pl-k">.</span>class<span class="pl-k">.</span>getPackage()<span class="pl-k">.</span>getName());
+        packages<span class="pl-k">.</span>add(<span class="pl-smi">Dinistiq</span><span class="pl-k">.</span>class<span class="pl-k">.</span>getPackage()<span class="pl-k">.</span>getName());
+        <span class="pl-smi">Dinistiq</span> d <span class="pl-k">=</span> <span class="pl-c1">null</span>;
+        <span class="pl-smi">ClassResolver</span> classResolver <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">BetterClassResolver</span>(packages);
+        <span class="pl-k">try</span> {
+            d <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Dinistiq</span>(classResolver);
+        } <span class="pl-k">catch</span> (<span class="pl-smi">Exception</span> e) {
+            <span class="pl-c">//</span>
+        } <span class="pl-c">// try/catch</span>
+    } <span class="pl-c">// main()</span>
+
+} <span class="pl-c">// Test</span></pre></div>
+
+<p>Be sure to add the package dinistiq in these cases as shown above. Otherwise for obvious 
+reasons the properties files from the dinistiq path cannot be found as resources to be taken
+into consideration.</p>
+
+<p>If you want to use custom class resolvers with the web integration you need to implement
+a class resolver taking the set of package names as the single parameter to the constructor
+and put the name of this implementing class in the context loader listener configuration
+for dinistiq.</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"&gt;
+
+  &lt;display-name&gt;dinistiq.web&lt;/display-name&gt;
+
+  &lt;listener&gt;
+    &lt;listener-class&gt;dinistiq.web.DinistiqContextLoaderListener&lt;/listener-class&gt;
+  &lt;/listener&gt;
+  &lt;context-param&gt;
+    &lt;param-name&gt;dinistiq.packages&lt;/param-name&gt;
+    &lt;param-value&gt;com.example.components,org.example.components&lt;/param-value&gt;
+  &lt;/context-param&gt;
+  &lt;context-param&gt;
+    &lt;param-name&gt;dinistiq.class.resolver&lt;/param-name&gt;
+    &lt;param-value&gt;org.example.dinistiq.BetterClassResolver&lt;/param-value&gt;
+  &lt;/context-param&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;dinistiq&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;dinistiq.web.DinistiqServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;dinistiq&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/d/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+
+&lt;/web-app&gt;
+</code></pre>
+
+<p>Within the web application all beans from the dinistiq scope are available in the
+application scope (servlet context) as attributes.</p>
+
+<h2>
+<a id="external-components" class="anchor" href="#external-components" aria-hidden="true"><span class="octicon octicon-link"></span></a>External Components</h2>
+
+<p>If your software needs to use some components which cannot be instanciated or obtained using
+all of the means presented here, you can pass over a named set of instances as a base set
+of beans for dinistiq to add the scanned and configured beans to.</p>
+
+<p>We use this to e.g. put the servlet context in the set of beans for web integration (see below).</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">DinistiqContextLoaderListener</span> <span class="pl-k">implements</span> <span class="pl-e">ServletContextListener</span> {
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">contextInitialized</span>(<span class="pl-smi">ServletContextEvent</span> <span class="pl-v">contextEnvironment</span>) {
+        <span class="pl-smi">ServletContext</span> context <span class="pl-k">=</span> contextEnvironment<span class="pl-k">.</span>getServletContext();
+        <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
+        <span class="pl-c1">...</span>
+        <span class="pl-k">try</span> {
+            <span class="pl-k">Map&lt;<span class="pl-smi">String</span>, <span class="pl-smi">Object</span>&gt;</span> externalBeans <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashMap&lt;<span class="pl-smi">String</span>, <span class="pl-smi">Object</span>&gt;</span>();
+            externalBeans<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</span>servletContext<span class="pl-pds">"</span></span>, context);
+            <span class="pl-smi">Dinistiq</span> dinistiq <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Dinistiq</span>(packages, externalBeans);
+            context<span class="pl-k">.</span>setAttribute(<span class="pl-c1">DINISTIQ_INSTANCE</span>, dinistiq);
+        } <span class="pl-k">catch</span> (<span class="pl-smi">Exception</span> ex) {
+            <span class="pl-c1">LOG</span><span class="pl-k">.</span>error(<span class="pl-s"><span class="pl-pds">"</span>init()<span class="pl-pds">"</span></span>, ex);
+        } <span class="pl-c">// try/catch</span>
+    } <span class="pl-c">// contextInitialized()</span>
+
+} <span class="pl-c">// DinistiqContextLoaderListener</span></pre></div>
+
+<h2>
+<a id="besides-the-one-managed-scope" class="anchor" href="#besides-the-one-managed-scope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Besides the one managed Scope</h2>
+
+<p>Dinistiq defines just one scope of beans you can grab beans from. If you need fresh instances
+of beans where the members of this scope should be injected on creation and optional post
+construct methods should be called just following the same rules as the beans from the dinistiq
+scope, you will find a createBeans method besides all the options to find existing beans
+in the scope.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-smi">My</span> myNewInstance <span class="pl-k">=</span> dinistiq<span class="pl-k">.</span>createBean(<span class="pl-smi">My</span><span class="pl-k">.</span>class, <span class="pl-c1">null</span>);</pre></div>
+
+<p>If this is still no option, you can - like with external beans - provide instances externally and
+let dinistiq still handle their injections and post construct methods.</p>
+
+<div class="highlight highlight-Java"><pre><span class="pl-smi">My</span> myNewInstance <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">My</span>();
+dinistiq<span class="pl-k">.</span>initBean(myNewInstance, <span class="pl-c1">null</span>);</pre></div>
+
+<h2>
+<a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<p>The code for dinistiq is supposed to be written in Java 7 and prepared for building with gradle. 
+Gradle versions 1.12 up to 2.3 are tested to be working.</p>
+
+<h2>
+<a id="comparison" class="anchor" href="#comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparison</h2>
+
+<p>The developers of <a href="http://www.silkdi.com/help/comparison.html">silk</a> present an interesting 
+comparison of some DI implementations done in Java and we want to add some  values for dinistiq 
+to this list:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Library</th>
+<th align="right">dinistiq</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Version</td>
+<td align="right">0.3</td>
+</tr>
+<tr>
+<td align="left">Archive size</td>
+<td align="right">&lt;25kB</td>
+</tr>
+<tr>
+<td align="left">Further dependencies</td>
+<td align="right">&lt;=5</td>
+</tr>
+<tr>
+<td align="left">API</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Methods in injector/context</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td align="left">Concept</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Container Model</td>
+<td align="right">flat instances</td>
+</tr>
+<tr>
+<td align="left">Configuration style</td>
+<td align="right">annotation,properties</td>
+</tr>
+<tr>
+<td align="left">Wiring style</td>
+<td align="right">automatic scan</td>
+</tr>
+<tr>
+<td align="left">Types</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Generics support</td>
+<td align="right">limitted</td>
+</tr>
+<tr>
+<td align="left">Generic type safety</td>
+<td align="right">-</td>
+</tr>
+<tr>
+<td align="left">Wildcard generics</td>
+<td align="right">-</td>
+</tr>
+<tr>
+<td align="left">Primitive types handling</td>
+<td align="right">-</td>
+</tr>
+<tr>
+<td align="left">Bind to all (generic) supertypes</td>
+<td align="right">yes</td>
+</tr>
+<tr>
+<td align="left">Type link</td>
+<td align="right">-</td>
+</tr>
+<tr>
+<td align="left">Injection</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Annotation guidance</td>
+<td align="right">only JSR330</td>
+</tr>
+<tr>
+<td align="left">Constructor injection</td>
+<td align="right">yes</td>
+</tr>
+<tr>
+<td align="left">Field injection</td>
+<td align="right">yes</td>
+</tr>
+<tr>
+<td align="left">Setter injection</td>
+<td align="right">yes</td>
+</tr>
+<tr>
+<td align="left">Factory methods</td>
+<td align="right">no</td>
+</tr>
+<tr>
+<td align="left">Static injection</td>
+<td align="right">no</td>
+</tr>
+<tr>
+<td align="left">Method interception</td>
+<td align="right">no</td>
+</tr>
+<tr>
+<td align="left">Providers</td>
+<td align="right">(limited)</td>
+</tr>
+<tr>
+<td align="left">Optional injection</td>
+<td align="right">no</td>
+</tr>
+<tr>
+<td align="left">Mixed injection</td>
+<td align="right">?</td>
+</tr>
+<tr>
+<td align="left">Post construction hook</td>
+<td align="right">yes</td>
+</tr>
+<tr>
+<td align="left">Modularity</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Arrays</td>
+<td align="right">no</td>
+</tr>
+<tr>
+<td align="left">Collections</td>
+<td align="right">partly</td>
+</tr>
+<tr>
+<td align="left">Multibinds</td>
+<td align="right">yes</td>
+</tr>
+<tr>
+<td align="left">Sequence of declarations</td>
+<td align="right">undefined</td>
+</tr>
+<tr>
+<td align="left">Scopes</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Default scope</td>
+<td align="right">Singleton</td>
+</tr>
+<tr>
+<td align="left">Custom scopes</td>
+<td align="right">-</td>
+</tr>
+<tr>
+<td align="left">Available scopes</td>
+<td align="right">Singleton</td>
+</tr>
+<tr>
+<td align="left">Error behaviour</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">Dependency cycles</td>
+<td align="right">illegal</td>
+</tr>
+<tr>
+<td align="left">Detection of a cyclic dependencies error</td>
+<td align="right">runtime</td>
+</tr>
+</tbody>
+</table>
+
+<p>The closest competitor of dinistiq seems to be TinyDI - <a href="https://code.google.com/p/tinydi/">https://code.google.com/p/tinydi/</a>. 
+It recognises JSR330 Annotation but seems to lack the option of config files like the 
+simple properties file mechanism of dinistiq. Additionally - unlike Spring and dinistiq - 
+it depends on public setters for the injections. Private members with the <a href="https://github.com/Inject" class="user-mention">@Inject</a> annotation
+are not enough. Also it is fairly unmaintained for some years now.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
