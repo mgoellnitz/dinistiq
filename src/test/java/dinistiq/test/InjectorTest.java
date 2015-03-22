@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -158,14 +158,14 @@ public class InjectorTest {
         Assert.assertNotNull("test list not found", list);
         Assert.assertEquals("first value not correct", "first", list.get(0));
         Assert.assertEquals("second value not correct", "second", list.get(1));
-        
+
         Set<Set> sets = d.findBeans(Set.class);
         Assert.assertTrue("no sets at all found", sets.size()>0);
         Set set = d.findBean(Set.class, "setTest");
         Assert.assertNotNull("test set not found", set);
         Assert.assertEquals("set should contain two elements", 2, set.size());
         Assert.assertEquals("first value not correct", "second", set.iterator().next());
-        
+
         CollectionReferences cr = d.findBean(CollectionReferences.class);
         Assert.assertNotNull("no collection references object found", cr);
         Assert.assertEquals("referenced set should contain two elements", 2, cr.getStringSet().size());

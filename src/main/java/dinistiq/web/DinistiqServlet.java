@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.Servlet;
@@ -42,9 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Front controller servlet for all dinistiq related calls.
  *
- * All servlets depending on injected components should implement the registrable servlet interface to
- * be registered with this one and be consireded and called in the correct order according to their
- * respective URL patterns.
+ * All servlets depending on injected components should implement the registrable servlet interface to be registered
+ * with this one and be considered and called in the correct order according to their respective URL patterns.
  */
 public class DinistiqServlet extends HttpServlet {
 
@@ -56,7 +54,7 @@ public class DinistiqServlet extends HttpServlet {
     private final Map<Pattern, Servlet> servletMap = new HashMap<>();
 
     /**
-     * describes the order in which the uri pattern regular expressions should be checked.
+     * Describes the order in which the uri pattern's regular expressions should be checked.
      */
     private final List<Pattern> patternOrder = new ArrayList<>();
 
@@ -95,8 +93,7 @@ public class DinistiqServlet extends HttpServlet {
             } // for
             Collections.sort(orderedServlets);
             for (RegisterableServlet servlet : orderedServlets) {
-                Set<String> uriRegexes = servlet.getUriRegex();
-                for (String uriRegex : uriRegexes) {
+                for (String uriRegex : servlet.getUriRegex()) {
                     LOG.debug("init() * {}", uriRegex);
                     Pattern uriPattern = Pattern.compile(uriRegex.replace("/", "\\/"));
                     patternOrder.add(uriPattern);

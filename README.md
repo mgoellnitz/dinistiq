@@ -11,11 +11,11 @@ implemented in Java.
 
 Or: What I got wrong about DI
 
-Minimalistic component to use dependency injection for the wire-up of software components. 
+Minimalistic library to use dependency injection for the wire-up of software components. 
 It thus mostly deals with singletons - some of them implementing interfaces - which should 
 be injected as dependencies into one another.
 
-As the only other option besides the single scope managed by Dinistiq it allows for the 
+As the only other option besides the single scope managed by dinistiq it allows for the 
 creation of fresh instances with all dependencies filled in from the scope of all beans
 collected.
 
@@ -25,10 +25,10 @@ Fire up the wire up
 Dinistiq scans a given portion of the classpath for classes annotated with JSR330 Annotations. 
 It does not introduce any custom annotations.
 
-The missing bits can be configured by a set of property files, describing
+The missing bits can be configured by a set of properties files, describing
 
-- additional components that should be instancianted
-- additional values that should be injected into the instancianted components but cannot be derived from the autoscanned parts
+- additional components that should be instanciated
+- additional values that should be injected into the instanciated components but cannot be derived from the autoscanned parts
 
 Convention over Configuration
 -----------------------------
@@ -45,9 +45,10 @@ public class TestComponentB {
 } // TestComponentB
 ```
 
-It then resolves those components from the auto-scanned portion of the classpath where it instanciates 
-all classes annotated with @Singleton. Optionally these components may be named with @Named (with an 
-optional name as the value parameter). Without a name given as a parameter, components are always named
+In the next step dinistiq resolves those components from the auto-scanned portion 
+of the classpath where it instanciates all classes annotated with @Singleton. 
+Optionally these components may be named with @Named (with an optional name as the 
+value parameter). Without a name given as a parameter, components are always named
 after their class name without the package name and a decapitalized first letter.
 
 ```Java
@@ -57,13 +58,13 @@ public class TestComponent implements TestInterface {
 } // TestComponent
 ```
 
-Thus in this example the instanciated bean of class TestComponent will be available with the name 
-testComponent. The term "name" is used in this document since it is used as the parameter name in 
-the JSR330 annotations. Since names must be unique they are in this case in fact identifiers 
-througout the whole process.
+Thus in this example the instanciated bean of class TestComponent will be available 
+with the name testComponent. The term "name" is used in this document since it is 
+used as the parameter name in the JSR330 annotations. Since names must be unique 
+within the scope they are in this case in fact identifiers througout the whole process.
 
-If you are dealing with components of the same type, not only the beans may be named but also the
-injection point might indicate to require a bean with a certain name.
+If you are dealing with components of the same type, not only the beans may be named 
+but also the injection point might indicate to require a bean with a certain name.
 
 ```Java
 public class ConfigStuff {
@@ -79,45 +80,46 @@ public class ConfigStuff {
 } // ConfigStuff
 ```
 
-In this case, filename is searched as a String component with the name "filename", while somePrefix
-has a specific named annotation with value "prefix".
+In this case, filename is searched as a String component with the name "filename", 
+while somePrefix has a specific named annotation with value "prefix".
 
-This complete set-up is done without any configuration for dinistiq itself but only for the 
-components to be used.
+This complete set-up is done without any configuration for dinistiq itself but only 
+for the components to be used.
 
 Optional Configuration with properties files
 --------------------------------------------
 
-If this is not enough, you can explicitly add some beans to be instanciated in properties files
+If this is not enough, you can explicitly add some beans to be instanciated in properties files.
 
 ```
 unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 ```
 
-Those files must simply be put in the folder dinistiq/ anywhere on your classpath. This example 
-will instanciate the class dinistiq.test.components.UnannotatedComponent and store this bean with 
-the name uannotatedComponent in the set of available beans.
+Those files must simply be put in the folder dinistiq/ anywhere on your classpath. 
+This example will instanciate the class dinistiq.test.components.UnannotatedComponent 
+and store this bean with the name unannotatedComponent in the set of available beans.
 
-The properties files are scanned in alphabetical order, so you can override the class for e.g. 
-unannotatedComponent in a latter properties file, so classes given for bean names used in mybeans.properties
-can be overridden in override-mybeans.properties.
+The properties files are scanned in alphabetical order, so you can override the class 
+for e.g. unannotatedComponent in a latter properties file, so classes given for bean 
+names used in mybeans.properties can be overridden in override-mybeans.properties.
 
 For any of the instanciated beans you can provide more values to explicitly inject - again 
 by the use of properties files.
 
-After instanciation of the bean a properties file with the bean's name as its base filename 
-is searched - first in the dinistiq/defaults/ and then in the dinistiq/beans/ folders on the 
-classpath. Thus you can deliver your components with a reasonable default and necessary 
-overrides for the specific application.
+After instanciation of the bean a properties file with the bean's name as its base 
+filename is searched - first in the dinistiq/defaults/ and then in the dinistiq/beans/ 
+folders on the classpath. Thus you can deliver your components with a reasonable 
+defaults and necessary overrides for the specific application.
 
 file dinistiq/beans/example.properties
 ```
 activateCaching=true
 ```
 
-This will call the property setter setActivateCaching() on the bean named example. The grammar of
-the properties files describing the explicit injection supports, collections, boolean values, numeric
-value, strings, and references.
+This will call the property setter setActivateCaching() on the bean named example. 
+The grammar of the properties files describing the explicit injection supports set
+and list type collections, boolean values, numeric value, strings, and references
+to other beans.
 
 file dinistiq/beans/example.properties
 ```
@@ -169,8 +171,8 @@ unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 showed. If you need some typical configuration types at this level - like e.g. Strings, 
 Booleans, Lists, and Maps some extensions of this mere class based syntax had to be 
 introduced. Any simple type found in the java.lang package can be intanciated with a 
-value set since these values are immutable and there are thus no modifiable fields or 
-setters in these classes.
+value bound to it since these values are immutable and there are thus no modifiable 
+fields or setters in these classes.
 
 So
 
@@ -185,8 +187,8 @@ are some examples for this. While
 mapTest=java.util.Map
 ```
 
-creates and empty map instance. Like any other beans the contents of this map can be
-modified by a properties file. In this case the contents of the properties file's
+creates and empty map instance. Like any other beans the contents of this map can 
+be modified by a properties file. In this case the contents of the properties file's
 key / value pairs will be used as content for the whole map.
 
 Lists of string can be created by
@@ -199,9 +201,9 @@ How to use
 ----------
 
 Extend your project with the dependency to the rather small dinistiq library file. 
-Dinisitq - releases and snapshots - are available from the tangram repository at
+Dinistiq - releases and snapshots - are available from the tangram repository at
 
-https://raw.githubusercontent.com/mgoellnitz/artifacts/master
+http://dl.bintray.com/mgoellnitz/maven
 
 The group id and artifact id are both 'dinistiq'.
 
@@ -209,13 +211,13 @@ Thus for projects built with gradle you will need to add to your repositories
 sections of the build file the line
 
 ```
-maven { url "https://raw.githubusercontent.com/mgoellnitz/artifacts/master" }
+maven { url "http://dl.bintray.com/mgoellnitz/maven" }
 ```
 
 and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.4-SNAPSHOT"
+compile "dinistiq:dinistiq:0.4"
 ```
 
 Projects built with legacy tool Apache Maven need the following steps:
@@ -241,7 +243,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.4-SNAPSHOT</version>
+    <versions>0.4</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -251,8 +253,8 @@ base  pom.xml
 <repositories>
   <repository>
     <id>tangram</id>
-    <name>Tangram and Dinistiq</name>
-    <url>https://raw.githubusercontent.com/mgoellnitz/artifacts/master</url>
+    <name>Dinistiq</name>
+    <url>http://dl.bintray.com/mgoellnitz/maven</url>
     <layout>default</layout>
     <snapshots>
       <enabled>true</enabled>
@@ -264,8 +266,8 @@ base  pom.xml
 
 Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
 
-Apart from optional configuration files to be placed somehere on your classpath, you simply 
-have to tell dinistiq which portion of the classpath to scan for annotations.
+Apart from optional configuration files to be placed somehere on your classpath, 
+you simply have to tell dinistiq which portion of the classpath to scan for annotations.
 
 ```Java
 public class Test  {
@@ -279,8 +281,8 @@ public class Test  {
 } // Test
 ```
 
-Make this portion of the classpath as small as ever possible or point to some invented and thus 
-empty package, if you want to avoid scanning.
+Make this portion of the classpath as small as ever possible or point to some invented 
+and thus empty package, if you want to avoid scanning.
 
 After this step you can ask dinistiq for instances of the components it created and injected.
 
@@ -307,8 +309,8 @@ public class Test  {
 Web embedding
 -------------
 
-dinistiq comes with a very lean web integration. A small servlet is used as a front controller 
-with which other servlets implemented as components can be registered.
+Dinistiq comes with a very lean web integration. A small servlet is used as a front 
+controller with which other servlets implemented as components can be registered.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -343,8 +345,8 @@ with which other servlets implemented as components can be registered.
 </web-app>
 ```
 
-This front controller servlet tries to find the other servlets from the dinistiq context by asking 
-for registrable servlets. 
+This front controller servlet tries to find the other servlets from the dinistiq 
+context by asking for registrable servlets. 
 
 ```Java
 /**
@@ -358,7 +360,7 @@ public interface RegisterableServlet extends Servlet, Comparable<RegisterableSer
     Set<String> getUriRegex();
 
     /**
-     * returns an integer indicating if the implementing instance should be considered earlier or later in
+     * Returns an integer indicating if the implementing instance should be considered earlier or later in
      * the servlet selection process.
      */
     int getOrder();
@@ -450,9 +452,9 @@ application scope (servlet context) as attributes.
 External Components
 -------------------
 
-If your software needs to use some components which cannot be instanciated or obtained using
-all of the means presented here, you can pass over a named set of instances as a base set
-of beans for dinistiq to add the scanned and configured beans to.
+If your software needs to use some components which cannot be instanciated or obtained 
+using all of the means presented here, you can pass over a named set of instances as 
+a base set of beans for dinistiq to add the scanned and configured beans to.
 
 We use this to e.g. put the servlet context in the set of beans for web integration (see below).
 
@@ -480,11 +482,11 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 Besides the one managed Scope
 -----------------------------
 
-Dinistiq defines just one scope of beans you can grab beans from. If you need fresh instances
-of beans where the members of this scope should be injected on creation and optional post
-construct methods should be called just following the same rules as the beans from the dinistiq
-scope, you will find a createBeans method besides all the options to find existing beans
-in the scope.
+Dinistiq defines just one scope of beans you can grab beans from. If you need fresh 
+instances of beans where the members of this scope should be injected on creation and 
+optional post construct methods should be called just following the same rules as 
+the beans from the dinistiq scope, you will find a createBeans method besides all 
+the options to find existing beans in the scope.
 
 ```Java
 My myNewInstance = dinistiq.createBean(My.class, null);
@@ -501,19 +503,19 @@ dinistiq.initBean(myNewInstance, null);
 Building
 --------
 
-The code for dinistiq is supposed to be written in Java 7 and prepared for building with gradle. 
-Gradle versions 1.12 up to 2.3 are tested to be working.
+The code for dinistiq is supposed to be written in Java 7 and prepared for building 
+with gradle. Gradle versions 1.12 up to 2.3 are tested to be working.
 
 Comparison
 ----------
 
-The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an interesting 
-comparison of some DI implementations done in Java and we want to add some  values for dinistiq 
-to this list:
+The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an 
+interesting comparison of some DI implementations done in Java and we want to add 
+some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.3|
+|Version|0.4|
 |Archive size|<25kB|
 |Further dependencies|<=5|
 |API||

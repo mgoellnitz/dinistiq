@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -82,7 +82,7 @@ public class Dinistiq {
 
 
     /**
-     * small helper method to keep areas with suppressed warnings small.
+     * Small helper method to keep areas with suppressed warnings small.
      *
      * @param <T>
      * @param bean
@@ -189,7 +189,7 @@ public class Dinistiq {
 
 
     /**
-     * return the names of all beans in the inistiq scope.
+     * Return the names of all beans in the inistiq scope.
      *
      * @return collection of all bean names
      */
@@ -198,6 +198,18 @@ public class Dinistiq {
     } // getAllBeanNames()
 
 
+    /**
+     * Tries to resolve the value for a given placeholder.
+     *
+     * @param beanProperties properties of the beans to resolve the value for
+     * @param dependencies global dependencies collector to store retrieved reference values as dependecy in
+     * @param customer "customer" descriptor for logging who needed the value resolved
+     * @param cls target class of the value
+     * @param type target type of the value
+     * @param name name of the placeholder
+     * @return replaced value or original string
+     * @throws Exception
+     */
     private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
@@ -240,7 +252,7 @@ public class Dinistiq {
 
 
     /**
-     * Obtain a parameter array to call a method with injections or a constructor with injections
+     * Obtain a parameter array to call a method with injections or a constructor with injections.
      *
      * @param dependencies map of dependencies for beans - pass null if you don't want to record needed dependencies
      * @param beanName name of the bean
@@ -267,7 +279,7 @@ public class Dinistiq {
 
 
     /**
-     * creates an instance of the given type and registeres it with the container.
+     * Creates an instance of the given type and registeres it with the container.
      *
      * @param dependencies dependencies within the scope
      * @param cls type to create an instance of
@@ -315,7 +327,7 @@ public class Dinistiq {
 
 
     /**
-     * creates an instance of the given type and registeres it with the container.
+     * Creates an instance of the given type and registeres it with the container.
      *
      * @param cls type to create an instance of
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
@@ -452,7 +464,7 @@ public class Dinistiq {
 
 
     /**
-     * store URL parts of a given named value with suffixed names in a given map of config values.
+     * Store URL parts of a given named value with suffixed names in a given map of config values.
      *
      * @param name base name of the parts
      * @param value original value of the property

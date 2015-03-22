@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -65,8 +65,7 @@ public class SimpleClassResolver implements ClassResolver {
         try {
             Enumeration<URL> urlEnumeration = Thread.currentThread().getContextClassLoader().getResources(packagePath);
             while (urlEnumeration.hasMoreElements()) {
-                URL u = urlEnumeration.nextElement();
-                String url = u.toString();
+                String url = urlEnumeration.nextElement().toString();
                 int idx = url.indexOf('!');
                 url = idx>0 ? url.substring(0, idx) : url;
                 url = url.startsWith("jar:") ? url.substring(4) : url;
@@ -108,6 +107,12 @@ public class SimpleClassResolver implements ClassResolver {
     } // checkClassAndAdd()
 
 
+    /**
+     * Recurses a given directory to scan for properties and class files.
+     *
+     * @param dir base directory to scann recursively
+     * @param basePathLength length of the basePath string
+     */
     protected final void recurseSubDir(File dir, int basePathLength) {
         LOG.debug("recurseSubDir() scanning {}", dir.getAbsolutePath());
         for (File f : (dir.isDirectory() ? dir.listFiles() : new File[0])) {
@@ -122,6 +127,11 @@ public class SimpleClassResolver implements ClassResolver {
     } // recurseSubDir()
 
 
+    /**
+     * Initialize class resolver with a given set of package names to scan.
+     *
+     * @param packageNames Set of string names for pakckges to scan
+     */
     public SimpleClassResolver(Set<String> packageNames) {
         this.packageNames = packageNames;
         // to have the properties files in the path which we intend to use for configuration

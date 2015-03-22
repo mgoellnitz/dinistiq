@@ -22,7 +22,7 @@ defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.4-SNAPSHOT'
+version = '0.4'
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
@@ -60,9 +60,9 @@ dependencies {
   compile "org.slf4j:slf4j-api:1.7.10"
   compile "org.apache.commons:commons-lang3:3.3.2"
   compile "javax.inject:javax.inject:1"
-  
+
   compile "javax.servlet:servlet-api:2.5"
-    
+
   testCompile "junit:junit:4.12"
   // integrate tck into unit tests
   testCompile "javax.inject:javax.inject-tck:1"
@@ -126,11 +126,11 @@ publishing {
         developer.appendNode('name', 'Martin Goellnitz')
         developer.appendNode('organization', 'Provocon')
         developer.appendNode('organizationUrl', 'http://www.provocon.de/')
-      }  
+      }
       groupId 'dinistiq'
       from components.java
-      artifact sourcesJar 
-      artifact javadocJar 
+      artifact sourcesJar
+      artifact javadocJar
     }
   }
 }

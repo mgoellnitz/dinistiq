@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,15 +30,18 @@ import org.slf4j.LoggerFactory;
 public class TestComponent implements TestInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestComponent.class);
-    
+
+
     @PostConstruct
     public void afterPropertiesSet() {
         LOG.info("afterPropertiesSet() YEAH!");
     } // afterPropertiesSet()
 
+
     /**
      * setMeUp method - not a setter.
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     public void setMeUp() throws Exception {
     } // setMeUp()

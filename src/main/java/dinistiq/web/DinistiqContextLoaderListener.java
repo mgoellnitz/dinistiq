@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -34,17 +34,20 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Context loader listener to initialize the context within a dinistiq instance.
+ * Context loader listener to initialize the context with a dinistiq instance.
  *
  * A dinistiq.packages init param will be necessary to find application specific components.
  *
- * The instance is store in a servlet context attribute for later use together with all the other
- * bean definitions from the dinistiq scope.
+ * The instance is stored in a servlet context attribute for later use together with all the other bean definitions
+ * from the dinistiq scope.
  */
 public class DinistiqContextLoaderListener implements ServletContextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DinistiqContextLoaderListener.class);
 
+    /**
+     * Attribute name for the context/application scope to store the dinistiq instance.
+     */
     public static final String DINISTIQ_INSTANCE = "DINISTIQ_INSTANCE";
 
     /**
@@ -61,9 +64,9 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
     /**
      * Web related dinistiq initialization with parameters taken from the web.xml.
      *
-     * Looks up relevant packages for scanning and a custom class resolvers implementation class name.
-     * Exposes any bean from the dinistiq scope to the application scope (servlet context) of the web
-     * layer including an instance of dinistiq itself.
+     * Looks up relevant packages for scanning and a custom class resolver's implementation class name. Exposes any
+     * bean from the dinistiq scope to the application scope (servlet context) of the web layer including an instance
+     * of dinistiq itself.
      *
      * @param contextEvent
      */
