@@ -220,24 +220,21 @@ key / value pairs will be used as content for the whole map.</p>
 <a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
 
 <p>Extend your project with the dependency to the rather small dinistiq library file. 
-Dinistiq - releases and snapshots - are available from the tangram repository at</p>
+Dinistiq releases are available from JCenter. The group id and artifact id are both 
+'dinistiq'.</p>
 
-<p><a href="http://dl.bintray.com/mgoellnitz/maven">http://dl.bintray.com/mgoellnitz/maven</a></p>
+<p>Thus for projects built with gradle you will need to add to your repositories sections 
+of the build file the line</p>
 
-<p>The group id and artifact id are both 'dinistiq'.</p>
-
-<p>Thus for projects built with gradle you will need to add to your repositories 
-sections of the build file the line</p>
-
-<pre><code>maven { url "http://dl.bintray.com/mgoellnitz/maven" }
+<pre><code>jcenter()
 </code></pre>
 
-<p>and the dependency to the artifact in the dependencies section.</p>
+<p>if it's not there already and the dependency to the artifact in the dependencies section.</p>
 
 <pre><code>compile "dinistiq:dinistiq:0.4"
 </code></pre>
 
-<p>Projects built with legacy tool Apache Maven need the following steps:</p>
+<p>Projects built with Apache Maven need the following steps:</p>
 
 <p>module pom.xml</p>
 
@@ -268,18 +265,19 @@ sections of the build file the line</p>
 
 &lt;<span class="pl-ent">repositories</span>&gt;
   &lt;<span class="pl-ent">repository</span>&gt;
-    &lt;<span class="pl-ent">id</span>&gt;tangram&lt;/<span class="pl-ent">id</span>&gt;
-    &lt;<span class="pl-ent">name</span>&gt;Dinistiq&lt;/<span class="pl-ent">name</span>&gt;
-    &lt;<span class="pl-ent">url</span>&gt;http://dl.bintray.com/mgoellnitz/maven&lt;/<span class="pl-ent">url</span>&gt;
-    &lt;<span class="pl-ent">layout</span>&gt;default&lt;/<span class="pl-ent">layout</span>&gt;
-    &lt;<span class="pl-ent">snapshots</span>&gt;
-      &lt;<span class="pl-ent">enabled</span>&gt;true&lt;/<span class="pl-ent">enabled</span>&gt;
-    &lt;/<span class="pl-ent">snapshots</span>&gt;
+    &lt;<span class="pl-ent">id</span>&gt;jcenter&lt;/<span class="pl-ent">id</span>&gt;
+    &lt;<span class="pl-ent">name</span>&gt;JCenter&lt;/<span class="pl-ent">name</span>&gt;
+    &lt;<span class="pl-ent">url</span>&gt;http://jcenter.bintray.com/&lt;/<span class="pl-ent">url</span>&gt;
   &lt;/<span class="pl-ent">repository</span>&gt;
 &lt;/<span class="pl-ent">repositories</span>&gt;
 ...</pre></div>
 
 <p>Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.</p>
+
+<p>Snapshots artifacts are - at the moment - available from </p>
+
+<pre><code>https://raw.githubusercontent.com/mgoellnitz/artifacts/master/
+</code></pre>
 
 <p>Apart from optional configuration files to be placed somehere on your classpath, 
 you simply have to tell dinistiq which portion of the classpath to scan for annotations.</p>
