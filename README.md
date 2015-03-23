@@ -201,26 +201,23 @@ How to use
 ----------
 
 Extend your project with the dependency to the rather small dinistiq library file. 
-Dinistiq - releases and snapshots - are available from the tangram repository at
+Dinistiq releases are available from JCenter. The group id and artifact id are both 
+'dinistiq'.
 
-http://dl.bintray.com/mgoellnitz/maven
-
-The group id and artifact id are both 'dinistiq'.
-
-Thus for projects built with gradle you will need to add to your repositories 
-sections of the build file the line
+Thus for projects built with gradle you will need to add to your repositories sections 
+of the build file the line
 
 ```
-maven { url "http://dl.bintray.com/mgoellnitz/maven" }
+jcenter()
 ```
 
-and the dependency to the artifact in the dependencies section.
+if it's not there already and the dependency to the artifact in the dependencies section.
 
 ```
 compile "dinistiq:dinistiq:0.4"
 ```
 
-Projects built with legacy tool Apache Maven need the following steps:
+Projects built with Apache Maven need the following steps:
 
 module pom.xml
 ```xml
@@ -252,19 +249,21 @@ base  pom.xml
 
 <repositories>
   <repository>
-    <id>tangram</id>
-    <name>Dinistiq</name>
-    <url>http://dl.bintray.com/mgoellnitz/maven</url>
-    <layout>default</layout>
-    <snapshots>
-      <enabled>true</enabled>
-    </snapshots>
+    <id>jcenter</id>
+    <name>JCenter</name>
+    <url>http://jcenter.bintray.com/</url>
   </repository>
 </repositories>
 ...
 ```
 
 Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
+
+Snapshots artifacts are - at the moment - available from 
+
+```
+https://raw.githubusercontent.com/mgoellnitz/artifacts/master/
+```
 
 Apart from optional configuration files to be placed somehere on your classpath, 
 you simply have to tell dinistiq which portion of the classpath to scan for annotations.
