@@ -32,11 +32,11 @@ import javax.servlet.Servlet;
 public interface RegisterableServlet extends Servlet, Comparable<RegisterableServlet> {
 
     /**
-     * Returns a set of regular expression of which the calling URI must adhere one so that this servlet should handle it.
+     * Returns a set of url patterns this servlet should be registered for.
      *
-     * @return set of regular expressions where matching URLs should be serviced by this servlet
+     * @return set of url patterns this servlet should be called for
      */
-    Set<String> getUriRegex();
+    Set<String> getUrlPatterns();
 
     /**
      * Indicator if the implementing instance should be considered earlier or later in the servlet selection process.

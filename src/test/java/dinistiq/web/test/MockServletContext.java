@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014 Martin Goellnitz
+ * Copyright 2014-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,21 +24,32 @@ import dinistiq.web.DinistiqContextLoaderListener;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.EventListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
+import javax.servlet.ServletSecurityElement;
+import javax.servlet.SessionCookieConfig;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.descriptor.JspConfigDescriptor;
 
 
 @SuppressWarnings("deprecation")
 public class MockServletContext implements ServletContext {
 
     private final Map<String, Object> attributes = new HashMap<>();
-    
+
     private boolean emptyInit;
 
     private String resolverClassName;
@@ -87,7 +98,7 @@ public class MockServletContext implements ServletContext {
 
 
     @Override
-    public Set<?> getResourcePaths(String string) {
+    public Set<String> getResourcePaths(String string) {
         throw new UnsupportedOperationException("NYI");
     }
 
@@ -123,13 +134,13 @@ public class MockServletContext implements ServletContext {
 
 
     @Override
-    public Enumeration<?> getServlets() {
+    public Enumeration<Servlet> getServlets() {
         throw new UnsupportedOperationException("NYI");
     }
 
 
     @Override
-    public Enumeration<?> getServletNames() {
+    public Enumeration<String> getServletNames() {
         throw new UnsupportedOperationException("NYI");
     }
 
@@ -178,7 +189,7 @@ public class MockServletContext implements ServletContext {
 
 
     @Override
-    public Enumeration<?> getInitParameterNames() {
+    public Enumeration<String> getInitParameterNames() {
         throw new UnsupportedOperationException("NYI");
     }
 
@@ -190,7 +201,7 @@ public class MockServletContext implements ServletContext {
 
 
     @Override
-    public Enumeration<?> getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         throw new UnsupportedOperationException("NYI");
     }
 
@@ -209,6 +220,253 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public String getServletContextName() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public int getEffectiveMajorVersion() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public int getEffectiveMinorVersion() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public boolean setInitParameter(String string, String string1) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public ServletRegistration.Dynamic addServlet(String string, String string1) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public ServletRegistration.Dynamic addServlet(String string, Servlet srvlt) {
+        return new ServletRegistration.Dynamic() {
+
+
+            @Override
+            public void setLoadOnStartup(int i) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public Set<String> setServletSecurity(ServletSecurityElement sse) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public void setMultipartConfig(MultipartConfigElement mce) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public void setRunAsRole(String string) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public Set<String> addMapping(String... strings) {
+                return new HashSet<>();
+            }
+
+
+            @Override
+            public Collection<String> getMappings() {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public String getRunAsRole() {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public String getName() {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public String getClassName() {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public boolean setInitParameter(String string, String string1) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public String getInitParameter(String string) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public Set<String> setInitParameters(Map<String, String> map) {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public Map<String, String> getInitParameters() {
+                throw new UnsupportedOperationException("NYI");
+            }
+
+
+            @Override
+            public void setAsyncSupported(boolean arg0) {
+                throw new UnsupportedOperationException("NYI");
+            }
+        };
+    }
+
+
+    @Override
+    public ServletRegistration.Dynamic addServlet(String string, Class<? extends Servlet> type) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public <T extends Servlet> T createServlet(Class<T> type) throws ServletException {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public ServletRegistration getServletRegistration(String string) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public Map<String, ? extends ServletRegistration> getServletRegistrations() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String string, String string1) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String string, Filter filter) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String string, Class<? extends Filter> type) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public <T extends Filter> T createFilter(Class<T> type) throws ServletException {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public FilterRegistration getFilterRegistration(String string) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public Map<String, ? extends FilterRegistration> getFilterRegistrations() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public SessionCookieConfig getSessionCookieConfig() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public void setSessionTrackingModes(Set<SessionTrackingMode> set) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public Set<SessionTrackingMode> getDefaultSessionTrackingModes() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public Set<SessionTrackingMode> getEffectiveSessionTrackingModes() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public void addListener(String string) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public <T extends EventListener> void addListener(T t) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public void addListener(Class<? extends EventListener> type) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public <T extends EventListener> T createListener(Class<T> type) throws ServletException {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public JspConfigDescriptor getJspConfigDescriptor() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public ClassLoader getClassLoader() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public void declareRoles(String... strings) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    @Override
+    public String getVirtualServerName() {
         throw new UnsupportedOperationException("NYI");
     }
 

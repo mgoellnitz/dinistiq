@@ -21,13 +21,18 @@ package dinistiq.web;
 import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
 import dinistiq.SimpleClassResolver;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletRegistration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +109,18 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             context.setAttribute(DINISTIQ_INSTANCE, dinistiq);
             for (String name : dinistiq.getAllBeanNames()) {
                 context.setAttribute(name, dinistiq.findBean(Object.class, name));
+            } // for
+            Collection<RegisterableServlet> servlets = dinistiq.findBeans(RegisterableServlet.class);
+            List<RegisterableServlet> orderedServlets = new ArrayList<>(servlets.size());
+            orderedServlets.addAll(servlets);
+            Collections.sort(orderedServlets);
+            LOG.debug("contextInitialized() servlets {}", orderedServlets);
+            for (RegisterableServlet servlet : orderedServlets) {
+                ServletRegistration registration = context.addServlet(servlet.getClass().getSimpleName(), servlet);
+                for (String urlPattern : servlet.getUrlPatterns()) {
+                    LOG.debug("contextInitialized() * {}", urlPattern);
+                    registration.addMapping(urlPattern);
+                } // for
             } // for
         } catch (Exception ex) {
             LOG.error("init()", ex);
