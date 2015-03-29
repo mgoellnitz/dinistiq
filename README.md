@@ -191,7 +191,7 @@ creates and empty map instance. Like any other beans the contents of this map ca
 be modified by a properties file. In this case the contents of the properties file's
 key / value pairs will be used as content for the whole map.
 
-Lists of string can be created by
+Lists of strings can be created by
 
 ```
 listTest=java.util.List(first,second)
@@ -214,7 +214,7 @@ jcenter()
 if it's not there already and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.4"
+compile "dinistiq:dinistiq:0.5-SNAPSHOT"
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -240,7 +240,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.4</version>
+    <versions>0.5-SNAPSHOT</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -259,10 +259,10 @@ base  pom.xml
 
 Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
 
-Snapshots artifacts are - at the moment - available from 
+Snapshot artifacts are available from the OJO repository:
 
 ```
-https://raw.githubusercontent.com/mgoellnitz/artifacts/master/
+https://oss.jfrog.org/
 ```
 
 Apart from optional configuration files to be placed somehere on your classpath, 

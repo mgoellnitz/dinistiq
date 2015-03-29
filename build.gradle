@@ -18,42 +18,26 @@
  */
 import groovy.util.Node;
 
+plugins {
+  id "com.jfrog.artifactory" version '3.0.3'
+  id 'com.github.kt3k.coveralls' version '2.0.1'
+}
+
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'maven-publish'
+
 defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.4'
-
-apply plugin: 'java'
-apply plugin: 'jacoco'
-apply plugin: 'signing'
-apply plugin: 'maven-publish'
+version = '0.5-SNAPSHOT'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
-  mavenLocal()
   mavenCentral()
-}
-
-// Code coverage reporting
-apply plugin: 'com.github.kt3k.coveralls'
-
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
-  }
-}
-
-jacocoTestReport {
-  reports {
-    xml.enabled = true // coveralls plugin depends on xml format report
-    html.enabled = true
-  }
 }
 
 dependencies {
@@ -61,7 +45,7 @@ dependencies {
   compile "org.apache.commons:commons-lang3:3.3.2"
   compile "javax.inject:javax.inject:1"
 
-  compile "javax.servlet:servlet-api:2.5"
+  compile "javax.servlet:javax.servlet-api:3.1.0"
 
   testCompile "junit:junit:4.12"
   // integrate tck into unit tests
@@ -70,6 +54,13 @@ dependencies {
   testCompile "org.slf4j:slf4j-log4j12:1.7.10"
   // Some servlet API elements
   testCompile "org.mockito:mockito-all:1.10.19"
+}
+
+jacocoTestReport {
+  reports {
+    xml.enabled = true // coveralls plugin depends on xml format report
+    html.enabled = true
+  }
 }
 
 // Triggers some unit test elements
@@ -90,14 +81,24 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
   from "${buildDir}/docs/javadoc"
 }
 
-
 artifacts {
-    archives javadocJar, sourcesJar
+  archives javadocJar, sourcesJar
 }
 
-//signing {
-//    sign configurations.archives
-//}
+artifactory {
+  contextUrl = 'https://oss.jfrog.org/artifactory'
+  publish {
+    repository {
+      repoKey = 'oss-snapshot-local'
+      username = "$bintrayUser"
+      password = "$bintrayKey"
+      maven = true
+    }
+    defaults {
+      publications ('mavenJava')
+    }
+  }
+}
 
 publishing {
   publications {
@@ -111,7 +112,7 @@ publishing {
         def first = pom.children().get(0)
         first.plus {
           new Node(pom, 'name', 'Dinistiq')
-          new Node(pom, 'description', 'JSR 330 based Java  minimal footprint Dependency Injection framework')
+          new Node(pom, 'description', 'JSR 330 based Java minimal footprint Dependency Injection framework')
           new Node(pom, 'url', 'https://github.com/mgoellnitz/dinistiq/')
           def scm = new Node(pom, 'scm')
           scm.appendNode('connection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')

@@ -1,4 +1,4 @@
 language: java
 
 after_success:
-  - gradle jacocoTestReport coveralls  
+  - gradle jacocoTestReport coveralls build artifactoryPublish
