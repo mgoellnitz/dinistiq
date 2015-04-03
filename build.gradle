@@ -41,7 +41,7 @@ repositories {
 }
 
 dependencies {
-  compile "org.slf4j:slf4j-api:1.7.10"
+  compile "org.slf4j:slf4j-api:1.7.12"
   compile "org.apache.commons:commons-lang3:3.3.2"
   compile "javax.inject:javax.inject:1"
 
@@ -51,7 +51,7 @@ dependencies {
   // integrate tck into unit tests
   testCompile "javax.inject:javax.inject-tck:1"
   // tests are logging at debug level through special log4j.properties
-  testCompile "org.slf4j:slf4j-log4j12:1.7.10"
+  testCompile "org.slf4j:slf4j-log4j12:1.7.12"
   // Some servlet API elements
   testCompile "org.mockito:mockito-all:1.10.19"
 }
