@@ -5,6 +5,7 @@ Minimalistic Dependency Injection
 
 [![Build Status](https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master)](https://travis-ci.org/mgoellnitz/dinistiq)
 [![Coverage Status](https://coveralls.io/repos/mgoellnitz/dinistiq/badge.svg)](https://coveralls.io/r/mgoellnitz/dinistiq)
+[![Dependency Status](https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053)
 
 A small footprint approach to dependency injection with a framework or container 
 implemented in Java.
@@ -283,7 +284,8 @@ public class Test  {
 Make this portion of the classpath as small as ever possible or point to some invented 
 and thus empty package, if you want to avoid scanning.
 
-After this step you can ask dinistiq for instances of the components it created and injected.
+After this step you can ask dinistiq for instances of the components it created and 
+injected.
 
 ```Java
 public class Test  {
@@ -308,8 +310,9 @@ public class Test  {
 Web embedding
 -------------
 
-Dinistiq comes with a very lean web integration. A small servlet is used as a front 
-controller with which other servlets implemented as components can be registered.
+Dinistiq comes with a very lean web integration. An ordered list of beans implementing
+the servlet interface will be added to the web application context using injection
+and serving web requests.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -328,15 +331,6 @@ controller with which other servlets implemented as components can be registered
     <param-value>com.example.components,org.example.components</param-value>
   </context-param>
   
-  <servlet>
-    <servlet-name>dinistiq</servlet-name>
-    <servlet-class>dinistiq.web.DinistiqServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>dinistiq</servlet-name>
-    <url-pattern>/d/*</url-pattern>
-  </servlet-mapping>
-  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
@@ -344,8 +338,8 @@ controller with which other servlets implemented as components can be registered
 </web-app>
 ```
 
-This front controller servlet tries to find the other servlets from the dinistiq 
-context by asking for registrable servlets. 
+The context loader listener tries to find the other servlets from the dinistiq context 
+by asking for registrable servlets. 
 
 ```Java
 /**
@@ -354,31 +348,29 @@ context by asking for registrable servlets.
 public interface RegisterableServlet extends Servlet, Comparable<RegisterableServlet> {
 
     /**
-     * Returns a set of regular expression of which the calling URI must adhere one so that this servlet should handle it.
+     * Returns a set of url patterns this servlet should be registered for.
      */
-    Set<String> getUriRegex();
+    Set<String> getUrlPatterns();
 
     /**
-     * Returns an integer indicating if the implementing instance should be considered earlier or later in
-     * the servlet selection process.
+     * Indicator if the implementing instance should be considered earlier or later 
+     * in the servlet selection process.
      */
     int getOrder();
 
 } // RegisterableServlet
 ```
 
-So a servlet has to tell which regular expressions its request should meet to be able to handle them. 
-Additionally it tells an order number to sort all available servlets to provide a certain precedency 
-rule for them.
-
-Note: Since / is such a common character in URLs and regular exressions need to escape exactly this 
-character, you must pass the / unescaped as it gets auto-escaped by dinistiq.
+So a servlet has to tell which url patterns its request should meet to be able to 
+handle them. Additionally it tells an order number to sort all available servlets 
+to provide a certain precedency rule for them.
 
 Custom Class Resolver
 ---------------------
 
-It is perfectly possible that you will find our class resolving pretty dumb. So we provide the 
-option to pass over a class resolver instance to dinistiq instead of the set of package names.
+It is perfectly possible that you will find our class resolving pretty dumb. So we 
+provide the option to pass over a class resolver instance to dinistiq instead of the 
+set of package names.
 
 ```Java
 public class Test  {
@@ -400,8 +392,8 @@ public class Test  {
 ```
 
 Be sure to add the package dinistiq in these cases as shown above. Otherwise for obvious 
-reasons the properties files from the dinistiq path cannot be found as resources to be taken
-into consideration.
+reasons the properties files from the dinistiq path cannot be found as resources to 
+be taken into consideration.
 
 If you want to use custom class resolvers with the web integration you need to implement
 a class resolver taking the set of package names as the single parameter to the constructor
@@ -429,15 +421,6 @@ for dinistiq.
     <param-value>org.example.dinistiq.BetterClassResolver</param-value>
   </context-param>
   
-  <servlet>
-    <servlet-name>dinistiq</servlet-name>
-    <servlet-class>dinistiq.web.DinistiqServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>dinistiq</servlet-name>
-    <url-pattern>/d/*</url-pattern>
-  </servlet-mapping>
-  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
@@ -455,7 +438,8 @@ If your software needs to use some components which cannot be instanciated or ob
 using all of the means presented here, you can pass over a named set of instances as 
 a base set of beans for dinistiq to add the scanned and configured beans to.
 
-We use this to e.g. put the servlet context in the set of beans for web integration (see below).
+We use this to e.g. put the servlet context in the set of beans for web integration 
+(see below).
 
 ```Java
 public class DinistiqContextLoaderListener implements ServletContextListener {
@@ -491,8 +475,8 @@ the options to find existing beans in the scope.
 My myNewInstance = dinistiq.createBean(My.class, null);
 ```
 
-If this is still no option, you can - like with external beans - provide instances externally and
-let dinistiq still handle their injections and post construct methods.
+If this is still no option, you can - like with external beans - provide instances 
+externally and let dinistiq still handle their injections and post construct methods.
 
 ```Java
 My myNewInstance = new My();
