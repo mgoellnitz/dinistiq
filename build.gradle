@@ -47,13 +47,18 @@ dependencies {
 
   compile "javax.servlet:javax.servlet-api:3.1.0"
 
-  testCompile "junit:junit:4.12"
+  testCompile "org.testng:testng:6.8.21"
   // integrate tck into unit tests
   testCompile "javax.inject:javax.inject-tck:1"
   // tests are logging at debug level through special log4j.properties
   testCompile "org.slf4j:slf4j-log4j12:1.7.12"
   // Some servlet API elements
   testCompile "org.mockito:mockito-all:1.10.19"
+}
+
+test {
+  useTestNG() {
+  }
 }
 
 jacocoTestReport {

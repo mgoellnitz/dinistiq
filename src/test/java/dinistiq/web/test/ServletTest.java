@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014 Martin Goellnitz
+ * Copyright 2014-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletContextEvent;
 import org.atinject.tck.auto.Car;
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 
 /**
@@ -44,7 +44,7 @@ public class ServletTest {
         try {
             d = new Dinistiq(packages, InjectorTest.prepareInitialBeans());
         } catch (Exception e) {
-            Assert.assertNotNull("DI container could not be initialized", d);
+            Assert.assertNotNull(d, "DI container could not be initialized");
             Assert.fail(e.getMessage());
         } // try/catch
 

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014 Martin Goellnitz
+ * Copyright 2014-2015 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,8 +24,8 @@ import dinistiq.test.components.TestComponentB;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Singleton;
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 
 public class ClassResolverTest {
@@ -37,9 +37,9 @@ public class ClassResolverTest {
         packages.add("javax");
         ClassResolver resolver = new SimpleClassResolver(packages);
         Set<Class<TestComponentB>> subclasses = resolver.getSubclasses(TestComponentB.class);
-        Assert.assertEquals("Cannot find implementing classes", 2, subclasses.size());
+        Assert.assertEquals(2, subclasses.size(), "Cannot find implementing classes");
         Set<Class<TestComponentB>> annotatedSubclasses = resolver.getAnnotatedSubclasses(TestComponentB.class, Singleton.class);
-        Assert.assertEquals("Cannot find annotated implementing classes", 2, annotatedSubclasses.size());
+        Assert.assertEquals(2, annotatedSubclasses.size(), "Cannot find annotated implementing classes");
     } // testClassLoader()
 
 } // ClassResolverTest
