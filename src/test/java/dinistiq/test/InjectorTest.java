@@ -242,6 +242,8 @@ public class InjectorTest {
         // test if system properties can be used
         Assert.assertNotNull(map.get("osName"), "no os name found");
         Assert.assertNotEquals(map.get("osName"), "__UNKNOWN__", "os name must be given");
+        Assert.assertEquals(map.get("unknownReference"), "__UNKNOWN__", "reference cannot be replaced");
+        Assert.assertEquals(map.get("noReplacementTest"), "this is perfectly __UNKNOWN__", "this is perfectly ${noReference}");
         Assert.assertEquals(map.get("replacementTest"), "here comes a string value (a string value)", "pattern not replaced as expected");
     } // testStringReplacement()
 
@@ -270,7 +272,10 @@ public class InjectorTest {
         Assert.assertNotNull(cb.getAllInstances(), "No collection of instances available");
         Assert.assertEquals(cb.getAllInstances().size(), 1, "Wrong number of instaces in collection");
         Assert.assertNotNull(uac.getManuallyInjectedCollection(), "No collection of instances available");
-        Assert.assertEquals(uac.getManuallyInjectedCollection().size(), 1, "Wrong number of instaces in collection");
+        Assert.assertEquals(uac.getManuallyInjectedCollection().size(), 1, "Wrong number of instances in collection");
+        Assert.assertNotNull(uac.getManuallyInjectedList(), "No list of strings available");
+        Assert.assertEquals(uac.getManuallyInjectedList().size(), 3, "Wrong number of strings in list");
+        Assert.assertEquals(uac.getManuallyInjectedList().get(1), "nice", "Unexpected second value in list");
     } // testConstructorInjection()
 
 

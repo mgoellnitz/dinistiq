@@ -19,6 +19,7 @@
 package dinistiq.test.components;
 
 import java.util.Collection;
+import java.util.List;
 import javax.inject.Inject;
 
 
@@ -34,6 +35,8 @@ public class UnannotatedComponent {
     private boolean basetypeBooleanValue;
 
     private Collection<Object> manuallyInjectedCollection;
+
+    private List<String> manuallyInjectedList;
 
 
     public TestComponentB getB() {
@@ -79,6 +82,16 @@ public class UnannotatedComponent {
 
     public void setManuallyInjectedCollection(Collection<Object> manuallyInjectedCollection) {
         this.manuallyInjectedCollection = manuallyInjectedCollection;
+    }
+
+
+    public List<String> getManuallyInjectedList() {
+        return manuallyInjectedList;
+    }
+
+
+    public void setManuallyInjectedList(List<String> manuallyInjectedList) {
+        this.manuallyInjectedList = manuallyInjectedList;
     }
 
 } // UnannotatedComponent

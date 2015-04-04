@@ -194,7 +194,7 @@ public class SimpleClassResolver implements ClassResolver {
         for (String className : classNames) {
             try {
                 Class<T> cls = loadClass(className);
-                LOG.debug("getSubclasses() {} {} {} className={}", (!cls.isInterface()), c.isAssignableFrom(cls), ((cls.getModifiers()&Modifier.ABSTRACT)==0), className);
+                LOG.debug("getSubclasses() className={}", className);
                 if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
                 } // if
@@ -243,7 +243,7 @@ public class SimpleClassResolver implements ClassResolver {
         for (String className : classNames) {
             try {
                 Class<T> cls = loadClass(className);
-                LOG.debug("getAnnotatedSubclasses() {} {} {} className={}", (cls.getAnnotation(annotation)!=null), c.isAssignableFrom(cls), (!cls.isInterface()), className);
+                LOG.debug("getAnnotatedSubclasses() className={}", className);
                 if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
                     result.add(cls);
                 } // if

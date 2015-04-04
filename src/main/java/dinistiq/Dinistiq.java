@@ -219,6 +219,9 @@ public class Dinistiq {
                 LOG.debug("getValue() inner type {}", collectionType);
                 Collection<? extends Object> resultCollection = findBeans((Class<? extends Object>) collectionType);
                 resultCollection = List.class.isAssignableFrom(cls) ? new ArrayList<>(resultCollection) : resultCollection;
+                if (dependencies!=null) {
+                    dependencies.get(customer).addAll(resultCollection);
+                } // if
                 return resultCollection;
             } // if
         } // if
@@ -478,9 +481,7 @@ public class Dinistiq {
             try {
                 LOG.info("storeUrlParts() splitting {} ({})", value, name);
                 String protocol = value.substring(0, idx);
-                if (StringUtils.isNotBlank(protocol)) {
-                    values.put(name+".protocol", protocol);
-                } // if
+                values.put(name+".protocol", protocol);
                 idx += 3;
                 String host = value.substring(idx);
                 String uri = "";
@@ -513,9 +514,7 @@ public class Dinistiq {
                     port = host.substring(idx+1);
                     host = host.substring(0, idx);
                 } // if
-                if (StringUtils.isNotBlank(host)) {
-                    values.put(name+".host", host);
-                } // if
+                values.put(name+".host", host);
                 if (StringUtils.isNotBlank(port)) {
                     values.put(name+".port", port);
                 } // if
@@ -641,12 +640,25 @@ public class Dinistiq {
                     if ("double".equals(parameterType.getName())) {
                         parameters[0] = new Double(propertyValue);
                     } // if
-                    if (isCollection&&(!Collection.class.isAssignableFrom(parameters[0].getClass()))) {
-                        Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
-                        for (String value : propertyValue.split(",")) {
-                            values.add(getReferenceValue(value));
-                        } // for
-                        parameters[0] = values;
+                    if (isCollection) {
+                        if (!Collection.class.isAssignableFrom(parameters[0].getClass())) {
+                            Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
+                            for (String value : propertyValue.split(",")) {
+                                values.add(getReferenceValue(value));
+                            } // for
+                            parameters[0] = values;
+                        } // if
+                        if (dependencies!=null) {
+                            for (Object d : (Collection<?>) parameters[0]) {
+                                if (beans.containsValue(d)) {
+                                    dependencies.get(key).add(d);
+                                } // if
+                            } // if
+                        } // if
+                    } else {
+                        if ((dependencies!=null)&&(beans.containsValue(parameters[0]))) {
+                            dependencies.get(key).add(parameters[0]);
+                        } // if
                     } // if
                     LOG.debug("injectDependencies({}) setting value {} '{}' :{}", key, propertyName, parameters[0], parameters[0].getClass());
                     m.invoke(bean, parameters);
@@ -786,19 +798,11 @@ public class Dinistiq {
             LOG.info("() {} beans left", dependencies.size());
             Set<String> deletions = new HashSet<>();
             for (String key : dependencies.keySet()) {
-                LOG.debug("() checking if {} can be safely put into the ordered list", key);
+                LOG.debug("() checking if {} with {} dependencies can be safely put into the ordered list {}", key, dependencies.get(key).size(), dependencies.get(key));
                 boolean dependenciesMet = true;
                 for (Object dep : dependencies.get(key)) {
                     boolean isMet = orderedBeans.contains(dep);
-                    if ((!isMet)&&(dep instanceof Collection)) {
-                        isMet = true;
-                        @SuppressWarnings("unchecked")
-                        Collection<Object> depCollection = (Collection<Object>) dep;
-                        for (Object d : depCollection) {
-                            isMet = isMet&&orderedBeans.contains(d);
-                        } // for
-                    } // if
-                    LOG.debug("() {} is missing {} :{}", key, dep, dep.getClass().getName());
+                    LOG.debug("() {} depends on {} :{} missing? {} collection= {}", key, dep, dep.getClass().getName(), !isMet, (dep instanceof Collection));
                     dependenciesMet = dependenciesMet&&isMet;
                 } // for
                 if (dependenciesMet) {

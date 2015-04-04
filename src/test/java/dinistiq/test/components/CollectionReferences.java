@@ -18,8 +18,10 @@
  */
 package dinistiq.test.components;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -34,6 +36,9 @@ public class CollectionReferences {
     private Set<String> stringSet;
 
     private List<String> stringList;
+
+    @Inject
+    private Collection<TestInterface> testInstances;
 
 
     public void setStringSet(Set<String> stringSet) {
@@ -53,6 +58,11 @@ public class CollectionReferences {
 
     public void setStringList(List<String> stringList) {
         this.stringList = stringList;
+    }
+
+
+    public Collection<TestInterface> getTestInstances() {
+        return testInstances;
     }
 
 } // CollectionReferences
