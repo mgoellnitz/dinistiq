@@ -20,7 +20,7 @@ package dinistiq.test;
 
 import dinistiq.ClassResolver;
 import dinistiq.SimpleClassResolver;
-import dinistiq.test.components.TestComponentB;
+import dinistiq.test.components.TestInterface;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Singleton;
@@ -36,10 +36,10 @@ public class ClassResolverTest {
         packages.add(SimpleClassResolver.class.getPackage().getName());
         packages.add("javax");
         ClassResolver resolver = new SimpleClassResolver(packages);
-        Set<Class<TestComponentB>> subclasses = resolver.getSubclasses(TestComponentB.class);
-        Assert.assertEquals(2, subclasses.size(), "Cannot find implementing classes");
-        Set<Class<TestComponentB>> annotatedSubclasses = resolver.getAnnotatedSubclasses(TestComponentB.class, Singleton.class);
-        Assert.assertEquals(2, annotatedSubclasses.size(), "Cannot find annotated implementing classes");
+        Set<Class<TestInterface>> subclasses = resolver.getSubclasses(TestInterface.class);
+        Assert.assertEquals(subclasses.size(), 1, "Cannot find expected number of implementing classes");
+        Set<Class<TestInterface>> annotatedSubclasses = resolver.getAnnotatedSubclasses(TestInterface.class, Singleton.class);
+        Assert.assertEquals(annotatedSubclasses.size(), 2, "Cannot find expected number of implementing classes annotated as singleton");
     } // testClassLoader()
 
 } // ClassResolverTest

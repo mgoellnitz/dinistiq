@@ -16,43 +16,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package dinistiq.test.components;
 
-import java.util.List;
-import java.util.Set;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 
 /**
- * Test vehicle to test set/collections automatically collected by the framework.
+ * Interface annotated as a singleton sub interface to check class resolving.
  */
-@Named
 @Singleton
-public class CollectionReferences {
+public interface UselessAnnotatedSubInterface extends TestInterface {
 
-    private Set<String> stringSet;
-
-    private List<String> stringList;
-
-
-    public void setStringSet(Set<String> stringSet) {
-        this.stringSet = stringSet;
-    }
-
-
-    public Set<String> getStringSet() {
-        return stringSet;
-    }
-
-
-    public List<String> getStringList() {
-        return stringList;
-    }
-
-
-    public void setStringList(List<String> stringList) {
-        this.stringList = stringList;
-    }
-
-} // CollectionReferences
+} // UselessAnnotatedInterface

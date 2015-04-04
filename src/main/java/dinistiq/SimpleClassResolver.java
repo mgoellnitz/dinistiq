@@ -193,9 +193,9 @@ public class SimpleClassResolver implements ClassResolver {
         LOG.debug("getSubclasses() checking {} classes", classNames.size());
         for (String className : classNames) {
             try {
-                LOG.debug("getSubclasses() className={}", className);
                 Class<T> cls = loadClass(className);
-                if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((c.getModifiers()&Modifier.ABSTRACT)==0)) {
+                LOG.debug("getSubclasses() {} {} {} className={}", (!cls.isInterface()), c.isAssignableFrom(cls), ((cls.getModifiers()&Modifier.ABSTRACT)==0), className);
+                if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
                     result.add(cls);
                 } // if
             } catch (ClassNotFoundException e) {
@@ -242,8 +242,8 @@ public class SimpleClassResolver implements ClassResolver {
         LOG.debug("getAnnotatedSubclasses() checking {} classes", classNames.size());
         for (String className : classNames) {
             try {
-                LOG.debug("getAnnotatedSubclasses() className={}", className);
                 Class<T> cls = loadClass(className);
+                LOG.debug("getAnnotatedSubclasses() {} {} {} className={}", (cls.getAnnotation(annotation)!=null), c.isAssignableFrom(cls), (!cls.isInterface()), className);
                 if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
                     result.add(cls);
                 } // if

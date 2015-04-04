@@ -619,42 +619,40 @@ public class Dinistiq {
                 Class<?> parameterType = m.getParameterTypes()[0];
                 Type genericType = m.getGenericParameterTypes()[0];
                 LOG.debug("injectDependencies({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
-                if (beanProperties.stringPropertyNames().contains(propertyName)) {
-                    String propertyValue = beanProperties.getProperty(propertyName);
-                    boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
-                    boolean isCollection = Collection.class.isAssignableFrom(parameterType);
-                    Object[] parameters = new Object[1];
-                    LOG.debug("injectDependencies({}) trying to set value {} (bool {}) (collection {}) '{}'", key, propertyName, isBoolean, isCollection, propertyValue);
-                    try {
-                        parameters[0] = getReferenceValue(propertyValue);
-                        if (isBoolean&&(parameters[0] instanceof String)) {
-                            parameters[0] = Boolean.valueOf(propertyValue);
-                        } // if
-                        if ("long".equals(parameterType.getName())) {
-                            parameters[0] = new Long(propertyValue);
-                        } // if
-                        if ("int".equals(parameterType.getName())) {
-                            parameters[0] = new Integer(propertyValue);
-                        } // if
-                        if ("float".equals(parameterType.getName())) {
-                            parameters[0] = new Float(propertyValue);
-                        } // if
-                        if ("double".equals(parameterType.getName())) {
-                            parameters[0] = new Double(propertyValue);
-                        } // if
-                        if (isCollection&&(!Collection.class.isAssignableFrom(parameters[0].getClass()))) {
-                            Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
-                            for (String value : propertyValue.split(",")) {
-                                values.add(getReferenceValue(value));
-                            } // for
-                            parameters[0] = values;
-                        } // if
-                        LOG.debug("injectDependencies({}) setting value {} '{}' :{}", key, propertyName, parameters[0], parameters[0].getClass());
-                        m.invoke(bean, parameters);
-                    } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                        LOG.error("injectDependencies() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
-                    } // try/catch
-                } // if
+                String propertyValue = beanProperties.getProperty(propertyName); // Must definetely be there without additional check
+                boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
+                boolean isCollection = Collection.class.isAssignableFrom(parameterType);
+                Object[] parameters = new Object[1];
+                LOG.debug("injectDependencies({}) trying to set value {} (bool {}) (collection {}) '{}'", key, propertyName, isBoolean, isCollection, propertyValue);
+                try {
+                    parameters[0] = getReferenceValue(propertyValue);
+                    if (isBoolean&&(parameters[0] instanceof String)) {
+                        parameters[0] = Boolean.valueOf(propertyValue);
+                    } // if
+                    if ("long".equals(parameterType.getName())) {
+                        parameters[0] = new Long(propertyValue);
+                    } // if
+                    if ("int".equals(parameterType.getName())) {
+                        parameters[0] = new Integer(propertyValue);
+                    } // if
+                    if ("float".equals(parameterType.getName())) {
+                        parameters[0] = new Float(propertyValue);
+                    } // if
+                    if ("double".equals(parameterType.getName())) {
+                        parameters[0] = new Double(propertyValue);
+                    } // if
+                    if (isCollection&&(!Collection.class.isAssignableFrom(parameters[0].getClass()))) {
+                        Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
+                        for (String value : propertyValue.split(",")) {
+                            values.add(getReferenceValue(value));
+                        } // for
+                        parameters[0] = values;
+                    } // if
+                    LOG.debug("injectDependencies({}) setting value {} '{}' :{}", key, propertyName, parameters[0], parameters[0].getClass());
+                    m.invoke(bean, parameters);
+                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
+                    LOG.error("injectDependencies() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
+                } // try/catch
             } // if
         } // for
     }  // injectDependencies()

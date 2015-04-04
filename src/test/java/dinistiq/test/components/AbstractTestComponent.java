@@ -18,41 +18,12 @@
  */
 package dinistiq.test.components;
 
-import java.util.List;
-import java.util.Set;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 
 /**
- * Test vehicle to test set/collections automatically collected by the framework.
+ * This one should not used by any test except that class resolver test.
  */
-@Named
-@Singleton
-public class CollectionReferences {
+public abstract class AbstractTestComponent extends TestComponent {
 
-    private Set<String> stringSet;
+    public abstract void doSomething();
 
-    private List<String> stringList;
-
-
-    public void setStringSet(Set<String> stringSet) {
-        this.stringSet = stringSet;
-    }
-
-
-    public Set<String> getStringSet() {
-        return stringSet;
-    }
-
-
-    public List<String> getStringList() {
-        return stringList;
-    }
-
-
-    public void setStringList(List<String> stringList) {
-        this.stringList = stringList;
-    }
-
-} // CollectionReferences
+} // AbstractTestComponent
