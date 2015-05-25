@@ -19,7 +19,7 @@
 import groovy.util.Node;
 
 plugins {
-  id "com.jfrog.artifactory" version '3.0.3'
+  id 'com.jfrog.artifactory' version '3.0.3'
   id 'com.github.kt3k.coveralls' version '2.0.1'
 }
 
@@ -118,9 +118,9 @@ publishing {
         def pom = asNode()
         def first = pom.children().get(0)
         first.plus {
-          new Node(pom, 'name', 'Dinistiq')
+          new Node(pom, 'name', 'dinistiq')
           new Node(pom, 'description', 'JSR 330 based Java minimal footprint Dependency Injection framework')
-          new Node(pom, 'url', 'https://github.com/mgoellnitz/dinistiq/')
+          new Node(pom, 'url', 'http://mgoellnitz.github.io/dinistiq/')
           def scm = new Node(pom, 'scm')
           scm.appendNode('connection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
           scm.appendNode('developerConnection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
