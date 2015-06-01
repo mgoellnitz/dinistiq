@@ -180,6 +180,7 @@ So
 ```
 booleanValue=java.lang.Boolean("false")
 stringValue=java.lang.String("string value")
+integerValue=java.lang.Integer(42)
 ```
 
 are some examples for this. While
