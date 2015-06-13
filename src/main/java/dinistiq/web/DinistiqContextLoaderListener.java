@@ -128,6 +128,12 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
     } // contextInitialized()
 
 
+    /**
+     * Action on context destruction.
+     * Empty for now.
+     *
+     * @param sce servlet context event fire to destroy the context
+     */
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         // Nothing to be cleaned up on context destruction
