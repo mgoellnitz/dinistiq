@@ -26,6 +26,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
+apply plugin: 'pmd'
 
 defaultTasks 'clean', 'build'
 
@@ -54,6 +55,11 @@ dependencies {
   testCompile "org.slf4j:slf4j-log4j12:1.7.12"
   // Some servlet API elements
   testCompile "org.mockito:mockito-all:1.10.19"
+}
+
+pmd {
+  ruleSets = []
+  ruleSetFiles = files('pmd.xml')
 }
 
 test {
