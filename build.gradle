@@ -60,6 +60,7 @@ dependencies {
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
+  sourceSets = [sourceSets.main]
 }
 
 test {
