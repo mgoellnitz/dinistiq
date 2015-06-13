@@ -64,7 +64,6 @@ California, 94041, USA.
   </rule>
   <rule ref="rulesets/java/design.xml">
     <exclude name="UncommentedEmptyConstructor"/>
-    <exclude name="UncommentedEmptyMethod"/>
     <exclude name="AvoidReassigningParameters"/>
     <exclude name="GodClass"/>
     <exclude name="UseCollectionIsEmpty"/>
