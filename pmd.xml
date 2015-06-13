@@ -84,6 +84,7 @@ California, 94041, USA.
   <rule ref="rulesets/java/junit.xml"/>
   <rule ref="rulesets/java/logging-jakarta-commons.xml">
     <exclude name="GuardLogStatement"/>
+    <exclude name="GuardDebugLogging"/>
   </rule>
   <rule ref="rulesets/java/logging-java.xml">
     <exclude name="GuardLogStatementJavaUtil"/>
