@@ -199,6 +199,43 @@ public class Dinistiq {
 
 
     /**
+     * Simple private class to generate provider implementations from the dinistiq scope on the fly.
+     */
+    private class ImplicitProvider implements Provider<Object> {
+
+        private final Dinistiq d;
+        private final Class<? extends Object> c;
+        private final String name;
+
+
+        /**
+         * Generate provider for a given class and an optional name from dinistiq instance.
+         *
+         * @param name optional name of the instance - may be null
+         * @param d dinistiq instance
+         * @param c class to find an instance of
+         */
+        public ImplicitProvider(Dinistiq d, Class<? extends Object> c, String name) {
+            this.d = d;
+            this.c = c;
+            this.name = name;
+        } // ImplicitProvider()
+
+
+        /**
+         * Lazily find object from dinistiq scope.
+         *
+         * @return instance or null
+         */
+        @Override
+        public Object get() {
+            return (name==null) ? d.findBean(c) : d.findBean(c, name);
+        }
+
+    } // ImplicitProvider
+
+
+    /**
      * Tries to resolve the value for a given placeholder.
      *
      * @param beanProperties properties of the beans to resolve the value for
@@ -210,7 +247,7 @@ public class Dinistiq {
      * @return replaced value or original string
      * @throws Exception
      */
-    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, final String name) throws Exception {
+    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name) throws Exception {
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
             LOG.debug("getValue() collection: {}", type);
@@ -227,17 +264,10 @@ public class Dinistiq {
         } // if
         Object bean = (name==null) ? findBean(cls) : (beanProperties.containsKey(name) ? getReferenceValue(beanProperties.getProperty(name)) : beans.get(name));
         if (Provider.class.equals(cls)) {
-            final Dinistiq d = this;
-            final Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            Dinistiq d = this;
+            Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
             LOG.info("getValue() Provider for {} :{}", name, c);
-            bean = new Provider<Object>() {
-
-                @Override
-                public Object get() {
-                    return (name==null) ? d.findBean(c) : d.findBean(c, name);
-                }
-
-            };
+            bean = new ImplicitProvider(d, c, name);
             String beanName = ""+bean;
             if (dependencies!=null) {
                 dependencies.put(beanName, new HashSet<>());
