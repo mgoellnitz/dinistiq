@@ -159,7 +159,7 @@ public class InjectorTest {
 
         List list = d.findBean(List.class, "listTest");
         Assert.assertNotNull(list, "test list not found");
-        Assert.assertEquals(list.get(0), "first", "second value not correct");
+        Assert.assertEquals(list.get(0), "first", "first value not correct");
         Assert.assertEquals(list.get(1), "second", "second value not correct");
 
         Set<Set> sets = d.findBeans(Set.class);
@@ -167,12 +167,12 @@ public class InjectorTest {
         Set set = d.findBean(Set.class, "setTest");
         Assert.assertNotNull(set, "test set not found");
         Assert.assertEquals(set.size(), 2, "set should contain two elements");
-        Assert.assertEquals(set.iterator().next(), "second", "first value not correct");
+        Assert.assertTrue(set.contains("second"), "missing value 'second'");
 
         CollectionReferences cr = d.findBean(CollectionReferences.class);
         Assert.assertNotNull(cr, "no collection references object found");
         Assert.assertEquals(cr.getStringSet().size(), 2, "referenced set should contain two elements");
-        Assert.assertEquals(cr.getStringSet().iterator().next(), "second", "first value not correct in referenced set");
+        Assert.assertTrue(cr.getStringSet().contains("second"), "first value not correct in referenced set");
     } // testLiteralCollections()
 
 
