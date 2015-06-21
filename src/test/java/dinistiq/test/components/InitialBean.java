@@ -20,6 +20,7 @@ package dinistiq.test.components;
 
 import javax.inject.Inject;
 
+
 public class InitialBean {
 
     @Inject

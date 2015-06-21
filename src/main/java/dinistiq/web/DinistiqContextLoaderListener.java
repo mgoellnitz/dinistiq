@@ -73,7 +73,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
      * bean from the dinistiq scope to the application scope (servlet context) of the web layer including an instance
      * of dinistiq itself.
      *
-     * @param contextEvent event  instance to be used while handling the initialization
+     * @param contextEvent event instance to be used while handling the initialization
      */
     @Override
     public void contextInitialized(ServletContextEvent contextEvent) {

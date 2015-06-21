@@ -204,7 +204,9 @@ public class Dinistiq {
     private class ImplicitProvider implements Provider<Object> {
 
         private final Dinistiq d;
+
         private final Class<? extends Object> c;
+
         private final String name;
 
 

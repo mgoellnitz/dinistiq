@@ -38,6 +38,7 @@ public interface RegisterableServlet extends Servlet, Comparable<RegisterableSer
      */
     Set<String> getUrlPatterns();
 
+
     /**
      * Indicator if the implementing instance should be considered earlier or later in the servlet selection process.
      *
