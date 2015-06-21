@@ -490,6 +490,9 @@ Building
 The code for dinistiq is supposed to be written in Java 7 and prepared for building 
 with gradle. Gradle versions 1.12 up to 2.4 are tested to be working.
 
+While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be compiled
+and tested with Java 8.
+
 Comparison
 ----------
 
