@@ -397,8 +397,8 @@ public class Dinistiq {
     /**
      * Create a fresh instance of a given class and inject all needed dependencies from the dinistiq scope.
      *
-     * @param <T>
-     * @param cls
+     * @param <T> generic type limit for bean to be created
+     * @param cls class to create an instance of
      * @param name an optional name of the beans used for injection discovery - may be null
      * @return fresh instance with dependencies filled in and post contruct method called if available
      */

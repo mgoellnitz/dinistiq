@@ -31,8 +31,8 @@ public interface ClassResolver {
     /**
      * Get all available subclasses of a given class.
      *
-     * @param <T>
-     * @param type
+     * @param <T> generic type variable for the result set
+     * @param type type to search subclasses for
      * @return Set of classes implementing the given type
      */
     <T extends Object> Set<Class<T>> getSubclasses(Class<T> type);
@@ -41,8 +41,8 @@ public interface ClassResolver {
     /**
      * Get all classes annotated with a given annotation.
      *
-     * @param <T>
-     * @param annotation
+     * @param <T> generic type variable for the result set
+     * @param annotation annotation instance resulting classes should adhere
      * @return Set of classes with the given annotation
      */
     <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation);
@@ -51,9 +51,9 @@ public interface ClassResolver {
     /**
      * Get all available subclasses of a given type annotated with a given annotation.
      *
-     * @param <T>
-     * @param c
-     * @param annotation
+     * @param <T> generic type variable for the result set
+     * @param c type to search subclasses for
+     * @param annotation annotation instance resulting classes should adhere
      * @return Set of class instances fulfilling the condition
      */
     <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation);
@@ -62,7 +62,7 @@ public interface ClassResolver {
     /**
      * Get the filenames of properties files in a given path in alphabetical order.
      *
-     * @param path
+     * @param path file or resource path to scan.
      * @return Sorted set of property files paths
      */
     SortedSet<String> getProperties(String path);
