@@ -6,7 +6,7 @@
     <title>Dinistiq by mgoellnitz</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
     <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
@@ -201,6 +201,7 @@ fields or setters in these classes.</p>
 
 <pre><code>booleanValue=java.lang.Boolean("false")
 stringValue=java.lang.String("string value")
+integerValue=java.lang.Integer(42)
 </code></pre>
 
 <p>are some examples for this. While</p>
@@ -485,7 +486,10 @@ dinistiq<span class="pl-k">.</span>initBean(myNewInstance, <span class="pl-c1">n
 <a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h2>
 
 <p>The code for dinistiq is supposed to be written in Java 7 and prepared for building 
-with gradle. Gradle versions 1.12 up to 2.3 are tested to be working.</p>
+with gradle. Gradle versions 1.12 up to 2.4 are tested to be working.</p>
+
+<p>While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be compiled
+and tested with Java 8.</p>
 
 <h2>
 <a id="comparison" class="anchor" href="#comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparison</h2>
