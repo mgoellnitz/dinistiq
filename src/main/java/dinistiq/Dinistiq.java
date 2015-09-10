@@ -676,19 +676,18 @@ public class Dinistiq {
                         if (!Collection.class.isAssignableFrom(parameters[0].getClass())) {
                             Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
                             for (String value : propertyValue.split(",")) {
-                                values.add(getReferenceValue(value));
+                                Object effectiveValue = getReferenceValue(value);
+                                values.add(effectiveValue);
+                                if ((dependencies!=null)&&(value.indexOf("${")>=0)) {
+                                    if (beans.containsValue(effectiveValue)) {
+                                        dependencies.get(key).add(effectiveValue);
+                                    } // if
+                                } // if
                             } // for
                             parameters[0] = values;
                         } // if
-                        if (dependencies!=null) {
-                            for (Object d : (Collection<?>) parameters[0]) {
-                                if (beans.containsValue(d)) {
-                                    dependencies.get(key).add(d);
-                                } // if
-                            } // if
-                        } // if
                     } else {
-                        if ((dependencies!=null)&&(beans.containsValue(parameters[0]))) {
+                        if ((dependencies!=null)&&(beans.containsValue(parameters[0]))&&(propertyValue.indexOf("${")>=0)) {
                             dependencies.get(key).add(parameters[0]);
                         } // if
                     } // if
@@ -834,7 +833,7 @@ public class Dinistiq {
                 boolean dependenciesMet = true;
                 for (Object dep : dependencies.get(key)) {
                     boolean isMet = orderedBeans.contains(dep);
-                    LOG.debug("() {} depends on {} :{} missing? {} collection= {}", key, dep, dep.getClass().getName(), !isMet, (dep instanceof Collection));
+                    LOG.debug("() {} depends on {} :{} met? {} {}", key, dep, dep.getClass().getName(), isMet, ((dep instanceof Collection) ? "is a collection" : ""));
                     dependenciesMet = dependenciesMet&&isMet;
                 } // for
                 if (dependenciesMet) {
