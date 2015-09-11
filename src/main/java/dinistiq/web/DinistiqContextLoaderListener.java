@@ -21,18 +21,15 @@ package dinistiq.web;
 import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
 import dinistiq.SimpleClassResolver;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
+import javax.servlet.http.HttpServlet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +61,20 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
      * Init parameter name for the parameter holding class resolver name.
      */
     public static final String DINISTIQ_CLASSRESOLVER = "dinistiq.class.resolver";
+
+
+    /**
+     * Helper method to keep areas with suppressed warnings small.
+     *
+     * @param <T>
+     * @param className
+     * @return simply returns Class.forName(classname)
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("unchecked")
+    private <T extends Object> Class<T> loadClass(String className) throws ClassNotFoundException {
+        return (Class<T>) Class.forName(className);
+    } // loadClass()
 
 
     /**
@@ -107,19 +118,22 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             externalBeans.put("servletContext", context);
             Dinistiq dinistiq = new Dinistiq(classResolver, externalBeans);
             context.setAttribute(DINISTIQ_INSTANCE, dinistiq);
+            LOG.debug("contextInitialized() registering all beans as attribute in servlet context");
             for (String name : dinistiq.getAllBeanNames()) {
                 context.setAttribute(name, dinistiq.findBean(Object.class, name));
             } // for
-            Collection<RegisterableServlet> servlets = dinistiq.findBeans(RegisterableServlet.class);
-            List<RegisterableServlet> orderedServlets = new ArrayList<>(servlets.size());
-            orderedServlets.addAll(servlets);
-            Collections.sort(orderedServlets);
-            LOG.debug("contextInitialized() servlets {}", orderedServlets);
-            for (RegisterableServlet servlet : orderedServlets) {
-                ServletRegistration registration = context.addServlet(servlet.getClass().getSimpleName(), servlet);
-                for (String urlPattern : servlet.getUrlPatterns()) {
-                    LOG.debug("contextInitialized() * {}", urlPattern);
-                    registration.addMapping(urlPattern);
+            LOG.debug("contextInitialized() checking injections for servlets");
+            for (ServletRegistration registration : context.getServletRegistrations().values()) {
+                String className = registration.getClassName();
+                LOG.debug("contextInitialized() class name {}", className);
+                Class<HttpServlet> servletClass = loadClass(className);
+                LOG.debug("contextInitialized() class  {}", servletClass);
+                for (HttpServlet servlet : dinistiq.findBeans(servletClass)) {
+                    LOG.debug("contextInitialized() servlet instance {}", servlet);
+                    if (servlet.getServletName().equals(registration.getName())) {
+                        LOG.debug("contextInitialized() injecting into servlet instance {}", servlet);
+                        dinistiq.initBean(servlet, servlet.getServletName());
+                    } // if
                 } // for
             } // for
         } catch (Exception ex) {

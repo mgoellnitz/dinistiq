@@ -47,20 +47,23 @@ public class MockServletContext implements ServletContext {
 
     private final Map<String, Object> attributes = new HashMap<>();
 
+    private MockServlet servlet;
+
     private boolean emptyInit;
 
     private String resolverClassName;
 
 
-    public MockServletContext(boolean emptyInit, String resolverClassName, Dinistiq dinistiq) {
+    public MockServletContext(boolean emptyInit, String resolverClassName, Dinistiq dinistiq, MockServlet servlet) {
         this.emptyInit = emptyInit;
         this.resolverClassName = resolverClassName;
         attributes.put(DinistiqContextLoaderListener.DINISTIQ_INSTANCE, dinistiq);
+        this.servlet = servlet;
     }
 
 
     public MockServletContext(Dinistiq dinistiq) {
-        this(false, null, dinistiq);
+        this(false, null, dinistiq, new MockServlet());
     }
 
 
@@ -271,7 +274,14 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public Map<String, ? extends ServletRegistration> getServletRegistrations() {
-        throw new UnsupportedOperationException("NYI");
+        Map<String, ServletRegistration> registrations = new HashMap<>();
+        ServletRegistration mock = Mockito.mock(ServletRegistration.class);
+        final String servletName = "MockServlet";
+        Mockito.when(mock.getName()).thenReturn(servletName);
+        final String className = servlet.getClass().getName();
+        Mockito.when(mock.getClassName()).thenReturn(className);
+        registrations.put(servletName, mock);
+        return registrations;
     }
 
 

@@ -56,15 +56,17 @@ public class ServletTest {
 
         // Test with no init values for the servlet to trigger default paths
         dcll = new DinistiqContextLoaderListener();
-        sce = new ServletContextEvent(new MockServletContext(true, null, d));
+        MockServlet servlet = new MockServlet();
+        sce = new ServletContextEvent(new MockServletContext(true, null, d, servlet));
         dcll.contextInitialized(sce);
+        Assert.assertEquals(servlet.getValueInServlet(), "stringValue", "Injection into servlet failed.");
         dcll.contextDestroyed(sce);
 
-        // Test with partially wrong init values for the servlet to trigger exception handling
-        dcll = new DinistiqContextLoaderListener();
-        sce = new ServletContextEvent(new MockServletContext(true, "X", d));
-        dcll.contextInitialized(sce);
-        dcll.contextDestroyed(sce);
+//        // Test with partially wrong init values for the servlet to trigger exception handling
+//        dcll = new DinistiqContextLoaderListener();
+//        sce = new ServletContextEvent(new MockServletContext(true, "X", d, servlet));
+//        dcll.contextInitialized(sce);
+//        dcll.contextDestroyed(sce);
     } // testContextLoaderListener()
 
 } // ServletTest
