@@ -216,7 +216,7 @@ jcenter()
 if it's not there already and the dependency to the artifact in the dependencies section.
 
 ```
-compile "dinistiq:dinistiq:0.5-SNAPSHOT"
+compile "dinistiq:dinistiq:0.5"
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -242,7 +242,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.5-SNAPSHOT</version>
+    <versions>0.5</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -312,8 +312,7 @@ Web embedding
 -------------
 
 Dinistiq comes with a very lean web integration. An ordered list of beans implementing
-the servlet interface will be added to the web application context using injection
-and serving web requests.
+the servlet interface will be registered directly with the servlet container.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -338,8 +337,8 @@ and serving web requests.
 </web-app>
 ```
 
-The context loader listener tries to find the other servlets from the dinistiq context
-by asking for registrable servlets.
+The context loader listener tries to find the servlets from the dinistiq context by asking
+for RegisterableServlet instances.
 
 ```Java
 /**
