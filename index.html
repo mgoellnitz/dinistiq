@@ -71,7 +71,7 @@ It does not introduce any custom annotations.</p>
 <p>First of all the most important thing to use dinistiq is to annotate you dependencies with 
 JSR <a href="https://github.com/Inject" class="user-mention">@Inject</a> so that dinistiq can find out which components are needed.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TestComponentB</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TestComponentB</span> {
 
     <span class="pl-k">@Inject</span>
     <span class="pl-k">public</span> <span class="pl-smi">TestInterface</span> test;
@@ -84,7 +84,7 @@ Optionally these components may be named with <a href="https://github.com/Named"
 value parameter). Without a name given as a parameter, components are always named
 after their class name without the package name and a decapitalized first letter.</p>
 
-<div class="highlight highlight-Java"><pre>@<span class="pl-smi">Singleton</span>
+<div class="highlight highlight-source-java"><pre>@<span class="pl-smi">Singleton</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TestComponent</span> <span class="pl-k">implements</span> <span class="pl-e">TestInterface</span> {
 
 } <span class="pl-c">// TestComponent</span></pre></div>
@@ -97,7 +97,7 @@ within the scope they are in this case in fact identifiers througout the whole p
 <p>If you are dealing with components of the same type, not only the beans may be named 
 but also the injection point might indicate to require a bean with a certain name.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ConfigStuff</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ConfigStuff</span> {
 
     <span class="pl-k">@Inject</span>
     <span class="pl-k">@Named</span>
@@ -165,7 +165,7 @@ replacementTest=here comes ${replacement}
 
 <p>The bean named example is either a result of the automatic discovery of a class named Example</p>
 
-<div class="highlight highlight-Java"><pre>@<span class="pl-smi">Named</span>
+<div class="highlight highlight-source-java"><pre>@<span class="pl-smi">Named</span>
 @<span class="pl-smi">Singleton</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Example</span> {
 
@@ -173,7 +173,7 @@ replacementTest=here comes ${replacement}
 
 <p>a name declaration from the scanned class</p>
 
-<div class="highlight highlight-Java"><pre>@Named(<span class="pl-s"><span class="pl-pds">"</span>example<span class="pl-pds">"</span></span>)
+<div class="highlight highlight-source-java"><pre>@Named(<span class="pl-s"><span class="pl-pds">"</span>example<span class="pl-pds">"</span></span>)
 @<span class="pl-smi">Singleton</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ExampleComponent</span>  {
 
@@ -240,7 +240,7 @@ of the build file the line</p>
 
 <p>module pom.xml</p>
 
-<div class="highlight highlight-xml"><pre>...
+<div class="highlight highlight-text-xml"><pre>...
 &lt;<span class="pl-ent">dependencies</span>&gt;
   ...
   &lt;<span class="pl-ent">dependency</span>&gt;
@@ -252,7 +252,7 @@ of the build file the line</p>
 
 <p>base  pom.xml</p>
 
-<div class="highlight highlight-xml"><pre>...
+<div class="highlight highlight-text-xml"><pre>...
 &lt;<span class="pl-ent">dependencyManagement</span>&gt;
   ...
   &lt;<span class="pl-ent">dependency</span>&gt;
@@ -284,7 +284,7 @@ of the build file the line</p>
 <p>Apart from optional configuration files to be placed somehere on your classpath, 
 you simply have to tell dinistiq which portion of the classpath to scan for annotations.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
 
     <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span class="pl-v">args</span>) {
         <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
@@ -300,7 +300,7 @@ and thus empty package, if you want to avoid scanning.</p>
 <p>After this step you can ask dinistiq for instances of the components it created and 
 injected.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
 
     <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span class="pl-v">args</span>) {
         <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
@@ -351,7 +351,7 @@ and serving web requests.</p>
 <p>The context loader listener tries to find the other servlets from the dinistiq context 
 by asking for registrable servlets. </p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-c">/**</span>
+<div class="highlight highlight-source-java"><pre><span class="pl-c">/**</span>
 <span class="pl-c"> * Servlets which should handle requests fulfilling a certain regular expression for their uris.</span>
 <span class="pl-c"> */</span>
 <span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-en">RegisterableServlet</span> <span class="pl-k">extends</span> <span class="pl-e">Servlet</span>, <span class="pl-e">Comparable&lt;<span class="pl-smi">RegisterableServlet</span>&gt;</span> {
@@ -380,7 +380,7 @@ to provide a certain precedency rule for them.</p>
 provide the option to pass over a class resolver instance to dinistiq instead of the 
 set of package names.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Test</span>  {
 
     <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-en">main</span>(<span class="pl-k">String</span>[] <span class="pl-v">args</span>) {
         <span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> packages <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">HashSet&lt;<span class="pl-smi">String</span>&gt;</span>();
@@ -446,7 +446,7 @@ a base set of beans for dinistiq to add the scanned and configured beans to.</p>
 <p>We use this to e.g. put the servlet context in the set of beans for web integration 
 (see below).</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">DinistiqContextLoaderListener</span> <span class="pl-k">implements</span> <span class="pl-e">ServletContextListener</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">DinistiqContextLoaderListener</span> <span class="pl-k">implements</span> <span class="pl-e">ServletContextListener</span> {
 
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">contextInitialized</span>(<span class="pl-smi">ServletContextEvent</span> <span class="pl-v">contextEnvironment</span>) {
@@ -474,12 +474,12 @@ optional post construct methods should be called just following the same rules a
 the beans from the dinistiq scope, you will find a createBeans method besides all 
 the options to find existing beans in the scope.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-smi">My</span> myNewInstance <span class="pl-k">=</span> dinistiq<span class="pl-k">.</span>createBean(<span class="pl-smi">My</span><span class="pl-k">.</span>class, <span class="pl-c1">null</span>);</pre></div>
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">My</span> myNewInstance <span class="pl-k">=</span> dinistiq<span class="pl-k">.</span>createBean(<span class="pl-smi">My</span><span class="pl-k">.</span>class, <span class="pl-c1">null</span>);</pre></div>
 
 <p>If this is still no option, you can - like with external beans - provide instances 
 externally and let dinistiq still handle their injections and post construct methods.</p>
 
-<div class="highlight highlight-Java"><pre><span class="pl-smi">My</span> myNewInstance <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">My</span>();
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">My</span> myNewInstance <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">My</span>();
 dinistiq<span class="pl-k">.</span>initBean(myNewInstance, <span class="pl-c1">null</span>);</pre></div>
 
 <h2>
@@ -508,11 +508,11 @@ some  values for dinistiq to this list:</p>
 <tbody>
 <tr>
 <td align="left">Version</td>
-<td align="right">0.4</td>
+<td align="right">0.5</td>
 </tr>
 <tr>
 <td align="left">Archive size</td>
-<td align="right">&lt;25kB</td>
+<td align="right">&lt;23kB</td>
 </tr>
 <tr>
 <td align="left">Further dependencies</td>
