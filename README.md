@@ -499,8 +499,8 @@ some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.4|
-|Archive size|<25kB|
+|Version|0.5|
+|Archive size|<23kB|
 |Further dependencies|<=5|
 |API||
 |Methods in injector/context|3|
