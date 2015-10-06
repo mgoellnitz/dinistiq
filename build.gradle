@@ -123,19 +123,20 @@ publishing {
     }
     mavenJava(MavenPublication) {
       pom.withXml {
-        asNode().children().get(3).plus {
-          new Node(pom, 'name', 'dinistiq')
-          new Node(pom, 'description', 'JSR 330 based Java minimal footprint Dependency Injection framework')
-          new Node(pom, 'url', 'http://mgoellnitz.github.io/dinistiq/')
-          def scm = new Node(pom, 'scm')
+        def rootNode = asNode()
+        rootNode.children().get(3).plus {
+          new Node(rootNode, 'name', 'dinistiq')
+          new Node(rootNode, 'description', 'JSR 330 based Java minimal footprint Dependency Injection framework')
+          new Node(rootNode, 'url', 'http://mgoellnitz.github.io/dinistiq/')
+          def scm = new Node(rootNode, 'scm')
           scm.appendNode('connection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
           scm.appendNode('developerConnection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
           scm.appendNode('url', 'git@github.com:mgoellnitz/dinistiq.git')
-          def license = new Node(pom, 'licenses').appendNode('license')
+          def license = new Node(rootNode, 'licenses').appendNode('license')
           license.appendNode('name', 'LGPL-3.0')
           license.appendNode('url', 'http://opensource.org/licenses/LGPL-3.0')
           license
-          def developer = pom.appendNode('developers').appendNode('developer')
+          def developer = rootNode.appendNode('developers').appendNode('developer')
           developer.appendNode('name', 'Martin Goellnitz')
           developer.appendNode('organization', 'Provocon')
           developer.appendNode('organizationUrl', 'http://www.provocon.de/')
