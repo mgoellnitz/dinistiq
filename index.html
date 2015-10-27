@@ -279,7 +279,7 @@ of the build file the line</p>
 
 <p>Snapshot artifacts are available from the OJO repository:</p>
 
-<pre><code>https://oss.jfrog.org/
+<pre><code>https://oss.jfrog.org/oss-snapshot-local/
 </code></pre>
 
 <p>Apart from optional configuration files to be placed somehere on your classpath,
@@ -325,27 +325,26 @@ injected.</p>
 <p>Dinistiq comes with a very lean web integration. An ordered list of beans implementing
 the servlet interface will be registered directly with the servlet container.</p>
 
-<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1"&gt;
+<div class="highlight highlight-text-xml"><pre>&lt;?<span class="pl-ent">xml</span><span class="pl-e"> version</span>=<span class="pl-s"><span class="pl-pds">"</span>1.0<span class="pl-pds">"</span></span><span class="pl-e"> encoding</span>=<span class="pl-s"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>?&gt;
+&lt;<span class="pl-ent">web-app</span> <span class="pl-e">xmlns</span>=<span class="pl-s"><span class="pl-pds">"</span>http://xmlns.jcp.org/xml/ns/javaee<span class="pl-pds">"</span></span> <span class="pl-e">xmlns</span><span class="pl-e">:</span><span class="pl-e">xsi</span>=<span class="pl-s"><span class="pl-pds">"</span>http://www.w3.org/2001/XMLSchema-instance<span class="pl-pds">"</span></span>
+         <span class="pl-e">xsi</span><span class="pl-e">:</span><span class="pl-e">schemaLocation</span>=<span class="pl-s"><span class="pl-pds">"</span>http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd<span class="pl-pds">"</span></span>
+         <span class="pl-e">version</span>=<span class="pl-s"><span class="pl-pds">"</span>3.1<span class="pl-pds">"</span></span>&gt;
 
-  &lt;display-name&gt;dinistiq.web&lt;/display-name&gt;
+  &lt;<span class="pl-ent">display-name</span>&gt;dinistiq.web&lt;/<span class="pl-ent">display-name</span>&gt;
 
-  &lt;listener&gt;
-    &lt;listener-class&gt;dinistiq.web.DinistiqContextLoaderListener&lt;/listener-class&gt;
-  &lt;/listener&gt;
-  &lt;context-param&gt;
-    &lt;param-name&gt;dinistiq.packages&lt;/param-name&gt;
-    &lt;param-value&gt;com.example.components,org.example.components&lt;/param-value&gt;
-  &lt;/context-param&gt;
+  &lt;<span class="pl-ent">listener</span>&gt;
+    &lt;<span class="pl-ent">listener-class</span>&gt;dinistiq.web.DinistiqContextLoaderListener&lt;/<span class="pl-ent">listener-class</span>&gt;
+  &lt;/<span class="pl-ent">listener</span>&gt;
+  &lt;<span class="pl-ent">context-param</span>&gt;
+    &lt;<span class="pl-ent">param-name</span>&gt;dinistiq.packages&lt;/<span class="pl-ent">param-name</span>&gt;
+    &lt;<span class="pl-ent">param-value</span>&gt;com.example.components,org.example.components&lt;/<span class="pl-ent">param-value</span>&gt;
+  &lt;/<span class="pl-ent">context-param</span>&gt;
 
-  &lt;welcome-file-list&gt;
-    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
-  &lt;/welcome-file-list&gt;
+  &lt;<span class="pl-ent">welcome-file-list</span>&gt;
+    &lt;<span class="pl-ent">welcome-file</span>&gt;index.html&lt;/<span class="pl-ent">welcome-file</span>&gt;
+  &lt;/<span class="pl-ent">welcome-file-list</span>&gt;
 
-&lt;/web-app&gt;
-</code></pre>
+&lt;/<span class="pl-ent">web-app</span>&gt;</pre></div>
 
 <p>The context loader listener tries to find the servlets from the dinistiq context by asking
 for RegisterableServlet instances.</p>
@@ -672,12 +671,82 @@ It recognises JSR330 Annotation but seems to lack the option of config files lik
 simple properties file mechanism of dinistiq. Additionally - unlike Spring and dinistiq -
 it depends on public setters for the injections. Private members with the <a href="https://github.com/Inject" class="user-mention">@Inject</a> annotation
 are not enough. Also it is fairly unmaintained for some years now.</p>
+
+<p>Another option I just ran into today is <a href="https://github.com/zsoltherpai/feather">Feather</a>
+described in <a href="http://codejargon.blogspot.no/2015/09/feather-ultra-lightweight-dependency.html">this article</a>.
+I haven't done any further investigation.</p>
+
+<h2>
+<a id="history-and-why" class="anchor" href="#history-and-why" aria-hidden="true"><span class="octicon octicon-link"></span></a>History and Why</h2>
+
+<p>I rather apologise to introduce another Dependency Injection Container for the Java
+world - dinistiq - a very minimalistic approach to the topic. It turned out to be easier
+to implement another one, than to use others listed here. Limited in features, easy to
+use, and still more configurable than other options I could think of. After some months
+of use, I now can invite other users to take a look at it and try it in their own projects.</p>
+
+<p>Also this text gives you a "why" on the use of the JSR 330 annotations for Dependency Injection.
+It simply makes your code even more reusable in case your development or deployment environment
+changes.</p>
+
+<p>Since tangram is much more about glueing together proven existing software components and
+frameworks than writing code, I felt the need to check if the existing code base was really
+fully dependent on the Spring Framework.</p>
+
+<p>Despite the fact that spring more or less in many ways does what I need, it sometimes feels
+a bit bloated and does too much magic I don't understand in detail (which I still had to
+learn when debugging things). So I tried to isolate the spring code during the tangram 0.9
+work and present at least a second solution for all the things I did with spring so far.</p>
+
+<p>For tangram spring does three things</p>
+
+<ul>
+<li>Dependency Injection to plug the whole application together</li>
+<li>support a decent view layer with JSP and Apache Velocity views</li>
+<li>A concise way to map http requests to code - controller classes or methods</li>
+</ul>
+
+<p>So I took a look at other view frameworks like Vaadin, GWT, Apache Wicket, Play, Struts, JSF/JEE,
+Stripes. Right at the moment I think Vaading, GWT, Wicket, and Play are no really good fit for
+tangram, Struts in my eyes is a fading technology, and only JSF/JEE is an obvious option. With
+Java Server Faces I only had unsatisfying project experiences and the rest of JEE goes for plain
+Servlet. So tangram had to be provided with a plain servlet way of doing the view layer.</p>
+
+<p>Since the modularity of tangram was achieved by the Spring way of plugging components together with
+Dependency Injection, the first thing to do was, to mark the generic components in a spring independent
+way and to look at the other options for the Dependency Injection part. Only then it would be possible
+to replace the spring view layer with a servlet view layer during the startup and wire-up of the
+application.</p>
+
+<p>So the list of relevant DI frameworks gets shortened to those supporting the generic Dependency Injection
+annotations from JSR330 which are intended for JEE and can e.g. also be used with Google Guice and the
+Spring Framework alike.</p>
+
+<p>From the reading Google Guice seemed to be a good alternative for the proof of concept phase, but
+it took me that much work to get something to run with it (not everything can be plugged together
+programmatically in my case), that I came out faster with my own Dependency Injection Container.
+Rather minimalistic and only suited for the setup of components.</p>
+
+<p>Its advantage over Guice is that it's smaller and easier configurable with properties files.
+Weeks later I discovered TinyDI as another option. While this container seems to be a lot cleverer
+about the search of annotated classes it seems to lack the needed option of extending the configuration
+aspects from the annotations with properties files - defaults and overridden values and references.</p>
       </section>
       <footer>
         <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+		          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-59511125-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
