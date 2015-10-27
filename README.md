@@ -21,8 +21,7 @@ As the only other option besides the single scope managed by dinistiq it allows 
 creation of fresh instances with all dependencies filled in from the scope of all beans
 collected.
 
-Fire up the wire up
--------------------
+## Fire up the wire up
 
 Dinistiq scans a given portion of the classpath for classes annotated with JSR330 Annotations.
 It does not introduce any custom annotations.
@@ -32,8 +31,7 @@ The missing bits can be configured by a set of properties files, describing
 - additional components that should be instanciated
 - additional values that should be injected into the instanciated components but cannot be derived from the autoscanned parts
 
-Convention over Configuration
------------------------------
+## Convention over Configuration
 
 First of all the most important thing to use dinistiq is to annotate you dependencies with
 JSR @Inject so that dinistiq can find out which components are needed.
@@ -88,8 +86,7 @@ while somePrefix has a specific named annotation with value "prefix".
 This complete set-up is done without any configuration for dinistiq itself but only
 for the components to be used.
 
-Optional Configuration with properties files
---------------------------------------------
+## Optional Configuration with properties files
 
 If this is not enough, you can explicitly add some beans to be instanciated in properties files.
 
@@ -200,8 +197,7 @@ Lists of strings can be created by
 listTest=java.util.List(first,second)
 ```
 
-How to use
-----------
+## How to use
 
 Extend your project with the dependency to the rather small dinistiq library file.
 Dinistiq releases are available from JCenter. The group id and artifact id are both
@@ -265,7 +261,7 @@ Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
 Snapshot artifacts are available from the OJO repository:
 
 ```
-https://oss.jfrog.org/
+https://oss.jfrog.org/oss-snapshot-local/
 ```
 
 Apart from optional configuration files to be placed somehere on your classpath,
@@ -309,13 +305,12 @@ public class Test  {
 } // Test
 ```
 
-Web embedding
--------------
+## Web embedding
 
 Dinistiq comes with a very lean web integration. An ordered list of beans implementing
 the servlet interface will be registered directly with the servlet container.
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
@@ -365,8 +360,7 @@ So a servlet has to tell which url patterns its request should meet to be able t
 handle them. Additionally it tells an order number to sort all available servlets
 to provide a certain precedency rule for them.
 
-Custom Class Resolver
----------------------
+## Custom Class Resolver
 
 It is perfectly possible that you will find our class resolving pretty dumb. So we
 provide the option to pass over a class resolver instance to dinistiq instead of the
@@ -430,8 +424,7 @@ for dinistiq.
 Within the web application all beans from the dinistiq scope are available in the
 application scope (servlet context) as attributes.
 
-External Components
--------------------
+## External Components
 
 If your software needs to use some components which cannot be instanciated or obtained
 using all of the means presented here, you can pass over a named set of instances as
@@ -461,8 +454,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 } // DinistiqContextLoaderListener
 ```
 
-Besides the one managed Scope
------------------------------
+## Besides the one managed Scope
 
 Dinistiq defines just one scope of beans you can grab beans from. If you need fresh
 instances of beans where the members of this scope should be injected on creation and
@@ -482,8 +474,7 @@ My myNewInstance = new My();
 dinistiq.initBean(myNewInstance, null);
 ```
 
-Building
---------
+## Building
 
 The code for dinistiq is supposed to be written in Java 7 and prepared for building
 with gradle. Gradle versions up to 2.7 are tested to be working.
@@ -491,8 +482,7 @@ with gradle. Gradle versions up to 2.7 are tested to be working.
 While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be compiled
 and tested with Java 8.
 
-Comparison
-----------
+## Comparison
 
 The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
 interesting comparison of some DI implementations done in Java and we want to add
@@ -546,3 +536,60 @@ It recognises JSR330 Annotation but seems to lack the option of config files lik
 simple properties file mechanism of dinistiq. Additionally - unlike Spring and dinistiq -
 it depends on public setters for the injections. Private members with the @Inject annotation
 are not enough. Also it is fairly unmaintained for some years now.
+
+Another option I just ran into today is [Feather](https://github.com/zsoltherpai/feather)
+described in [this article](http://codejargon.blogspot.no/2015/09/feather-ultra-lightweight-dependency.html).
+I haven't done any further investigation.
+
+## History and Why
+
+I rather apologise to introduce another Dependency Injection Container for the Java
+world - dinistiq - a very minimalistic approach to the topic. It turned out to be easier
+to implement another one, than to use others listed here. Limited in features, easy to
+use, and still more configurable than other options I could think of. After some months
+of use, I now can invite other users to take a look at it and try it in their own projects.
+
+Also this text gives you a "why" on the use of the JSR 330 annotations for Dependency Injection.
+It simply makes your code even more reusable in case your development or deployment environment
+changes.
+
+Since tangram is much more about glueing together proven existing software components and
+frameworks than writing code, I felt the need to check if the existing code base was really
+fully dependent on the Spring Framework.
+
+Despite the fact that spring more or less in many ways does what I need, it sometimes feels
+a bit bloated and does too much magic I don't understand in detail (which I still had to
+learn when debugging things). So I tried to isolate the spring code during the tangram 0.9
+work and present at least a second solution for all the things I did with spring so far.
+
+For tangram spring does three things
+
+- Dependency Injection to plug the whole application together
+- support a decent view layer with JSP and Apache Velocity views
+- A concise way to map http requests to code - controller classes or methods
+
+So I took a look at other view frameworks like Vaadin, GWT, Apache Wicket, Play, Struts, JSF/JEE,
+Stripes. Right at the moment I think Vaading, GWT, Wicket, and Play are no really good fit for
+tangram, Struts in my eyes is a fading technology, and only JSF/JEE is an obvious option. With
+Java Server Faces I only had unsatisfying project experiences and the rest of JEE goes for plain
+Servlet. So tangram had to be provided with a plain servlet way of doing the view layer.
+
+Since the modularity of tangram was achieved by the Spring way of plugging components together with
+Dependency Injection, the first thing to do was, to mark the generic components in a spring independent
+way and to look at the other options for the Dependency Injection part. Only then it would be possible
+to replace the spring view layer with a servlet view layer during the startup and wire-up of the
+application.
+
+So the list of relevant DI frameworks gets shortened to those supporting the generic Dependency Injection
+annotations from JSR330 which are intended for JEE and can e.g. also be used with Google Guice and the
+Spring Framework alike.
+
+From the reading Google Guice seemed to be a good alternative for the proof of concept phase, but
+it took me that much work to get something to run with it (not everything can be plugged together
+programmatically in my case), that I came out faster with my own Dependency Injection Container.
+Rather minimalistic and only suited for the setup of components.
+
+Its advantage over Guice is that it's smaller and easier configurable with properties files.
+Weeks later I discovered TinyDI as another option. While this container seems to be a lot cleverer
+about the search of annotated classes it seems to lack the needed option of extending the configuration
+aspects from the annotations with properties files - defaults and overridden values and references.
