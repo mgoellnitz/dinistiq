@@ -118,7 +118,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             for (RegisterableServlet servlet : orderedServlets) {
                 ServletRegistration registration = context.addServlet(servlet.getClass().getSimpleName(), servlet);
                 for (String urlPattern : servlet.getUrlPatterns()) {
-                    LOG.debug("contextInitialized() * {}", urlPattern);
+                    LOG.info("contextInitialized() {}: {}", servlet.getClass().getSimpleName(), urlPattern);
                     registration.addMapping(urlPattern);
                 } // for
             } // for
