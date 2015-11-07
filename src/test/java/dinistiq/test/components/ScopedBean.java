@@ -36,7 +36,7 @@ public class ScopedBean {
     private String namedValue;
 
     @Inject
-    TestInterface testInterface;
+    private TestInterface testInterface;
 
 
     public String getNamedValue() {
@@ -48,4 +48,4 @@ public class ScopedBean {
         return testInterface;
     }
 
-} // DependentBean
+} // ScopedBean

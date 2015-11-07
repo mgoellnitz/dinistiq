@@ -44,6 +44,7 @@ public class TestComponent implements TestInterface {
      * @throws Exception
      */
     public void setMeUp() throws Exception {
+        // It's just the name that counts
     } // setMeUp()
 
 } // TestComponent

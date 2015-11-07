@@ -65,6 +65,7 @@ public class MockRegisterableServlet implements RegisterableServlet {
 
     @Override
     public void service(ServletRequest sr, ServletResponse sr1) throws ServletException, IOException {
+        // Mocks don't provide any service.
     }
 
 
@@ -76,6 +77,7 @@ public class MockRegisterableServlet implements RegisterableServlet {
 
     @Override
     public void destroy() {
+        // Nothing to do on destruction.
     }
 
 
