@@ -484,7 +484,7 @@ and tested with Java 8.
 
 ## Comparison
 
-The developers of [silk] (http://www.silkdi.com/help/comparison.html) present an
+The developer of [SilkDI](https://github.com/jbee/silk/blob/6a739b44973de964013d320c174a333e2f70665c/help/comparison.md) presents an
 interesting comparison of some DI implementations done in Java and we want to add
 some  values for dinistiq to this list:
 
