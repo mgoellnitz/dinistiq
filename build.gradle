@@ -132,7 +132,7 @@ publishing {
           license.appendNode('name', 'LGPL-3.0')
           license.appendNode('url', 'http://opensource.org/licenses/LGPL-3.0')
           license
-          def issues = new Node(pom, 'issueManagement')
+          def issues = new Node(rootNode, 'issueManagement')
           issues.appendNode('system', 'github')
           issues.appendNode('url', 'https://github.com/mgoellnitz/dinistiq/issues')
           issues
