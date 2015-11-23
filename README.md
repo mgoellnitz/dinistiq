@@ -537,9 +537,11 @@ simple properties file mechanism of dinistiq. Additionally - unlike Spring and d
 it depends on public setters for the injections. Private members with the @Inject annotation
 are not enough. Also it is fairly unmaintained for some years now.
 
-Another option I just ran into today is [Feather](https://github.com/zsoltherpai/feather)
+Another option I ran into is [Feather](https://github.com/zsoltherpai/feather)
 described in [this article](http://codejargon.blogspot.no/2015/09/feather-ultra-lightweight-dependency.html).
-I haven't done any further investigation.
+It lacks too many injection options to be usefull for the injection scenarios presented
+here like injecting after instanciation with a @PostConstruct method to complete
+initialization.
 
 ## History and Why
 
