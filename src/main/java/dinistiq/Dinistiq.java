@@ -231,6 +231,7 @@ public class Dinistiq {
          */
         @Override
         public Object get() {
+            // TODO: Deal with scopes.
             return (name==null) ? d.findBean(c) : d.findBean(c, name);
         }
 
@@ -307,6 +308,7 @@ public class Dinistiq {
                     name = ((Named) a).value();
                 } // if
             } // for
+            // TODO: Deal with scopes.
             parameters[i] = getValue(beanProperties, dependencies, beanName, types[i], genericTypes[i], name);
         } // for
         return parameters;
@@ -362,7 +364,9 @@ public class Dinistiq {
 
 
     /**
-     * Creates an instance of the given type and registeres it with the container.
+     * Creates an instance of the given type and registers it with the container.
+     *
+     * Adds default name resolution.
      *
      * @param cls type to create an instance of
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
@@ -397,6 +401,24 @@ public class Dinistiq {
 
 
     /**
+     * Common initialization parts of createBean() and initBean().
+     *
+     * @param bean to be initialized
+     * @param name name of the bean - may not be null!
+     * @param dependencies dummy dependency collector but must be the same troughout the process.
+     */
+    private void initBean(Object bean, String name, Map<String, Set<Object>> dependencies) {
+        try {
+            // TODO: Deal with scopes.
+            injectDependencies(dependencies, name, bean);
+            callPostConstruct(bean);
+        } catch (Exception e) {
+            LOG.error("initBean() "+bean.getClass(), e);
+        } // try/catch
+    } // initBean()
+
+
+    /**
      * Create a fresh instance of a given class and inject all needed dependencies from the dinistiq scope.
      *
      * @param <T> generic type limit for bean to be created
@@ -409,8 +431,7 @@ public class Dinistiq {
             String beanName = getBeanName(cls, name);
             Map<String, Set<Object>> dependencies = new HashMap<>();
             T bean = createInstance(dependencies, cls, beanName);
-            injectDependencies(dependencies, beanName, bean);
-            callPostConstruct(bean);
+            initBean(bean, beanName, dependencies);
             return bean;
         } catch (Exception e) {
             return null;
@@ -429,8 +450,7 @@ public class Dinistiq {
             String beanName = getBeanName(bean.getClass(), name);
             Map<String, Set<Object>> dependencies = new HashMap<>();
             dependencies.put(beanName, new HashSet<>());
-            injectDependencies(dependencies, beanName, bean);
-            callPostConstruct(bean);
+            initBean(bean, beanName, dependencies);
         } catch (Exception e) {
             LOG.error("initBean() "+bean.getClass(), e);
         } // try/catch
@@ -601,6 +621,7 @@ public class Dinistiq {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
                     LOG.info("injectDependencies({}) {} :{} needs injection with name {}", key, field.getName(), field.getGenericType(), name);
+                    // TODO: Deal with scopes.
                     Object b = getValue(beanProperties, dependencies, key, field.getType(), field.getGenericType(), name);
                     final boolean accessible = field.isAccessible();
                     try {
@@ -633,6 +654,7 @@ public class Dinistiq {
         } // for
 
         // Fill in manually set values from properties file
+        // TODO: Deal with scopes - do we need a second scope variable besides beans to hold "dependent" scope beans while injecting?
         for (String property : beanProperties.stringPropertyNames()) {
             String methodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
             LOG.debug("injectDependencies({}) {} -> {}", key, property, methodName);
@@ -687,7 +709,7 @@ public class Dinistiq {
                             parameters[0] = values;
                         } // if
                     } else {
-                        if ((dependencies!=null)&&(beans.containsValue(parameters[0]))&&(propertyValue.indexOf("${")>=0)) {
+                        if ((dependencies!=null)&&(beans.containsValue(parameters[0]))&&(propertyValue.contains("${"))) {
                             dependencies.get(key).add(parameters[0]);
                         } // if
                     } // if
@@ -705,7 +727,7 @@ public class Dinistiq {
      * Create a dinistiq context from the given class resolver and optional external beans.
      * Add all the external named beans from thei given map for later lookup to the context as well
      * and be sure that your class resolver takes the resources in the dinistiq/ path of your
-     * class path into cosideration.
+     * class path into consideration.
      *
      * @param classResolver resolver to us when resolving all types of classes
      * @param externalBeans map of beans with their id (name) as the key
@@ -818,7 +840,8 @@ public class Dinistiq {
 
         // Fill in injections and note needed dependencies
         for (String key : new HashSet<>(beans.keySet())) {
-            injectDependencies(dependencies, key, beans.get(key));
+            Object get = beans.get(key);
+            injectDependencies(dependencies, key, get);
         } // for
 
         // sort beans according to dependencies
