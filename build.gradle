@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -48,7 +48,7 @@ repositories {
 }
 
 dependencies {
-  compile 'org.slf4j:slf4j-api:1.7.14'
+  compile 'org.slf4j:slf4j-api:1.7.16'
   compile 'org.apache.commons:commons-lang3:3.4'
   compile 'javax.inject:javax.inject:1'
 
