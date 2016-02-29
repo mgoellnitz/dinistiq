@@ -48,7 +48,7 @@ repositories {
 }
 
 dependencies {
-  compile 'org.slf4j:slf4j-api:1.7.16'
+  compile 'org.slf4j:slf4j-api:1.7.18'
   compile 'org.apache.commons:commons-lang3:3.4'
   compile 'javax.inject:javax.inject:1'
 
@@ -61,7 +61,7 @@ dependencies {
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is what we'd like to have working
   testRuntime 'ch.qos.logback:logback-classic:1.1.5'
-  testRuntime 'org.codehaus.groovy:groovy:2.4.5'
+  testRuntime 'org.codehaus.groovy:groovy:2.4.6'
 }
 
 pmd {
