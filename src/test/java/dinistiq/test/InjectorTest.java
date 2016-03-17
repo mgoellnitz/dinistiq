@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,8 @@ import dinistiq.test.components.CollectionReferences;
 import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
 import dinistiq.test.components.InitialBeanDependentComponent;
+import dinistiq.test.components.InjectionFailure;
+import dinistiq.test.components.ManualBean;
 import dinistiq.test.components.MultiInstanceComponent;
 import dinistiq.test.components.NamedInjection;
 import dinistiq.test.components.NumericInjection;
@@ -40,11 +42,15 @@ import java.util.Set;
 import javax.inject.Singleton;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
 public class InjectorTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InjectorTest.class);
 
     private Dinistiq d;
 
@@ -316,6 +322,17 @@ public class InjectorTest {
         TestComponent testComponent = d.findBean(TestComponent.class);
         Assert.assertEquals(instance.getTestComponent(), testComponent, "Non expected instance injected");
     } // testInstanceInit()
+
+
+    @Test
+    public void testInjectionFailures() {
+        ManualBean bean = new ManualBean();
+        d.initBean(bean, null);
+        Assert.assertEquals(bean.getIndicator(), "not initialized", "Unexpected value from post construct method found.");
+        InjectionFailure failure = d.createBean(InjectionFailure.class, null);
+        Assert.assertNotNull(failure, "Was not able to create instance.");
+        Assert.assertEquals(failure.getIndicator(), "not initialized", "Unexpected value from impossible injection.");
+    } // testInjectionFailures()
 
 
     @Test
