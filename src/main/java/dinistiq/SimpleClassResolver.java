@@ -24,6 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -183,6 +184,26 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
+     * Helper method for all API methods which have to scan all detected classes.
+     *
+     * @return collection of classes for the collected class names.
+     */
+    private <T extends Object> Collection<Class<T>> getClasses() {
+        Set<Class<T>> result = new HashSet<>();
+        for (String className : classNames) {
+            try {
+                LOG.debug("getClasses() className={}", className);
+                Class<T> cls = loadClass(className);
+                result.add(cls);
+            } catch (ClassNotFoundException e) {
+                LOG.error("getClasses()", e);
+            } // try/catch
+        } // for
+        return result;
+    } // getClasses()
+
+
+    /**
      * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
      *
      * @see ClassResolver#getSubclasses(java.lang.Class)
@@ -191,17 +212,13 @@ public class SimpleClassResolver implements ClassResolver {
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
         Set<Class<T>> result = new HashSet<>();
         LOG.debug("getSubclasses() checking {} classes", classNames.size());
-        for (String className : classNames) {
-            try {
-                Class<T> cls = loadClass(className);
-                LOG.debug("getSubclasses() className={}", className);
-                if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
-                    result.add(cls);
-                } // if
-            } catch (ClassNotFoundException e) {
-                LOG.error("getSubclasses()", e);
-            } // try/catch
-        } // if
+        Collection<Class<T>> classes = getClasses();
+        for (Class<T> cls : classes) {
+            LOG.debug("getSubclasses() className={}", cls.getName());
+            if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
+                result.add(cls);
+            } // if
+        } // for
         return result;
     } // getSubclasses()
 
@@ -215,16 +232,12 @@ public class SimpleClassResolver implements ClassResolver {
     public <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<>();
         LOG.debug("getAnnotated() checking {} classes", classNames.size());
-        for (String className : classNames) {
-            try {
-                LOG.debug("getAnnotated() className={}", className);
-                Class<T> cls = loadClass(className);
-                if ((!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
-                    result.add(cls);
-                } // if
-            } catch (ClassNotFoundException e) {
-                LOG.error("getAnnotated()", e);
-            } // try/catch
+        Collection<Class<T>> classes = getClasses();
+        for (Class<T> cls : classes) {
+            LOG.debug("getAnnotated() className={}", cls.getName());
+            if ((!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
+                result.add(cls);
+            } // if
         } // if
         return result;
     } // getAnnotated()
@@ -240,16 +253,12 @@ public class SimpleClassResolver implements ClassResolver {
     public <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation) {
         Set<Class<T>> result = new HashSet<>();
         LOG.debug("getAnnotatedSubclasses() checking {} classes", classNames.size());
-        for (String className : classNames) {
-            try {
-                Class<T> cls = loadClass(className);
-                LOG.debug("getAnnotatedSubclasses() className={}", className);
-                if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
-                    result.add(cls);
-                } // if
-            } catch (ClassNotFoundException e) {
-                LOG.error("getAnnotatedSubclasses()", e);
-            } // try/catch
+        Collection<Class<T>> classes = getClasses();
+        for (Class<T> cls : classes) {
+            LOG.debug("getAnnotatedSubclasses() className={}", cls.getName());
+            if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
+                result.add(cls);
+            } // if
         } // if
         return result;
     } // getAnnotatedSubclasses()
