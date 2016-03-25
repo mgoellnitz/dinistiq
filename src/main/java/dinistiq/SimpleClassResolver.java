@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -134,14 +134,14 @@ public class SimpleClassResolver implements ClassResolver {
      * @param packageNames Set of string names for pakckges to scan
      */
     public SimpleClassResolver(Set<String> packageNames) {
-        this.packageNames = packageNames;
+        this.packageNames = new HashSet<>(packageNames);
         // to have the properties files in the path which we intend to use for configuration
         this.packageNames.add(this.getClass().getPackage().getName());
 
         properties = new HashSet<>();
         classNames = new HashSet<>();
         Set<URL> urls = new HashSet<>();
-        for (String packageName : packageNames) {
+        for (String packageName : this.packageNames) {
             addUrlsForPackage(urls, packageName);
         } // if
         LOG.debug("() url # {}", urls.size());
