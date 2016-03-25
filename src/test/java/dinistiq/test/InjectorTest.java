@@ -42,15 +42,11 @@ import java.util.Set;
 import javax.inject.Singleton;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
 public class InjectorTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InjectorTest.class);
 
     private Dinistiq d;
 
@@ -333,6 +329,13 @@ public class InjectorTest {
         Assert.assertNotNull(failure, "Was not able to create instance.");
         Assert.assertEquals(failure.getIndicator(), "not initialized", "Unexpected value from impossible injection.");
     } // testInjectionFailures()
+
+
+    @Test
+    public void testFailures() {
+        Singleton failure = d.createBean(Singleton.class, null);
+        Assert.assertNull(failure, "Should not have been able to create instance.");
+    } // testFailures()
 
 
     @Test
