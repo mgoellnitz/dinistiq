@@ -32,7 +32,7 @@ public class InjectionFailure {
      */
     @Inject
     @Named("hallo")
-    private String indicator = "not initialized";
+    private String indicator = "not initialized"; // NOPMD - this is an injection point although it is unused in test
 
 
     public String getIndicator() {
