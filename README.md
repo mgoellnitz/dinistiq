@@ -5,7 +5,7 @@ Minimalistic Dependency Injection
 
 [![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://github.com/mgoellnitz/dinistiq/releases/latest)
 [![Build Status](https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master)](https://travis-ci.org/mgoellnitz/dinistiq)
-[![Coverage Status](https://coveralls.io/repos/mgoellnitz/dinistiq/badge.svg)](https://coveralls.io/r/mgoellnitz/dinistiq)
+[![Coverage Status](https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master)](https://coveralls.io/github/mgoellnitz/dinistiq?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053)
 
 A small footprint approach to dependency injection with a framework or container
