@@ -48,13 +48,13 @@ repositories {
 }
 
 dependencies {
-  compile 'org.slf4j:slf4j-api:1.7.19'
+  compile 'org.slf4j:slf4j-api:1.7.20'
   compile 'org.apache.commons:commons-lang3:3.4'
   compile 'javax.inject:javax.inject:1'
 
   compile 'javax.servlet:javax.servlet-api:3.1.0'
 
-  testCompile 'org.testng:testng:6.9.10'
+  testCompile 'org.testng:testng:6.9.11'
   // Some servlet API elements
   testCompile 'org.mockito:mockito-all:1.10.19'
   // integrate tck into unit tests
