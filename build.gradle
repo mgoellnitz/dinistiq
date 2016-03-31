@@ -60,7 +60,7 @@ dependencies {
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is what we'd like to have working
-  testRuntime 'ch.qos.logback:logback-classic:1.1.6'
+  testRuntime 'ch.qos.logback:logback-classic:1.1.7'
   testRuntime 'org.codehaus.groovy:groovy:2.4.6'
 }
 
