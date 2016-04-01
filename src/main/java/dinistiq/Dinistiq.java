@@ -467,15 +467,15 @@ public class Dinistiq {
      */
     private Properties getProperties(String key) throws IOException {
         Properties beanProperties = new Properties();
-        final String defaultsName = PRODUCT_BASE_PATH+"/defaults/"+key+".properties";
-        final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(defaultsName);
+        String defaultsName = PRODUCT_BASE_PATH+"/defaults/"+key+".properties";
+        Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(defaultsName);
         LOG.debug("getProperties({}) searching defaults {} {}", key, defaultsName, resources);
         while (resources.hasMoreElements()) {
-            final URL resource = resources.nextElement();
+            URL resource = resources.nextElement();
             LOG.debug("getProperties({}) loading defaults from {}", key, defaultsName);
             beanProperties.load(resource.openStream());
         } // while
-        final String beanValuesName = PRODUCT_BASE_PATH+"/beans/"+key+".properties";
+        String beanValuesName = PRODUCT_BASE_PATH+"/beans/"+key+".properties";
         InputStream beanStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(beanValuesName);
         LOG.debug("getProperties({}) searching bean values {} {}", key, beanValuesName, beanStream);
         if (beanStream!=null) {
@@ -623,7 +623,7 @@ public class Dinistiq {
                     LOG.info("injectDependencies({}) {} :{} needs injection with name {}", key, field.getName(), field.getGenericType(), name);
                     // TODO: Deal with scopes.
                     Object b = getValue(beanProperties, dependencies, key, field.getType(), field.getGenericType(), name);
-                    final boolean accessible = field.isAccessible();
+                    boolean accessible = field.isAccessible();
                     try {
                         field.setAccessible(true);
                         field.set(bean, b);
@@ -656,7 +656,7 @@ public class Dinistiq {
         // Fill in manually set values from properties file
         // TODO: Deal with scopes - do we need a second scope variable besides beans to hold "dependent" scope beans while injecting?
         for (String property : beanProperties.stringPropertyNames()) {
-            String methodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
+            String methodName = "set"+Character.toUpperCase(property.charAt(0))+property.substring(1);
             LOG.debug("injectDependencies({}) {} -> {}", key, property, methodName);
             Method m = null;
             // Have to find it just by name
@@ -810,7 +810,7 @@ public class Dinistiq {
         LOG.info("() beanlist {}", beanlist);
 
         // List annotated beans
-        final Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
+        Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
         LOG.info("() number of annotated beans {}", classes.size());
         for (Class<? extends Object> c : classes) {
             classList.add(c);
