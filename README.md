@@ -476,11 +476,21 @@ dinistiq.initBean(myNewInstance, null);
 
 ## Building
 
-The code for dinistiq is supposed to be written in Java 7 and prepared for building
-with gradle. Gradle versions up to 2.12 are tested to be working.
+While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be 
+compiled and tested with Java 8.
 
-While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be compiled
-and tested with Java 8.
+The code for dinistiq is prepared for building with gradle. Gradle versions up 
+to 2.13 are tested to be working.
+
+Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequent
+switch to Java 8.
+
+|Dinistiq|Works   |Compiles|GAE    |
+|Version |with    |with    |support|
+|:-------|--------|--------|------:|
+|  0.4   |Java 7/8|  Java7 |   +   |
+|  0.5   |Java 7/8| Java7/8|   -   |
+|  0.6   | Java 8 |  Java8 |   -   |
 
 ## Comparison
 
