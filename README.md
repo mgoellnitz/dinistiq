@@ -486,10 +486,10 @@ Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequen
 switch to Java 8.
 
 |dinistiq Version|Works with |Compiles with|GAE support|
-|:---------------|:---------:|:-----------:|:---------:|
-|0.4|Java 7/8|Java7|+|
-|0.5|Java 7/8|Java7/8|-|
-|0.6|Java 8|Java8 |-|
+|:--------------:|:---------:|:-----------:|:---------:|
+|0.4|Java 7 / 8|Java 7|+|
+|0.5|Java 7 / 8|Java 7 / 8|-|
+|0.6|Java 8|Java 8|-|
 
 ## Comparison
 
