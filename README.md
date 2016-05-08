@@ -485,8 +485,7 @@ to 2.13 are tested to be working.
 Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequent
 switch to Java 8.
 
-|Dinistiq|Works   |Compiles|GAE    |
-|Version |with    |with    |support|
+|DinistiqVersion|Works with |Compiles with|GAE support|
 |:-------|--------|--------|------:|
 |  0.4   |Java 7/8|  Java7 |   +   |
 |  0.5   |Java 7/8| Java7/8|   -   |
