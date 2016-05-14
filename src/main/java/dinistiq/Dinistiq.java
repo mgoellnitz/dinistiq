@@ -46,6 +46,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -189,7 +190,29 @@ public class Dinistiq {
 
 
     /**
-     * Return the names of all beans in the inistiq scope.
+     * Find all beans with a given qualifier and its values.
+     *
+     * @param <Q> Qualifier type constraint
+     * @param qualifier qualifier to find beans for
+     * @return Set of beans - may be empty but not null
+     */
+    public <Q extends Annotation> Set<Object> findQualifiedBeans(Q qualifier) {
+        if (qualifier.annotationType().getAnnotation(Qualifier.class) == null) {
+            throw new RuntimeException("Not a qualifier: "+qualifier.annotationType()+" ("+qualifier.getClass().getName()+")");
+        } // if
+        Set<Object> result = new HashSet<>();
+        for (Object bean : beans.values()) {
+            if (bean.getClass().getAnnotation(qualifier.annotationType())!=null) {
+                LOG.debug("findQualifiedBeans() found qualified bean {}", bean);
+                result.add(bean);
+            } // if
+        } // for
+        return result;
+    } // findQualifiedBeans()
+
+
+    /**
+     * Return the names of all beans in the dinistiq scope.
      *
      * @return collection of all bean names
      */

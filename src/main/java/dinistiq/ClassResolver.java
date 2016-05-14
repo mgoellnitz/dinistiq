@@ -49,6 +49,16 @@ public interface ClassResolver {
 
 
     /**
+     * Get classes from underlying packages satisfying the given annotation.
+     *
+     * @param <T> generic type variable for the result set
+     * @param annotation annotation instance resulting classes should adhere
+     * @return Set of classes with the given annotation
+     */
+    <T extends Object> Set<Class<T>> getAnnotatedItems(Class<? extends Annotation> annotation);
+
+
+    /**
      * Get all available subclasses of a given type annotated with a given annotation which are no interface.
      *
      * @param <T> generic type variable for the result set

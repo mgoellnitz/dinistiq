@@ -244,8 +244,28 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
+     * Get classes from underlying packages satisfying the given annotation.
+     *
+     * @see ClassResolver#getAnnotatedItems(java.lang.Class)
+     */
+    @Override
+    public <T extends Object> Set<Class<T>> getAnnotatedItems(Class<? extends Annotation> annotation) {
+        Set<Class<T>> result = new HashSet<>();
+        LOG.debug("getAnnotatedItems() checking {} classes", classNames.size());
+        Collection<Class<T>> classes = getClasses();
+        for (Class<T> cls : classes) {
+            LOG.debug("getAnnotatedItems() className={}", cls.getName());
+            if (cls.getAnnotation(annotation)!=null) {
+                result.add(cls);
+            } // if
+        } // if
+        return result;
+    } // getAnnotated()
+
+
+    /**
      * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
-     * 
+     *
      * @see ClassResolver#getAnnotatedSubclasses(java.lang.Class, java.lang.Class)
      */
     @Override
