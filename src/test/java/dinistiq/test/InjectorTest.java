@@ -18,7 +18,9 @@
  */
 package dinistiq.test;
 
+import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
+import dinistiq.SimpleClassResolver;
 import dinistiq.test.components.CollectionReferences;
 import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
@@ -33,12 +35,15 @@ import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
 import dinistiq.web.test.MockServletContext;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.inject.Named;
+import javax.inject.Scope;
 import javax.inject.Singleton;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
@@ -344,5 +349,51 @@ public class InjectorTest {
         Assert.assertNotNull(car, "Tck's car should have been instanciated");
         Tck.testsFor(car, true, true);
     } // testUsingTck()
+
+
+    @Test
+    public void testQualifiedBeans() {
+        Named n = new Named() {
+            @Override
+            public String value() {
+                return "test";
+            }
+
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Named.class;
+            }
+
+        };
+        Set<Object> qualifiedBeans = d.findQualifiedBeans(n);
+        Assert.assertEquals(qualifiedBeans.size(), 8, "Unexpected number of quaified beans discovered in dinistiq scope.");
+        boolean thrown = false;
+        try {
+            Scope s = new Scope() {
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return Scope.class;
+                }
+
+            };
+            qualifiedBeans = d.findQualifiedBeans(s);
+        } catch (Exception e) {
+            if (e.getMessage().startsWith("Not a qualifier")) {
+                thrown = true;
+            } // if
+        } // try/catch
+        Assert.assertTrue(thrown, "Should not issue results when no qualifier is given.");
+    } // testQualifiedBeans()
+
+
+    @Test
+    public void testScopes() {
+        Set<String> packs = new HashSet<>();
+        packs.add(Scope.class.getPackage().getName());
+        ClassResolver classResolver = new SimpleClassResolver(packs);
+        Set<Class<Object>> scopes = classResolver.getAnnotatedItems(Scope.class);
+        Assert.assertEquals(scopes.size(), 1, "Unexpected number of scopes discovered in class path.");
+    } // testScopes()
 
 } // InjectorTest
