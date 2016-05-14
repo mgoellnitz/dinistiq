@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2015 Martin Goellnitz
+ * Copyright 2015-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -32,10 +32,10 @@ appenders.add('CONSOLE')
 
 appender('FILE', RollingFileAppender) {
   file = "build/dinistiq-test.log"
-  append = true
+  append = false
   rollingPolicy(TimeBasedRollingPolicy) {
-    fileNamePattern = "${logDir}/${logFileName}-%d{yyyy-MM-dd_HH}.log"
-    maxHistory = 7
+    fileNamePattern = "build/dinistiq-test-%d{yyyy-MM-dd_HH}.log"
+    maxHistory = 5
   }
   encoder(PatternLayoutEncoder) {
     pattern = encoderPattern
