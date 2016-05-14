@@ -195,7 +195,7 @@ public class SimpleClassResolver implements ClassResolver {
                 LOG.debug("getClasses() className={}", className);
                 Class<T> cls = loadClass(className);
                 result.add(cls);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException|Error e) {
                 LOG.error("getClasses()", e);
             } // try/catch
         } // for
