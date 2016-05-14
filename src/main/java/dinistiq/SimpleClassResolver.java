@@ -204,7 +204,7 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
-     * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
+     * Get classes from underlying packages satisfying the given superclass which are no interfaces and not abstract.
      *
      * @see ClassResolver#getSubclasses(java.lang.Class)
      */
@@ -224,7 +224,7 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
-     * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
+     * Get classes from underlying packages satisfying the given annotation which are no interfaces and not abstract.
      *
      * @see ClassResolver#getAnnotated(java.lang.Class)
      */
@@ -244,9 +244,8 @@ public class SimpleClassResolver implements ClassResolver {
 
 
     /**
-     * Get classes from underlying packages satisfying the given annotation and superclass.
-     * Interfaces are excluded.
-     *
+     * Get classes from underlying packages satisfying the given annotation and superclass which are no interfaces.
+     * 
      * @see ClassResolver#getAnnotatedSubclasses(java.lang.Class, java.lang.Class)
      */
     @Override

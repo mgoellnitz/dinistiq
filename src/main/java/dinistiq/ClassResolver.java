@@ -29,7 +29,7 @@ import java.util.SortedSet;
 public interface ClassResolver {
 
     /**
-     * Get all available subclasses of a given class.
+     * Get all available subclasses of a given class which are not abstract.
      *
      * @param <T> generic type variable for the result set
      * @param type type to search subclasses for
@@ -39,7 +39,7 @@ public interface ClassResolver {
 
 
     /**
-     * Get all classes annotated with a given annotation.
+     * Get all classes annotated with a given annotation which are not abstract and no interface.
      *
      * @param <T> generic type variable for the result set
      * @param annotation annotation instance resulting classes should adhere
@@ -49,7 +49,7 @@ public interface ClassResolver {
 
 
     /**
-     * Get all available subclasses of a given type annotated with a given annotation.
+     * Get all available subclasses of a given type annotated with a given annotation which are no interface.
      *
      * @param <T> generic type variable for the result set
      * @param c type to search subclasses for
