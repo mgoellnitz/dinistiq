@@ -197,7 +197,7 @@ public class Dinistiq {
      * @return Set of beans - may be empty but not null
      */
     public <Q extends Annotation> Set<Object> findQualifiedBeans(Q qualifier) {
-        if (qualifier.annotationType().getAnnotation(Qualifier.class) == null) {
+        if (qualifier.annotationType().getAnnotation(Qualifier.class)==null) {
             throw new RuntimeException("Not a qualifier: "+qualifier.annotationType()+" ("+qualifier.getClass().getName()+")");
         } // if
         Set<Object> result = new HashSet<>();
@@ -469,14 +469,10 @@ public class Dinistiq {
      * @param name an optional name of the bean used for injection discovery - may be null
      */
     public void initBean(Object bean, String name) {
-        try {
-            String beanName = getBeanName(bean.getClass(), name);
-            Map<String, Set<Object>> dependencies = new HashMap<>();
-            dependencies.put(beanName, new HashSet<>());
-            initBean(bean, beanName, dependencies);
-        } catch (Exception e) {
-            LOG.error("initBean() "+bean.getClass(), e);
-        } // try/catch
+        String beanName = getBeanName(bean.getClass(), name);
+        Map<String, Set<Object>> dependencies = new HashMap<>();
+        dependencies.put(beanName, new HashSet<>());
+        initBean(bean, beanName, dependencies);
     } //  initBean()
 
 
