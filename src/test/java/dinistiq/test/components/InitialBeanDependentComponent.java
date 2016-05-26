@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2015 Martin Goellnitz
+ * Copyright 2014-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
+import lombok.Getter;
 
 
 @Named
@@ -29,11 +30,7 @@ import javax.servlet.ServletContext;
 public class InitialBeanDependentComponent {
 
     @Inject
+    @Getter
     private ServletContext servletContext;
-
-
-    public ServletContext getServletContext() {
-        return servletContext;
-    }
 
 } // InitialBeanDependentComponent

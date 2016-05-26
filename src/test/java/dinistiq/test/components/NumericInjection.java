@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014 Martin Goellnitz
+ * Copyright 2014-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,75 +20,37 @@ package dinistiq.test.components;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @Named
 @Singleton
 public class NumericInjection extends TestComponentB {
 
+    @Getter
+    @Setter
     private int intValue;
 
+    @Getter
+    @Setter
     private long longValue;
 
+    @Getter
+    @Setter
     private float floatValue;
 
+    @Getter
+    @Setter
     private double doubleValue;
 
+    @Getter
+    @Setter
     private boolean booleanValue;
-
-
-    public int getIntValue() {
-        return intValue;
-    }
-
-
-    public void setIntValue(int intValue) {
-        this.intValue = intValue;
-    }
 
 
     public void setIntValue() {
         // This method should not be consired on injection
-    }
-
-
-    public long getLongValue() {
-        return longValue;
-    }
-
-
-    public void setLongValue(long longValue) {
-        this.longValue = longValue;
-    }
-
-
-    public float getFloatValue() {
-        return floatValue;
-    }
-
-
-    public void setFloatValue(float floatValue) {
-        this.floatValue = floatValue;
-    }
-
-
-    public double getDoubleValue() {
-        return doubleValue;
-    }
-
-
-    public void setDoubleValue(double doubleValue) {
-        this.doubleValue = doubleValue;
-    }
-
-
-    public boolean isBooleanValue() {
-        return booleanValue;
-    }
-
-
-    public void setBooleanValue(boolean booleanValue) {
-        this.booleanValue = booleanValue;
     }
 
 } // NumericInjection

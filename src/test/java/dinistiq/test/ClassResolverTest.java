@@ -37,9 +37,9 @@ public class ClassResolverTest {
         packages.add("javax");
         ClassResolver resolver = new SimpleClassResolver(packages);
         Set<Class<TestInterface>> subclasses = resolver.getSubclasses(TestInterface.class);
-        Assert.assertEquals(subclasses.size(), 1, "Cannot find expected number of implementing classes");
+        Assert.assertEquals(subclasses.size(), 2, "Cannot find expected number of implementing classes");
         Set<Class<TestInterface>> annotatedSubclasses = resolver.getAnnotatedSubclasses(TestInterface.class, Singleton.class);
-        Assert.assertEquals(annotatedSubclasses.size(), 2, "Cannot find expected number of implementing classes annotated as singleton");
+        Assert.assertEquals(annotatedSubclasses.size(), 3, "Cannot find expected number of implementing classes annotated as singleton");
     } // testClassLoader()
 
 } // ClassResolverTest

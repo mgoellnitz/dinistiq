@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2014-2015 Martin Goellnitz
+ * Copyright 2014-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,7 @@ package dinistiq.test.components;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import lombok.Getter;
 
 
 /**
@@ -32,41 +33,25 @@ public class NamedInjection {
 
     @Inject
     @Named
+    @Getter
     private String stringTest;
 
     @Inject
     @Named("b")
+    @Getter
     private String stringValue;
 
     @Inject
     @Named
+    @Getter
     private String directValue;
 
     @Inject
     @Named("another")
+    @Getter
     private String namedValue;
 
     private String someValue;
-
-
-    public String getStringTest() {
-        return stringTest;
-    }
-
-
-    public String getStringValue() {
-        return stringValue;
-    }
-
-
-    public String getDirectValue() {
-        return directValue;
-    }
-
-
-    public String getNamedValue() {
-        return namedValue;
-    }
 
 
     public String getSomeValue() {

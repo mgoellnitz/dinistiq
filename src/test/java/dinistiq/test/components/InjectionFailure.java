@@ -20,6 +20,7 @@ package dinistiq.test.components;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import lombok.Getter;
 
 
 /**
@@ -32,11 +33,7 @@ public class InjectionFailure {
      */
     @Inject
     @Named("hallo")
+    @Getter
     private String indicator = "not initialized"; // NOPMD - this is an injection point although it is unused in test
 
-
-    public String getIndicator() {
-        return indicator;
-    }
-
-} // ManualBean
+} // InjectionFailure

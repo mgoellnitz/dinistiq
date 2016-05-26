@@ -18,9 +18,7 @@
  */
 package dinistiq.test;
 
-import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
-import dinistiq.SimpleClassResolver;
 import dinistiq.test.components.CollectionReferences;
 import dinistiq.test.components.ConstructorInjection;
 import dinistiq.test.components.InitialBean;
@@ -35,15 +33,12 @@ import dinistiq.test.components.TestComponentB;
 import dinistiq.test.components.TestInterface;
 import dinistiq.test.components.UnannotatedComponent;
 import dinistiq.web.test.MockServletContext;
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.inject.Named;
-import javax.inject.Scope;
 import javax.inject.Singleton;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
@@ -102,24 +97,12 @@ public class InjectorTest {
     public void testFindNames() {
         Set<String> tis = d.findNames(TestInterface.class);
         Assert.assertNotNull(tis, "Cannot obtain name set");
-        Assert.assertEquals(tis.size(), 1, "Cannot find expected number of bean names");
+        Assert.assertEquals(tis.size(), 2, "Cannot find expected number of bean names");
         Assert.assertEquals(tis.iterator().next(), "testComponent", "Cannot find expected bean name");
         Set<String> negative = d.findNames(InjectorTest.class);
         Assert.assertNotNull(negative, "Cannot obtain name set");
         Assert.assertEquals(negative.size(), 0, "Cannot find expected number of bean names");
     } // testFindNames()
-
-
-    @Test
-    public void testDontFind() {
-        String negativeTest = d.findBean(String.class, "unannotatedComponent");
-        Assert.assertNull(negativeTest, "Type conversion should not have been possible");
-        Set<InjectorTest> negative = d.findBeans(InjectorTest.class);
-        Assert.assertNotNull(negative, "Cannot obtain instance set");
-        Assert.assertEquals(negative.size(), 0, "Found unexpected instances");
-        InjectorTest notAvailable = d.findBean(InjectorTest.class);
-        Assert.assertNull(notAvailable, "Cannot obtain instance set");
-    } // testDontFind()
 
 
     @Test
@@ -277,7 +260,7 @@ public class InjectorTest {
         TestComponentB cb = d.findBean(TestComponentB.class);
         UnannotatedComponent uac = d.findBean(UnannotatedComponent.class);
         Assert.assertNotNull(cb.getAllInstances(), "No collection of instances available");
-        Assert.assertEquals(cb.getAllInstances().size(), 1, "Wrong number of instaces in collection");
+        Assert.assertEquals(cb.getAllInstances().size(), 2, "Wrong number of instances in collection");
         Assert.assertNotNull(uac.getManuallyInjectedCollection(), "No collection of instances available");
         Assert.assertEquals(uac.getManuallyInjectedCollection().size(), 1, "Wrong number of instances in collection");
         Assert.assertNotNull(uac.getManuallyInjectedList(), "No list of strings available");
@@ -289,7 +272,7 @@ public class InjectorTest {
     @Test
     public void testAnnotationLookup() {
         Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
-        Assert.assertEquals(beans.size(), 10, "Unexpected number of annotated beans in scope");
+        Assert.assertEquals(beans.size(), 12, "Unexpected number of annotated beans in scope");
     } // testAnnotationLookup()
 
 
@@ -337,63 +320,10 @@ public class InjectorTest {
 
 
     @Test
-    public void testFailures() {
-        Singleton failure = d.createBean(Singleton.class, null);
-        Assert.assertNull(failure, "Should not have been able to create instance.");
-    } // testFailures()
-
-
-    @Test
     public void testUsingTck() {
         Car car = d.findBean(Car.class);
-        Assert.assertNotNull(car, "Tck's car should have been instanciated");
+        Assert.assertNotNull(car, "Tck's car should have been instanciated.");
         Tck.testsFor(car, true, true);
     } // testUsingTck()
-
-
-    @Test
-    public void testQualifiedBeans() {
-        Named n = new Named() {
-            @Override
-            public String value() {
-                return "test";
-            }
-
-
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return Named.class;
-            }
-
-        };
-        Set<Object> qualifiedBeans = d.findQualifiedBeans(n);
-        Assert.assertEquals(qualifiedBeans.size(), 8, "Unexpected number of quaified beans discovered in dinistiq scope.");
-        boolean thrown = false;
-        try {
-            Scope s = new Scope() {
-                @Override
-                public Class<? extends Annotation> annotationType() {
-                    return Scope.class;
-                }
-
-            };
-            qualifiedBeans = d.findQualifiedBeans(s);
-        } catch (Exception e) {
-            if (e.getMessage().startsWith("Not a qualifier")) {
-                thrown = true;
-            } // if
-        } // try/catch
-        Assert.assertTrue(thrown, "Should not issue results when no qualifier is given.");
-    } // testQualifiedBeans()
-
-
-    @Test
-    public void testScopes() {
-        Set<String> packs = new HashSet<>();
-        packs.add(Scope.class.getPackage().getName());
-        ClassResolver classResolver = new SimpleClassResolver(packs);
-        Set<Class<Object>> scopes = classResolver.getAnnotatedItems(Scope.class);
-        Assert.assertEquals(scopes.size(), 1, "Unexpected number of scopes discovered in class path.");
-    } // testScopes()
 
 } // InjectorTest

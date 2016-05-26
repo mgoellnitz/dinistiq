@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2015-2016 Martin Goellnitz
+ * Copyright 2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,27 +18,14 @@
  */
 package dinistiq.test.components;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import lombok.Getter;
+import javax.inject.Singleton;
 
 
 /**
- * Non singleton scoped bean.
- *
- * Inject a (singleton) string from properties, a discovered singleton, an a dependent bean.
- * The latter one needing fresh instances on every creation of this beans.
+ * Another test interface implementation to test qualified injection.
  */
-@Named
-public class ScopedBean {
+@Singleton
+@TestQualifier
+public class QualifiedComponent implements TestInterface {
 
-    @Inject
-    @Named("another")
-    @Getter
-    private String namedValue;
-
-    @Inject
-    @Getter
-    private TestInterface testInterface;
-
-} // ScopedBean
+} // QualifiedComponent

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import lombok.Getter;
 
 
 @Named
@@ -35,25 +36,17 @@ public class TestComponentB {
     public TestInterface test;
 
     @Inject
+    @Getter
     private List<TestInterface> allInstances;
 
     @Inject
     @Named("stringTest")
+    @Getter
     private String hallo;
 
 
     public static TestInterface getTestInterface() {
         return testInterface;
     } // getTestInterface()
-
-
-    public String getHallo() {
-        return hallo;
-    }
-
-
-    public List<TestInterface> getAllInstances() {
-        return allInstances;
-    }
 
 } // TestComponentB

@@ -163,6 +163,7 @@ public class Dinistiq {
      */
     public <T extends Object> T findBean(Class<T> type) {
         Set<T> allBeans = findBeans(type);
+        LOG.info("findBean() :{} - {}", type.getSimpleName(), allBeans);
         return (allBeans.size()>0) ? allBeans.iterator().next() : null;
     } // findBean()
 
@@ -190,25 +191,61 @@ public class Dinistiq {
 
 
     /**
-     * Find all beans with a given qualifier and its values.
+     * Find all beans with a given qualifier from a given set.
      *
+     * @param beanSet set of beans to scan for qualified beans
      * @param <Q> Qualifier type constraint
-     * @param qualifier qualifier to find beans for
+     * @param qualifiers collection of qualifiers to find beans for
      * @return Set of beans - may be empty but not null
      */
-    public <Q extends Annotation> Set<Object> findQualifiedBeans(Q qualifier) {
-        if (qualifier.annotationType().getAnnotation(Qualifier.class)==null) {
-            throw new RuntimeException("Not a qualifier: "+qualifier.annotationType()+" ("+qualifier.getClass().getName()+")");
-        } // if
-        Set<Object> result = new HashSet<>();
-        for (Object bean : beans.values()) {
-            if (bean.getClass().getAnnotation(qualifier.annotationType())!=null) {
+    private <T extends Object, Q extends Annotation> Set<T> findQualifiedBeans(Collection<T> beanSet, Collection<Q> qualifiers) {
+        LOG.debug("findQualifiedBeans() checking {} for {}", beanSet, qualifiers);
+        Set<T> result = new HashSet<>();
+        for (T bean : beanSet) {
+            LOG.debug("findQualifiedBeans() checking {} for {}", bean, qualifiers);
+            boolean add = true;
+            for (Q qualifier : qualifiers) {
+                if (qualifier.annotationType().getAnnotation(Qualifier.class)==null) {
+                    throw new RuntimeException("Not a qualifier: "+qualifier.annotationType()+" ("+qualifier.getClass().getName()+")");
+                } // if
+                LOG.debug("findQualifiedBeans() checking :{} {}", qualifier.annotationType().getName(), bean.getClass().getAnnotation(qualifier.annotationType())!=null);
+                add = add&&(bean.getClass().getAnnotation(qualifier.annotationType())!=null);
+            } // for
+            if (add) {
                 LOG.debug("findQualifiedBeans() found qualified bean {}", bean);
                 result.add(bean);
             } // if
         } // for
         return result;
     } // findQualifiedBeans()
+
+
+    /**
+     * Find all beans with a given qualifier.
+     *
+     * @param <Q> Qualifier type constraint
+     * @param qualifiers collection of qualifiers to find beans for
+     * @return Set of beans - may be empty but not null
+     */
+    public <Q extends Annotation> Set<Object> findQualifiedBeans(Collection<Q> qualifiers) {
+        return findQualifiedBeans(beans.values(), qualifiers);
+    } // findQualifiedBeans()
+
+
+    /**
+     * Find exactly one bean of a given type.
+     * If there are more beans of that type just one of them is returned. This is fairly random by design.
+     *
+     * @param <T> type to check resulting bean for
+     * @param <Q> qualifier annotation type to check resulting bean for
+     * @param type instance of that type
+     * @param qualifiers collection of qualifiers to find bean for
+     * @return resulting bean or null
+     */
+    public <T extends Object, Q extends Annotation> T findBean(Class<T> type, Collection<Q> qualifiers) {
+        Set<T> allBeans = findQualifiedBeans(findBeans(type), qualifiers);
+        return allBeans.size()>0 ? allBeans.iterator().next() : null;
+    } // findBean()
 
 
     /**
@@ -270,10 +307,12 @@ public class Dinistiq {
      * @param cls target class of the value
      * @param type target type of the value
      * @param name name of the placeholder
+     * @param qualifiers qualifiers for the value to fulfill
      * @return replaced value or original string
      * @throws Exception
      */
-    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name) throws Exception {
+    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name, Collection<Qualifier> qualifiers) throws Exception {
+        LOG.debug("getValue() expecting qualifiers {} for {} :{}", qualifiers, name, cls.getSimpleName());
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
             LOG.debug("getValue() collection: {}", type);
@@ -288,7 +327,7 @@ public class Dinistiq {
                 return resultCollection;
             } // if
         } // if
-        Object bean = (name==null) ? findBean(cls) : (beanProperties.containsKey(name) ? getReferenceValue(beanProperties.getProperty(name)) : beans.get(name));
+        Object bean = (name==null) ? findBean(cls, qualifiers) : (beanProperties.containsKey(name) ? getReferenceValue(beanProperties.getProperty(name)) : beans.get(name));
         if (Provider.class.equals(cls)) {
             Dinistiq d = this;
             Class<? extends Object> c = (Class<?>) parameterizedType.getActualTypeArguments()[0];
@@ -326,13 +365,18 @@ public class Dinistiq {
         Object[] parameters = new Object[types.length];
         for (int i = 0; i<types.length; i++) {
             String name = null;
+            Collection<Qualifier> qualifiers = new HashSet<>();
             for (Annotation a : annotations[i]) {
                 if (a instanceof Named) {
                     name = ((Named) a).value();
                 } // if
+                if (a instanceof Qualifier) {
+                    Qualifier q = (Qualifier) a;
+                    qualifiers.add(q);
+                } // if
             } // for
             // TODO: Deal with scopes.
-            parameters[i] = getValue(beanProperties, dependencies, beanName, types[i], genericTypes[i], name);
+            parameters[i] = getValue(beanProperties, dependencies, beanName, types[i], genericTypes[i], name, qualifiers);
         } // for
         return parameters;
     } // getParameters()
@@ -640,8 +684,15 @@ public class Dinistiq {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
                     LOG.info("injectDependencies({}) {} :{} needs injection with name {}", key, field.getName(), field.getGenericType(), name);
+                    Collection<Qualifier> qualifiers = new HashSet<>();
+                    for (Annotation a : field.getAnnotations()) {
+                        if (a instanceof Qualifier) {
+                            Qualifier q = (Qualifier) a;
+                            qualifiers.add(q);
+                        } // if
+                    } // for
                     // TODO: Deal with scopes.
-                    Object b = getValue(beanProperties, dependencies, key, field.getType(), field.getGenericType(), name);
+                    Object b = getValue(beanProperties, dependencies, key, field.getType(), field.getGenericType(), name, qualifiers);
                     boolean accessible = field.isAccessible();
                     try {
                         field.setAccessible(true);
@@ -848,7 +899,7 @@ public class Dinistiq {
                 try {
                     createAndRegisterInstance(dependencies, classList.get(i), nameList.get(i));
                 } catch (Exception e) {
-                    LOG.warn("() will retry {} later: {} - {}", classList.get(i), e.getClass().getName(), e.getMessage());
+                    LOG.warn("() will retry {} later: {} - {}", classList.get(i).getName(), e.getClass().getName(), e.getMessage(), e);
                     restClassList.add(classList.get(i));
                     restNameList.add(nameList.get(i));
                 } // try/catch

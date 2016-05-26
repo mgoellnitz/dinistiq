@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014 Martin Goellnitz
+ * Copyright 2014-2016 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,16 +19,13 @@
 package dinistiq.test.components;
 
 import javax.inject.Inject;
+import lombok.Getter;
 
 
 public class InitialBean {
 
     @Inject
+    @Getter
     private TestInterface test;
-
-
-    public TestInterface getTest() {
-        return test;
-    }
 
 } // InitialBean
