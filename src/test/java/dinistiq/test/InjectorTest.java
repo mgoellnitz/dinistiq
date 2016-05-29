@@ -76,7 +76,9 @@ public class InjectorTest {
 
     @Test
     public void testFindImplementedInterface() {
-        Assert.assertNotNull(d.findBean(TestInterface.class), "Cannot find instanciated component for interface");
+        TestInterface testInterface = d.findBean(TestInterface.class);
+        Assert.assertNotNull(testInterface, "Cannot find instanciated component for interface.");
+        Assert.assertEquals(testInterface.getClass(), TestComponent.class, "Unexpected implementing class found.");
     } // testFindImplementedInterface()
 
 
@@ -266,7 +268,7 @@ public class InjectorTest {
         Assert.assertNotNull(uac.getManuallyInjectedList(), "No list of strings available");
         Assert.assertEquals(uac.getManuallyInjectedList().size(), 3, "Wrong number of strings in list");
         Assert.assertEquals(uac.getManuallyInjectedList().get(1), "nice", "Unexpected second value in list");
-    } // testConstructorInjection()
+    } // testCollectionInjection()
 
 
     @Test

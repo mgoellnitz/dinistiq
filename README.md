@@ -555,11 +555,11 @@ some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.5|
-|Archive size|<23kB|
+|Version|0.6|
+|Archive size|<24kB|
 |Further dependencies|<=5|
 |API||
-|Methods in injector/context|3|
+|Methods in injector/context|10|
 |Concept||
 |Container Model|flat instances|
 |Configuration style|annotation,properties|
@@ -577,10 +577,10 @@ some  values for dinistiq to this list:
 |Field injection|yes|
 |Setter injection|yes|
 |Factory methods|no|
-|Static injection|no|
+|Static injection|yes|
 |Method interception|no|
 |Providers|(limited)|
-|Optional injection|no|
+|Optional injection|yes|
 |Mixed injection|?|
 |Post construction hook|yes|
 |Modularity||
@@ -588,7 +588,7 @@ some  values for dinistiq to this list:
 |Collections|partly|
 |Multibinds|yes|
 |Sequence of declarations|undefined|
-|Scopes||
+|Scopes|limited|
 |Default scope|Singleton|
 |Custom scopes|-|
 |Available scopes|Singleton|

@@ -29,7 +29,7 @@ import javax.inject.Qualifier;
  * Qualifier used for tests.
  */
 @Qualifier
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TestQualifier {
 } // TestQualifier

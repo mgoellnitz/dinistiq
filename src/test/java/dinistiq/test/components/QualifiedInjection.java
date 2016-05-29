@@ -34,4 +34,17 @@ public class QualifiedInjection {
     @Getter
     private TestInterface testInterface;
 
+    private TestInterface constructorInjected;
+
+
+    public TestInterface getConstructorInjected() {
+        return constructorInjected;
+    }
+
+
+    @Inject
+    public QualifiedInjection(@TestQualifier TestInterface testInterface) {
+        this.constructorInjected = testInterface;
+    } // ()
+
 } // QualifiedInjection

@@ -120,7 +120,8 @@ public class QualifierTest {
         Assert.assertNotNull(qualifiedInjection, "Qualified injection point object should be found.");
         TestInterface testInterface = qualifiedInjection.getTestInterface();
         Assert.assertNotNull(testInterface, "Test interface instance should have be injected.");
-        Assert.assertEquals(testInterface.getClass(), QualifiedComponent.class, "Injected instance should be of type marked as aualified.");
+        Assert.assertEquals(testInterface.getClass(), QualifiedComponent.class, "Injected instance should be of type marked as qualified.");
+        Assert.assertEquals(qualifiedInjection.getConstructorInjected().getClass(), QualifiedComponent.class, "Injected instance should be of type marked as qualified.");
     } // testQualifiedInjection()
 
 } // QualifierTest

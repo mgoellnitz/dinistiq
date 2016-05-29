@@ -32,6 +32,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,7 +163,7 @@ public class Dinistiq {
      * @return resulting bean or null
      */
     public <T extends Object> T findBean(Class<T> type) {
-        Set<T> allBeans = findBeans(type);
+        Set<T> allBeans = findQualifiedBeans(findBeans(type), Collections.emptySet());
         LOG.info("findBean() :{} - {}", type.getSimpleName(), allBeans);
         return (allBeans.size()>0) ? allBeans.iterator().next() : null;
     } // findBean()
@@ -204,12 +205,26 @@ public class Dinistiq {
         for (T bean : beanSet) {
             LOG.debug("findQualifiedBeans() checking {} for {}", bean, qualifiers);
             boolean add = true;
+            Class<? extends Object> beanClass = bean.getClass();
+            if (qualifiers.isEmpty()) {
+                for (Annotation a : beanClass.getAnnotations()) {
+                    Class<? extends Annotation> type = a.annotationType();
+                    if (type.getAnnotation(Qualifier.class)!=null) {
+                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), type == Named.class);
+                        // don't add if the class is qualified but no qualifier is asked for in the collection.1
+                        add = add&&(type == Named.class);
+                        LOG.info("findQualifiedBeans() would add {}. ({})", bean, add);
+                    } // if
+                } // for
+            } // if
             for (Q qualifier : qualifiers) {
-                if (qualifier.annotationType().getAnnotation(Qualifier.class)==null) {
-                    throw new RuntimeException("Not a qualifier: "+qualifier.annotationType()+" ("+qualifier.getClass().getName()+")");
+                Class<? extends Annotation> annotationType = qualifier.annotationType();
+                if (annotationType.getAnnotation(Qualifier.class)==null) {
+                    throw new RuntimeException("Not a qualifier: "+annotationType+" ("+qualifier.getClass().getName()+")");
                 } // if
-                LOG.debug("findQualifiedBeans() checking :{} {}", qualifier.annotationType().getName(), bean.getClass().getAnnotation(qualifier.annotationType())!=null);
-                add = add&&(bean.getClass().getAnnotation(qualifier.annotationType())!=null);
+                LOG.debug("findQualifiedBeans() checking :{} {}", annotationType.getName(), beanClass.getAnnotation(annotationType)!=null);
+                LOG.debug("findQualifiedBeans() checking {}|{} {}", annotationType.getSimpleName(), beanClass.getSimpleName(), beanClass.getSimpleName().startsWith(annotationType.getSimpleName()));
+                add = add&&((beanClass.getAnnotation(annotationType)!=null)||(beanClass.getSimpleName().startsWith(annotationType.getSimpleName())));
             } // for
             if (add) {
                 LOG.debug("findQualifiedBeans() found qualified bean {}", bean);
@@ -311,7 +326,7 @@ public class Dinistiq {
      * @return replaced value or original string
      * @throws Exception
      */
-    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name, Collection<Qualifier> qualifiers) throws Exception {
+    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name, Collection<Annotation> qualifiers) throws Exception {
         LOG.debug("getValue() expecting qualifiers {} for {} :{}", qualifiers, name, cls.getSimpleName());
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
@@ -365,14 +380,18 @@ public class Dinistiq {
         Object[] parameters = new Object[types.length];
         for (int i = 0; i<types.length; i++) {
             String name = null;
-            Collection<Qualifier> qualifiers = new HashSet<>();
+            Collection<Annotation> qualifiers = new HashSet<>();
             for (Annotation a : annotations[i]) {
                 if (a instanceof Named) {
                     name = ((Named) a).value();
                 } // if
-                if (a instanceof Qualifier) {
-                    Qualifier q = (Qualifier) a;
-                    qualifiers.add(q);
+                boolean q = false;
+                for (Class<?> ii : a.getClass().getInterfaces()) {
+                    LOG.info("getParameters() {}: {}", ii, ii.getAnnotation(Qualifier.class));
+                    q = q||(ii.getAnnotation(Qualifier.class)!=null);
+                } // for
+                if (q) {
+                    qualifiers.add(a);
                 } // if
             } // for
             // TODO: Deal with scopes.
@@ -395,7 +414,7 @@ public class Dinistiq {
         Constructor<?>[] constructors = cls.getDeclaredConstructors();
         LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
         for (Constructor<?> ctor : constructors) {
-            LOG.debug("createInstance({}) {}", cls.getSimpleName(), ctor);
+            LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, ctor.getAnnotation(Inject.class)!=null);
             c = (ctor.getAnnotation(Inject.class)!=null) ? ctor : c;
         } // for
         c = (c==null) ? cls.getConstructor() : c;
@@ -684,11 +703,15 @@ public class Dinistiq {
                     Named named = field.getAnnotation(Named.class);
                     String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
                     LOG.info("injectDependencies({}) {} :{} needs injection with name {}", key, field.getName(), field.getGenericType(), name);
-                    Collection<Qualifier> qualifiers = new HashSet<>();
+                    Collection<Annotation> qualifiers = new HashSet<>();
                     for (Annotation a : field.getAnnotations()) {
-                        if (a instanceof Qualifier) {
-                            Qualifier q = (Qualifier) a;
-                            qualifiers.add(q);
+                        boolean q = false;
+                        for (Class<?> ii : a.getClass().getInterfaces()) {
+                            LOG.info("getParameters() {}: {}", ii, ii.getAnnotation(Qualifier.class));
+                            q = q||(ii.getAnnotation(Qualifier.class)!=null);
+                        } // for
+                        if (q) {
+                            qualifiers.add(a);
                         } // if
                     } // for
                     // TODO: Deal with scopes.
