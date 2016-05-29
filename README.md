@@ -265,7 +265,7 @@ if it's not there already and the dependency to the artifact in the dependencies
 section.
 
 ```
-compile "dinistiq:dinistiq:0.5"
+compile "dinistiq:dinistiq:0.6"
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -291,7 +291,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.5</version>
+    <versions>0.6</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -308,7 +308,7 @@ base  pom.xml
 ...
 ```
 
-Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.
+Dinistiq uses slf4j for logging and logback as an instance for testing.
 
 Snapshot artifacts are available from the OJO repository:
 
