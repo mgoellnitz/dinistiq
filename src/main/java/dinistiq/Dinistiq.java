@@ -102,7 +102,7 @@ public class Dinistiq {
      * @param type instance of that type
      * @return Set of beans - may be empty but not null
      */
-    public <T extends Object> Set<T> findBeans(Class<T> type) {
+    public final <T extends Object> Set<T> findBeans(Class<T> type) {
         Set<T> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
@@ -122,7 +122,7 @@ public class Dinistiq {
      * @param type instance of that type
      * @return Set of bean names - may be empty but not null
      */
-    public <T extends Object> Set<String> findNames(Class<T> type) {
+    public final <T extends Object> Set<String> findNames(Class<T> type) {
         Set<String> result = new HashSet<>();
         for (String name : beans.keySet()) {
             Object bean = beans.get(name);
@@ -142,7 +142,7 @@ public class Dinistiq {
      * @param type instance of that type
      * @return Set of beans - may be empty but not null
      */
-    public <A extends Annotation> Set<Object> findAnnotatedBeans(Class<A> type) {
+    public final <A extends Annotation> Set<Object> findAnnotatedBeans(Class<A> type) {
         Set<Object> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (bean.getClass().getAnnotation(type)!=null) {
@@ -162,7 +162,7 @@ public class Dinistiq {
      * @param type instance of that type
      * @return resulting bean or null
      */
-    public <T extends Object> T findBean(Class<T> type) {
+    public final <T extends Object> T findBean(Class<T> type) {
         Set<T> allBeans = findQualifiedBeans(findBeans(type), Collections.emptySet());
         LOG.info("findBean() :{} - {}", type.getSimpleName(), allBeans);
         return (allBeans.size()>0) ? allBeans.iterator().next() : null;
@@ -178,7 +178,7 @@ public class Dinistiq {
      * @param name name the searched bean must have
      * @return resulting bean or null
      */
-    public <T extends Object> T findBean(Class<? extends T> cls, String name) {
+    public final <T extends Object> T findBean(Class<? extends T> cls, String name) {
         T result = null;
         Object bean = beans.get(name);
         if (bean!=null) {
@@ -242,7 +242,7 @@ public class Dinistiq {
      * @param qualifiers collection of qualifiers to find beans for
      * @return Set of beans - may be empty but not null
      */
-    public <Q extends Annotation> Set<Object> findQualifiedBeans(Collection<Q> qualifiers) {
+    public final <Q extends Annotation> Set<Object> findQualifiedBeans(Collection<Q> qualifiers) {
         return findQualifiedBeans(beans.values(), qualifiers);
     } // findQualifiedBeans()
 
@@ -257,7 +257,7 @@ public class Dinistiq {
      * @param qualifiers collection of qualifiers to find bean for
      * @return resulting bean or null
      */
-    public <T extends Object, Q extends Annotation> T findBean(Class<T> type, Collection<Q> qualifiers) {
+    public final <T extends Object, Q extends Annotation> T findBean(Class<T> type, Collection<Q> qualifiers) {
         Set<T> allBeans = findQualifiedBeans(findBeans(type), qualifiers);
         return allBeans.size()>0 ? allBeans.iterator().next() : null;
     } // findBean()
