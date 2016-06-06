@@ -69,7 +69,8 @@ pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
   sourceSets = [sourceSets.main]
-  toolVersion = '5.4.2'
+  // We'd love to have a later version like 5.4.2 old gradle on travis seems to have a probem with this.
+  toolVersion = '5.2.2'
 }
 
 test {
