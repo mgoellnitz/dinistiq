@@ -34,7 +34,7 @@ public class QualifiedInjection {
     @Getter
     private TestInterface testInterface;
 
-    private TestInterface constructorInjected;
+    private final TestInterface constructorInjected;
 
 
     public TestInterface getConstructorInjected() {
