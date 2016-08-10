@@ -49,7 +49,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +80,34 @@ public class Dinistiq {
     private final List<Object> orderedBeans = new ArrayList<>();
 
     private final Map<String, Object> beans = new HashMap<>();
+
+
+    /**
+     * Determine if a string typed variable is empty by some measure.
+     *
+     * @param string the string to test
+     * @return true if the string is null or of length 0
+     */
+    public static final boolean isEmpty(String string) {
+        return string==null||string.isEmpty();
+    } // isEmpty()
+
+
+    /**
+     * Determine if the contents of a string not not whitespace character by character.
+     *
+     * @param string string to test
+     * @return true if the string is null or every character is a whitepace
+     */
+    public static final boolean isNotBlank(String string) {
+        boolean result = string!=null;
+        int i = 0;
+        while (result && i<string.length()) {
+            result = result&&Character.isWhitespace(string.charAt(i));
+            i++;
+        } // while
+        return (!result) && (string != null);
+    } // isNotBlank()
 
 
     /**
@@ -210,9 +237,9 @@ public class Dinistiq {
                 for (Annotation a : beanClass.getAnnotations()) {
                     Class<? extends Annotation> type = a.annotationType();
                     if (type.getAnnotation(Qualifier.class)!=null) {
-                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), type == Named.class);
+                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), type==Named.class);
                         // don't add if the class is qualified but no qualifier is asked for in the collection.1
-                        add = add&&(type == Named.class);
+                        add = add&&(type==Named.class);
                         LOG.info("findQualifiedBeans() would add {}. ({})", bean, add);
                     } // if
                 } // for
@@ -442,7 +469,7 @@ public class Dinistiq {
         LOG.debug("getBeanName({}) cls={}", name, cls);
         Named annotation = cls.getAnnotation(Named.class);
         String beanName = (name==null) ? (annotation==null ? null : annotation.value()) : name;
-        if (StringUtils.isBlank(beanName)) {
+        if (isEmpty(beanName)) {
             beanName = Introspector.decapitalize(cls.getSimpleName());
         } // if
         return beanName;
@@ -624,7 +651,7 @@ public class Dinistiq {
                     uri = host.substring(idx+1);
                     host = host.substring(0, idx);
                 } // if
-                if (StringUtils.isNotBlank(uri)) {
+                if (isNotBlank(uri)) {
                     values.put(name+".uri", uri);
                 } // if
                 String username = "";
@@ -638,7 +665,7 @@ public class Dinistiq {
                     username = userinfos[0];
                     values.put(name+".password", userinfos[1]);
                 } // if
-                if (StringUtils.isNotBlank(username)) {
+                if (isNotBlank(username)) {
                     values.put(name+".username", username);
                 } // if
 
@@ -649,7 +676,7 @@ public class Dinistiq {
                     host = host.substring(0, idx);
                 } // if
                 values.put(name+".host", host);
-                if (StringUtils.isNotBlank(port)) {
+                if (isNotBlank(port)) {
                     values.put(name+".port", port);
                 } // if
             } catch (Exception e) {
@@ -701,7 +728,7 @@ public class Dinistiq {
                 LOG.debug("injectDependencies({}) field {}", key, field.getName());
                 if (field.getAnnotation(Inject.class)!=null) {
                     Named named = field.getAnnotation(Named.class);
-                    String name = (named==null) ? null : (StringUtils.isBlank(named.value()) ? field.getName() : named.value());
+                    String name = (named==null) ? null : (isEmpty(named.value()) ? field.getName() : named.value());
                     LOG.info("injectDependencies({}) {} :{} needs injection with name {}", key, field.getName(), field.getGenericType(), name);
                     Collection<Annotation> qualifiers = new HashSet<>();
                     for (Annotation a : field.getAnnotations()) {

@@ -33,7 +33,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +81,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         ServletContext context = contextEvent.getServletContext();
         Set<String> packages = new HashSet<>();
         String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
-        if (StringUtils.isNotBlank(packagNameString)) {
+        if (Dinistiq.isNotBlank(packagNameString)) {
             for (String packageName : packagNameString.split(",")) {
                 packageName = packageName.trim();
                 packages.add(packageName);
@@ -90,7 +89,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         } // if
         String classResolverName = context.getInitParameter(DINISTIQ_CLASSRESOLVER);
         ClassResolver classResolver = null;
-        if (StringUtils.isNotBlank(classResolverName)) {
+        if (Dinistiq.isNotBlank(classResolverName)) {
             try {
                 Class<?> forName = Class.forName(classResolverName);
                 Object[] args = new Object[1];

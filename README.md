@@ -555,9 +555,9 @@ some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.6|
-|Archive size|<24kB|
-|Further dependencies|<=5|
+|Version|0.7|
+|Archive size|24kB|
+|Further dependencies|3|
 |API||
 |Methods in injector/context|10|
 |Concept||
@@ -661,7 +661,7 @@ concept phase, but it took me that much work to get something to run with it
 (not everything can be plugged together programmatically in my case), that I 
 came out faster with my own Dependency Injection Container. Rather minimalistic 
 and only suited for the setup of components.
-
+result
 Its advantage over Guice is that it's smaller and easier configurable with 
 properties files. Weeks later I discovered TinyDI as another option. While this 
 container seems to be a lot cleverer about the search of annotated classes it 
