@@ -42,17 +42,22 @@ targetCompatibility = 1.8
 def bootClasspathStr = "${project.hasProperty('jdk') ? "$jdk" : "$System.env.JAVA_HOME"}/jre/lib/rt.jar"
 project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
     ac.options.bootClasspath = bootClasspathStr
-})
+  })
 
 repositories {
   jcenter()
+}
+
+configurations {
+  optional
+  compile.extendsFrom optional
 }
 
 dependencies {
   compile 'org.slf4j:slf4j-api:1.7.21'
   compile 'javax.inject:javax.inject:1'
 
-  compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+  optional 'javax.servlet:javax.servlet-api:3.1.0'
 
   testCompile 'javax.servlet:javax.servlet-api:3.1.0'
   testCompile 'org.testng:testng:6.9.12'
@@ -154,6 +159,29 @@ publishing {
           developer.appendNode('organization', 'Provocon')
           developer.appendNode('organizationUrl', 'http://www.provocon.de/')
           developer
+        }
+        rootNode.dependencies.dependency.findAll { xmlDep ->
+          // mark optional dependencies
+          if ( project.configurations.optional.allDependencies.findAll { dep ->
+              xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
+            } ) {
+            def xmlOptional = xmlDep.optional[ 0 ];
+            if ( !xmlOptional ) {
+              xmlOptional = xmlDep.appendNode( 'optional' )
+            }
+            xmlOptional.value = 'true';
+          }
+
+          // fix maven-publish issue when all maven dependencies are placed into runtime scope
+          if ( project.configurations.compile.allDependencies.findAll { dep ->
+              xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
+            } ) {
+            def xmlScope = xmlDep.scope[ 0 ];
+            if ( !xmlScope ) {
+              xmlScope = xmlDep.appendNode( 'scope' )
+            }
+            xmlScope.value = 'compile';
+          }
         }
       }
       groupId 'dinistiq'
