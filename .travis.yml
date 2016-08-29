@@ -7,3 +7,5 @@ jdk:
 
 after_success:
   - gradle jacocoTestReport coveralls build generatePomFileForMavenJavaPublication artifactoryPublish
+  - bash <(curl -s https://codecov.io/bash)
+  
