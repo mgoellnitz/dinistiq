@@ -60,7 +60,7 @@ dependencies {
   optional 'javax.servlet:javax.servlet-api:3.1.0'
 
   testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-  testCompile 'org.testng:testng:6.9.12'
+  testCompile 'org.testng:testng:6.9.13.6'
   testCompile 'org.projectlombok:lombok:1.16.10'
   // Some servlet API elements
   testCompile 'org.mockito:mockito-all:1.10.19'
