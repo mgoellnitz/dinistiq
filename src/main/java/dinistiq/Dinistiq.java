@@ -133,7 +133,7 @@ public class Dinistiq {
         Set<T> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (type.isAssignableFrom(bean.getClass())) {
-                LOG.info("findBeans() adding to result {}:{}", bean, type.getName());
+                LOG.info("findBeans(:{}) adding {}", type.getName(), bean);
                 T b = convert(bean);
                 result.add(b);
             } // if
@@ -154,7 +154,7 @@ public class Dinistiq {
         for (String name : beans.keySet()) {
             Object bean = beans.get(name);
             if (type.isAssignableFrom(bean.getClass())) {
-                LOG.info("findNames() adding to result {} :{}", bean, type.getName());
+                LOG.info("findNames(:{}) adding {}", type.getName(), bean);
                 result.add(name);
             } // if
         } // for
@@ -173,7 +173,7 @@ public class Dinistiq {
         Set<Object> result = new HashSet<>();
         for (Object bean : beans.values()) {
             if (bean.getClass().getAnnotation(type)!=null) {
-                LOG.info("findAnnotatedBeans() adding to result {} :{}", bean, type.getName());
+                LOG.info("findAnnotatedBeans(:{}) adding {}", type.getName(), bean);
                 result.add(bean);
             } // if
         } // for
@@ -249,8 +249,7 @@ public class Dinistiq {
                 if (annotationType.getAnnotation(Qualifier.class)==null) {
                     throw new RuntimeException("Not a qualifier: "+annotationType+" ("+qualifier.getClass().getName()+")");
                 } // if
-                LOG.debug("findQualifiedBeans() checking :{} {}", annotationType.getName(), beanClass.getAnnotation(annotationType)!=null);
-                LOG.debug("findQualifiedBeans() checking {}|{} {}", annotationType.getSimpleName(), beanClass.getSimpleName(), beanClass.getSimpleName().startsWith(annotationType.getSimpleName()));
+                LOG.debug("findQualifiedBeans() checking {}|{} ({} || {})", annotationType.getSimpleName(), beanClass.getSimpleName(), beanClass.getAnnotation(annotationType)!=null, beanClass.getSimpleName().startsWith(annotationType.getSimpleName()));
                 add = add&&((beanClass.getAnnotation(annotationType)!=null)||(beanClass.getSimpleName().startsWith(annotationType.getSimpleName())));
             } // for
             if (add) {
@@ -445,7 +444,7 @@ public class Dinistiq {
             c = (ctor.getAnnotation(Inject.class)!=null) ? ctor : c;
         } // for
         c = (c==null) ? cls.getConstructor() : c;
-        // Don't record constructor dependencies - they MUST be already fulfilled
+        // Don't record constructor dependencies - they MUST already be fulfilled
         Object[] parameters = getParameters(null, null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
         dependencies.put(beanName, new HashSet<>());
         boolean accessible = c.isAccessible();
@@ -796,7 +795,6 @@ public class Dinistiq {
                 boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
                 boolean isCollection = Collection.class.isAssignableFrom(parameterType);
                 Object[] parameters = new Object[1];
-                LOG.debug("injectDependencies({}) trying to set value {} (bool {}) (collection {}) '{}'", key, propertyName, isBoolean, isCollection, propertyValue);
                 try {
                     parameters[0] = getReferenceValue(propertyValue);
                     if (isBoolean&&(parameters[0] instanceof String)) {
@@ -833,7 +831,7 @@ public class Dinistiq {
                             dependencies.get(key).add(parameters[0]);
                         } // if
                     } // if
-                    LOG.debug("injectDependencies({}) setting value {} '{}' :{}", key, propertyName, parameters[0], parameters[0].getClass());
+                    LOG.debug("injectDependencies({}) setting value {} '{}' :{} from '{}' (bool {}) (collection {})", key, propertyName, parameters[0], parameters[0].getClass(), propertyValue, isBoolean, isCollection);
                     m.invoke(bean, parameters);
                 } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
                     LOG.error("injectDependencies() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
