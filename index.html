@@ -38,6 +38,7 @@
 <p><a href="https://github.com/mgoellnitz/dinistiq/releases/latest"><img src="https://img.shields.io/github/release/mgoellnitz/dinistiq.svg" alt="Latest Release"></a>
 <a href="https://travis-ci.org/mgoellnitz/dinistiq"><img src="https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/mgoellnitz/dinistiq?branch=master"><img src="https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master" alt="Coverage Status"></a>
+<a href="https://codecov.io/gh/mgoellnitz/dinistiq"><img src="http://codecov.io/github/mgoellnitz/dinistiq/coverage.svg?branch=master" alt="Coverage Status"></a>
 <a href="https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053"><img src="https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053/badge.svg?style=flat" alt="Dependency Status"></a></p>
 
 <p>A small footprint approach to dependency injection with a framework or container
@@ -88,7 +89,7 @@ optional name as the value parameter). Without a name given as a parameter,
 components are always named after their class name without the package name and 
 a decapitalized first letter.</p>
 
-<div class="highlight highlight-source-java"><pre>@<span class="pl-smi">Singleton</span>
+<div class="highlight highlight-source-java"><pre><span class="pl-k">@Singleton</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TestComponent</span> <span class="pl-k">implements</span> <span class="pl-e">TestInterface</span> {
 
 } <span class="pl-c">// TestComponent</span></pre></div>
@@ -132,9 +133,9 @@ the selection of implementing classes outside the code.</p>
 
 <p>You may defined annotations describing qualifiers</p>
 
-<div class="highlight highlight-source-java"><pre>@<span class="pl-smi">Qualifier</span>
-@Target({<span class="pl-smi">ElementType</span><span class="pl-c1"><span class="pl-k">.</span>TYPE</span>, <span class="pl-smi">ElementType</span><span class="pl-c1"><span class="pl-k">.</span>METHOD</span>, <span class="pl-smi">ElementType</span><span class="pl-c1"><span class="pl-k">.</span>FIELD</span>})
-@Retention(<span class="pl-smi">RetentionPolicy</span><span class="pl-c1"><span class="pl-k">.</span>RUNTIME</span>)
+<div class="highlight highlight-source-java"><pre><span class="pl-k">@Qualifier</span>
+<span class="pl-k">@Target</span>({<span class="pl-smi">ElementType</span><span class="pl-c1"><span class="pl-k">.</span>TYPE</span>, <span class="pl-smi">ElementType</span><span class="pl-c1"><span class="pl-k">.</span>METHOD</span>, <span class="pl-smi">ElementType</span><span class="pl-c1"><span class="pl-k">.</span>FIELD</span>})
+<span class="pl-k">@Retention</span>(<span class="pl-smi">RetentionPolicy</span><span class="pl-c1"><span class="pl-k">.</span>RUNTIME</span>)
 <span class="pl-k">public</span> <span class="pl-k">@interface</span> <span class="pl-en">TestQualifier</span> {
 } <span class="pl-c">// TestQualifier</span></pre></div>
 
@@ -152,8 +153,8 @@ points.</p>
 <p>Only implementation annotated with the given qualifier are take into account
 when performing the injection.</p>
 
-<div class="highlight highlight-source-java"><pre>@<span class="pl-smi">Singleton</span>
-@<span class="pl-smi">TestQualifier</span>
+<div class="highlight highlight-source-java"><pre><span class="pl-k">@Singleton</span>
+<span class="pl-k">@TestQualifier</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">QualifiedComponent</span> <span class="pl-k">implements</span> <span class="pl-e">TestInterface</span> {
 
 } <span class="pl-c">// QualifiedComponent</span></pre></div>
@@ -211,16 +212,16 @@ replacementTest=here comes ${replacement}
 <p>The bean named example is either a result of the automatic discovery of a class 
 named Example</p>
 
-<div class="highlight highlight-source-java"><pre>@<span class="pl-smi">Named</span>
-@<span class="pl-smi">Singleton</span>
+<div class="highlight highlight-source-java"><pre><span class="pl-k">@Named</span>
+<span class="pl-k">@Singleton</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Example</span> {
 
 } <span class="pl-c">// Example</span></pre></div>
 
 <p>a name declaration from the scanned class</p>
 
-<div class="highlight highlight-source-java"><pre>@Named(<span class="pl-s"><span class="pl-pds">"</span>example<span class="pl-pds">"</span></span>)
-@<span class="pl-smi">Singleton</span>
+<div class="highlight highlight-source-java"><pre><span class="pl-k">@Named</span>(<span class="pl-s"><span class="pl-pds">"</span>example<span class="pl-pds">"</span></span>)
+<span class="pl-k">@Singleton</span>
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ExampleComponent</span>  {
 
 } <span class="pl-c">// ExampleComponent</span></pre></div>
@@ -280,7 +281,7 @@ sections of the build file the line</p>
 <p>if it's not there already and the dependency to the artifact in the dependencies 
 section.</p>
 
-<pre><code>compile "dinistiq:dinistiq:0.5"
+<pre><code>compile "dinistiq:dinistiq:0.6"
 </code></pre>
 
 <p>Projects built with Apache Maven need the following steps:</p>
@@ -305,7 +306,7 @@ section.</p>
   &lt;<span class="pl-ent">dependency</span>&gt;
     &lt;<span class="pl-ent">groupId</span>&gt;dinistiq&lt;/<span class="pl-ent">groupId</span>&gt;
     &lt;<span class="pl-ent">artifactId</span>&gt;dinistiq&lt;/<span class="pl-ent">artifactId</span>&gt;
-    &lt;<span class="pl-ent">versions</span>&gt;0.5&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;<span class="pl-ent">versions</span>&gt;0.6&lt;/<span class="pl-ent">version</span>&gt;
   &lt;/<span class="pl-ent">dependency</span>&gt;
 ...
 &lt;/<span class="pl-ent">dependencyManagement</span>&gt;
@@ -321,7 +322,7 @@ section.</p>
 &lt;/<span class="pl-ent">repositories</span>&gt;
 ...</pre></div>
 
-<p>Dinistiq uses slf4j for logging and (still) log4j as an instance for testing.</p>
+<p>Dinistiq uses slf4j for logging and logback as an instance for testing.</p>
 
 <p>Snapshot artifacts are available from the OJO repository:</p>
 
@@ -535,8 +536,9 @@ dinistiq<span class="pl-k">.</span>initBean(myNewInstance, <span class="pl-c1">n
 <p>While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be 
 compiled and tested with Java 8.</p>
 
-<p>The code for dinistiq is prepared for building with gradle. Gradle versions up 
-to 2.13 are tested to be working.</p>
+<p>The code for dinistiq is prepared for building with Gradle. Gradle 2 versions up 
+to 2.14.1 are tested to be working, while dinistiq starting from version 0.7
+at least needs Gradle 2.12.</p>
 
 <p>Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequent
 switch to Java 8.</p>
@@ -569,6 +571,12 @@ switch to Java 8.</p>
 <td align="center">Java 8</td>
 <td align="center">-</td>
 </tr>
+<tr>
+<td align="center">0.7</td>
+<td align="center">Java 8</td>
+<td align="center">Java 8</td>
+<td align="center">-</td>
+</tr>
 </tbody>
 </table>
 
@@ -589,15 +597,15 @@ some  values for dinistiq to this list:</p>
 <tbody>
 <tr>
 <td align="left">Version</td>
-<td align="right">0.6</td>
+<td align="right">0.7</td>
 </tr>
 <tr>
 <td align="left">Archive size</td>
-<td align="right">&lt;24kB</td>
+<td align="right">24kB</td>
 </tr>
 <tr>
 <td align="left">Further dependencies</td>
-<td align="right">&lt;=5</td>
+<td align="right">3</td>
 </tr>
 <tr>
 <td align="left">API</td>
@@ -817,9 +825,9 @@ and can e.g. also be used with Google Guice and the Spring Framework alike.</p>
 concept phase, but it took me that much work to get something to run with it 
 (not everything can be plugged together programmatically in my case), that I 
 came out faster with my own Dependency Injection Container. Rather minimalistic 
-and only suited for the setup of components.</p>
-
-<p>Its advantage over Guice is that it's smaller and easier configurable with 
+and only suited for the setup of components.
+result
+Its advantage over Guice is that it's smaller and easier configurable with 
 properties files. Weeks later I discovered TinyDI as another option. While this 
 container seems to be a lot cleverer about the search of annotated classes it 
 seems to lack the needed option of extending the configuration aspects from the 
