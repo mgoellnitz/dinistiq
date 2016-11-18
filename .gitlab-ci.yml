@@ -1,0 +1,4 @@
+image: dominikhastrich/java-gitlab-cd
+
+build:
+  script: gradle jacocoTestReport coveralls build generatePomFileForMavenJavaPublication artifactoryPublish
