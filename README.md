@@ -535,8 +535,8 @@ dinistiq.initBean(myNewInstance, null);
 While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be 
 compiled and tested with Java 8.
 
-The code for dinistiq is prepared for building with Gradle. Gradle 2 versions up 
-to 2.14.1 are tested to be working, while dinistiq starting from version 0.7
+The code for dinistiq is prepared for building with Gradle. Gradle versions up 
+to 3.2.1 are tested to be working, while dinistiq starting from version 0.7
 at least needs Gradle 2.12.
 
 Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequent
