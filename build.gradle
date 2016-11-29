@@ -22,7 +22,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 plugins {
   id 'net.saliman.cobertura' version '2.3.2'
   id 'com.jfrog.artifactory' version '4.4.0'
-  id 'com.github.kt3k.coveralls' version '2.6.3'
+  id 'com.github.kt3k.coveralls' version '2.7.1'
 }
 
 apply plugin: 'java'
