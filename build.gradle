@@ -60,14 +60,14 @@ dependencies {
   optional 'javax.servlet:javax.servlet-api:3.1.0'
 
   testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-  testCompile 'org.testng:testng:6.9.13.6'
-  testCompile 'org.projectlombok:lombok:1.16.10'
+  testCompile 'org.testng:testng:6.10'
+  testCompile 'org.projectlombok:lombok:1.16.12'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:2.2.28'
+  testCompile 'org.mockito:mockito-core:2.3.0'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
-  // tests are logging at debug level through special logback.groovy - this is what we'd like to have working
-  testRuntime 'ch.qos.logback:logback-classic:1.1.7'
+  // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
+  testRuntime 'ch.qos.logback:logback-classic:1.1.8'
   testRuntime 'org.codehaus.groovy:groovy:2.4.7'
 }
 
