@@ -5,7 +5,7 @@
 /.settings
 /private/cache
 *.nb-gradl*
+/wiki.html
 /.trackdown
 /github-issues.md
 /roadmap.md
-/wiki.html
