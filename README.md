@@ -1,4 +1,4 @@
-![dinistiq](https://raw.github.com/mgoellnitz/dinistiq/master/doc/dinistiq.png)
+![dinistiq](/mgoellnitz/dinistiq/master/doc/dinistiq.png)
 
 # Minimalistic Dependency Injection
 
