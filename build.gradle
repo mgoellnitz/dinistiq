@@ -39,10 +39,12 @@ version = '0.7-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def bootClasspathStr = "${project.hasProperty('jdk') ? "$jdk" : "$System.env.JAVA_HOME"}/jre/lib/rt.jar"
-project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
-    ac.options.bootClasspath = bootClasspathStr
+if (project.hasProperty('jdk')) {
+  def bootClasspathStr = "${jdk}/jre/lib/rt.jar"
+  project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
+      ac.options.bootClasspath = bootClasspathStr
   })
+}
 
 repositories {
   jcenter()
