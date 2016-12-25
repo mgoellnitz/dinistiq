@@ -27,7 +27,7 @@ stages:
   - dinistiq
 
 build:
-  stage: modules
+  stage: dinistiq
   script: gradle jacocoTestReport coveralls build generatePomFileForMavenJavaPublication artifactoryPublish
   artifacts:
     paths:
