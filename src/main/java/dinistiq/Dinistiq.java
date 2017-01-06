@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2016 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -101,12 +101,10 @@ public class Dinistiq {
      */
     public static final boolean isNotBlank(String string) {
         boolean result = string!=null;
-        int i = 0;
-        while (result && i<string.length()) {
+        for (int i = 0; result&&i<string.length(); i++) {
             result = result&&Character.isWhitespace(string.charAt(i));
-            i++;
-        } // while
-        return (!result) && (string != null);
+        } // for
+        return (!result)&&(string!=null);
     } // isNotBlank()
 
 
