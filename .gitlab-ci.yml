@@ -1,5 +1,5 @@
 # 
-# Copyright 2016 Martin Goellnitz
+# Copyright 2016-2017 Martin Goellnitz
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,7 @@
 # ORG_GRADLE_PROJECT_bintrayUser
 # ORG_GRADLE_PROJECT_bintrayKey
 #
-image: dominikhastrich/java-gitlab-cd
+image: provocon/gitlabci-gradle-java
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
