@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,7 @@ import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
 import dinistiq.SimpleClassResolver;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -82,10 +84,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         Set<String> packages = new HashSet<>();
         String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
         if (Dinistiq.isNotBlank(packagNameString)) {
-            for (String packageName : packagNameString.split(",")) {
-                packageName = packageName.trim();
-                packages.add(packageName);
-            } // for
+            packages = Arrays.stream(packagNameString.split(",")).map(name -> name.trim()).collect(Collectors.toSet());
         } // if
         String classResolverName = context.getInitParameter(DINISTIQ_CLASSRESOLVER);
         ClassResolver classResolver = null;

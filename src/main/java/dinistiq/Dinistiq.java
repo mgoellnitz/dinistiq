@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -128,15 +129,7 @@ public class Dinistiq {
      * @return Set of beans - may be empty but not null
      */
     public final <T extends Object> Set<T> findBeans(Class<T> type) {
-        Set<T> result = new HashSet<>();
-        for (Object bean : beans.values()) {
-            if (type.isAssignableFrom(bean.getClass())) {
-                LOG.info("findBeans(:{}) adding {}", type.getName(), bean);
-                T b = convert(bean);
-                result.add(b);
-            } // if
-        } // for
-        return result;
+        return beans.values().stream().filter(b -> type.isAssignableFrom(b.getClass())).map(b -> (T) b).collect(Collectors.toSet());
     } // findBeans()
 
 
@@ -148,15 +141,7 @@ public class Dinistiq {
      * @return Set of bean names - may be empty but not null
      */
     public final <T extends Object> Set<String> findNames(Class<T> type) {
-        Set<String> result = new HashSet<>();
-        for (String name : beans.keySet()) {
-            Object bean = beans.get(name);
-            if (type.isAssignableFrom(bean.getClass())) {
-                LOG.info("findNames(:{}) adding {}", type.getName(), bean);
-                result.add(name);
-            } // if
-        } // for
-        return result;
+        return beans.keySet().stream().filter(k -> type.isAssignableFrom(beans.get(k).getClass())).collect(Collectors.toSet());
     } // findNames()
 
 
@@ -168,14 +153,7 @@ public class Dinistiq {
      * @return Set of beans - may be empty but not null
      */
     public final <A extends Annotation> Set<Object> findAnnotatedBeans(Class<A> type) {
-        Set<Object> result = new HashSet<>();
-        for (Object bean : beans.values()) {
-            if (bean.getClass().getAnnotation(type)!=null) {
-                LOG.info("findAnnotatedBeans(:{}) adding {}", type.getName(), bean);
-                result.add(bean);
-            } // if
-        } // for
-        return result;
+        return beans.values().stream().filter(b -> b.getClass().getAnnotation(type)!=null).collect(Collectors.toSet());
     } // findAnnotatedBeans()
 
 

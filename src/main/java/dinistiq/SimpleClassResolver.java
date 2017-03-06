@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2016 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -32,6 +32,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,20 +207,14 @@ public class SimpleClassResolver implements ClassResolver {
     /**
      * Get classes from underlying packages satisfying the given superclass which are no interfaces and not abstract.
      *
+     * @param c class to et subclasses for
      * @see ClassResolver#getSubclasses(java.lang.Class)
      */
     @Override
     public <T extends Object> Set<Class<T>> getSubclasses(Class<T> c) {
-        Set<Class<T>> result = new HashSet<>();
         LOG.debug("getSubclasses() checking {} classes", classNames.size());
         Collection<Class<T>> classes = getClasses();
-        for (Class<T> cls : classes) {
-            LOG.debug("getSubclasses() className={}", cls.getName());
-            if ((!cls.isInterface())&&c.isAssignableFrom(cls)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
-                result.add(cls);
-            } // if
-        } // for
-        return result;
+        return classes.stream().filter(cls -> (!cls.isInterface())&&c.isAssignableFrom(cls)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)).collect(Collectors.toSet());
     } // getSubclasses()
 
 
@@ -230,16 +225,9 @@ public class SimpleClassResolver implements ClassResolver {
      */
     @Override
     public <T extends Object> Set<Class<T>> getAnnotated(Class<? extends Annotation> annotation) {
-        Set<Class<T>> result = new HashSet<>();
         LOG.debug("getAnnotated() checking {} classes", classNames.size());
         Collection<Class<T>> classes = getClasses();
-        for (Class<T> cls : classes) {
-            LOG.debug("getAnnotated() className={}", cls.getName());
-            if ((!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)) {
-                result.add(cls);
-            } // if
-        } // if
-        return result;
+        return classes.stream().filter(cls -> (!cls.isInterface())&&(cls.getAnnotation(annotation)!=null)&&((cls.getModifiers()&Modifier.ABSTRACT)==0)).collect(Collectors.toSet());
     } // getAnnotated()
 
 
@@ -250,16 +238,9 @@ public class SimpleClassResolver implements ClassResolver {
      */
     @Override
     public <T extends Object> Set<Class<T>> getAnnotatedItems(Class<? extends Annotation> annotation) {
-        Set<Class<T>> result = new HashSet<>();
         LOG.debug("getAnnotatedItems() checking {} classes", classNames.size());
         Collection<Class<T>> classes = getClasses();
-        for (Class<T> cls : classes) {
-            LOG.debug("getAnnotatedItems() className={}", cls.getName());
-            if (cls.getAnnotation(annotation)!=null) {
-                result.add(cls);
-            } // if
-        } // if
-        return result;
+        return classes.stream().filter(cls -> cls.getAnnotation(annotation)!=null).collect(Collectors.toSet());
     } // getAnnotated()
 
 
@@ -270,16 +251,9 @@ public class SimpleClassResolver implements ClassResolver {
      */
     @Override
     public <T extends Object> Set<Class<T>> getAnnotatedSubclasses(Class<T> c, Class<? extends Annotation> annotation) {
-        Set<Class<T>> result = new HashSet<>();
         LOG.debug("getAnnotatedSubclasses() checking {} classes", classNames.size());
         Collection<Class<T>> classes = getClasses();
-        for (Class<T> cls : classes) {
-            LOG.debug("getAnnotatedSubclasses() className={}", cls.getName());
-            if ((cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())) {
-                result.add(cls);
-            } // if
-        } // if
-        return result;
+        return classes.stream().filter(cls -> (cls.getAnnotation(annotation)!=null)&&c.isAssignableFrom(cls)&&(!cls.isInterface())).collect(Collectors.toSet());
     } // getAnnotatedSubclasses()
 
 
