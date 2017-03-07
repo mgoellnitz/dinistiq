@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
-import javax.servlet.http.HttpServlet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,20 +61,6 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
      * Init parameter name for the parameter holding class resolver name.
      */
     public static final String DINISTIQ_CLASSRESOLVER = "dinistiq.class.resolver";
-
-
-    /**
-     * Helper method to keep areas with suppressed warnings small.
-     *
-     * @param <T>
-     * @param className
-     * @return simply returns Class.forName(classname)
-     * @throws ClassNotFoundException
-     */
-    @SuppressWarnings("unchecked")
-    private <T extends Object> Class<T> loadClass(String className) throws ClassNotFoundException {
-        return (Class<T>) Class.forName(className);
-    } // loadClass()
 
 
     /**
@@ -126,15 +112,10 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
             for (ServletRegistration registration : context.getServletRegistrations().values()) {
                 String className = registration.getClassName();
                 LOG.debug("contextInitialized() class name {}", className);
-                Class<HttpServlet> servletClass = loadClass(className);
-                LOG.debug("contextInitialized() class  {}", servletClass);
-                for (HttpServlet servlet : dinistiq.findBeans(servletClass)) {
-                    LOG.debug("contextInitialized() servlet instance {}", servlet);
-                    if (servlet.getServletName().equals(registration.getName())) {
-                        LOG.debug("contextInitialized() injecting into servlet instance {}", servlet);
-                        dinistiq.initBean(servlet, servlet.getServletName());
-                    } // if
-                } // for
+                String servletName = registration.getName();
+                Servlet servlet = context.getServlet(servletName);
+                LOG.debug("contextInitialized() injecting into servlet instance {}", servlet);
+                dinistiq.initBean(servlet, servletName);
             } // for
         } catch (Exception ex) {
             LOG.error("init()", ex);
