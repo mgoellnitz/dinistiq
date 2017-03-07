@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,8 @@
 import groovy.util.Node;
 
 plugins {
-  id 'com.jfrog.artifactory' version '3.0.3'
-  id 'com.github.kt3k.coveralls' version '2.0.1'
+  id 'com.jfrog.artifactory' version '3.1.1'
+  id 'com.github.kt3k.coveralls' version '2.8.1'
 }
 
 apply plugin: 'java'
@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-  compile "org.slf4j:slf4j-api:1.7.12"
+  compile "org.slf4j:slf4j-api:1.7.23"
   compile "org.apache.commons:commons-lang3:3.4"
   compile "javax.inject:javax.inject:1"
 
@@ -52,7 +52,7 @@ dependencies {
   // integrate tck into unit tests
   testCompile "javax.inject:javax.inject-tck:1"
   // tests are logging at debug level through special log4j.properties
-  testCompile "org.slf4j:slf4j-log4j12:1.7.12"
+  testCompile "org.slf4j:slf4j-log4j12:1.7.23"
   // Some servlet API elements
   testCompile "org.mockito:mockito-all:1.10.19"
 }
@@ -61,7 +61,7 @@ pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
   sourceSets = [sourceSets.main]
-  toolVersion = '5.1.1' // We'd love to have a later version but travis seems to have a probem with this.
+  toolVersion = '5.5.4' // We'd love to have a later version but travis seems to have a probem with this.
 }
 
 test {
@@ -107,7 +107,6 @@ artifactory {
       repoKey = 'oss-snapshot-local'
       username = "$bintrayUser"
       password = "$bintrayKey"
-      maven = true
     }
     defaults {
       publications ('mavenJava')
