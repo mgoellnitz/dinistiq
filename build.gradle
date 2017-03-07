@@ -62,15 +62,15 @@ dependencies {
   optional 'javax.servlet:javax.servlet-api:3.1.0'
 
   testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-  testCompile 'org.testng:testng:6.10'
+  testCompile 'org.testng:testng:6.11'
   testCompile 'org.projectlombok:lombok:1.16.14'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:2.7.12'
+  testCompile 'org.mockito:mockito-core:2.7.14'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
   testRuntime 'ch.qos.logback:logback-classic:1.2.1'
-  testRuntime 'org.codehaus.groovy:groovy:2.4.8'
+  testRuntime 'org.codehaus.groovy:groovy:2.4.9'
 }
 
 pmd {
