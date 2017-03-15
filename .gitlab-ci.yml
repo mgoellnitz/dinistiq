@@ -29,7 +29,6 @@ stages:
 build:
   stage: dinistiq
   script: gradle jacocoTestReport coveralls build generatePomFileForMavenJavaPublication artifactoryPublish
-  script: bash <(curl -s https://codecov.io/bash)
   artifacts:
     paths:
     - build/libs/*
