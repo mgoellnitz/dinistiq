@@ -56,7 +56,7 @@ configurations {
 }
 
 dependencies {
-  compile 'org.slf4j:slf4j-api:1.7.24'
+  compile 'org.slf4j:slf4j-api:1.7.25'
   compile 'javax.inject:javax.inject:1'
 
   optional 'javax.servlet:javax.servlet-api:3.1.0'
@@ -70,7 +70,7 @@ dependencies {
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
   testRuntime 'ch.qos.logback:logback-classic:1.2.1'
-  testRuntime 'org.codehaus.groovy:groovy:2.4.9'
+  testRuntime 'org.codehaus.groovy:groovy:2.4.10'
 }
 
 pmd {
