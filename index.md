@@ -1,9 +1,10 @@
-![dinistiq](https://raw.github.com/mgoellnitz/dinistiq/master/doc/dinistiq.png)
+![dinistiq](doc/dinistiq.png)
 
 # Minimalistic Dependency Injection
 
 [![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://github.com/mgoellnitz/dinistiq/releases/latest)
 [![Build Status](https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master)](https://travis-ci.org/mgoellnitz/dinistiq)
+[![Build Status](https://gitlab.com/mgoellnitz/dinistiq/badges/master/build.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
 [![Coverage Status](https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master)](https://coveralls.io/github/mgoellnitz/dinistiq?branch=master)
 [![Coverage Status](http://codecov.io/github/mgoellnitz/dinistiq/coverage.svg?branch=master)](https://codecov.io/gh/mgoellnitz/dinistiq)
 [![Dependency Status](https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54ff710b4a10649b1b000053)
@@ -535,8 +536,8 @@ dinistiq.initBean(myNewInstance, null);
 While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be 
 compiled and tested with Java 8.
 
-The code for dinistiq is prepared for building with Gradle. Gradle 2 versions up 
-to 2.14.1 are tested to be working, while dinistiq starting from version 0.7
+The code for dinistiq is prepared for building with Gradle. Gradle versions up 
+to 3.2.1 are tested to be working, while dinistiq starting from version 0.7
 at least needs Gradle 2.12.
 
 Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequent
@@ -663,9 +664,9 @@ concept phase, but it took me that much work to get something to run with it
 (not everything can be plugged together programmatically in my case), that I 
 came out faster with my own Dependency Injection Container. Rather minimalistic 
 and only suited for the setup of components.
-result
-Its advantage over Guice is that it's smaller and easier configurable with 
+
+Its advantage over Guice is that it's smaller and easier to configure with 
 properties files. Weeks later I discovered TinyDI as another option. While this 
-container seems to be a lot cleverer about the search of annotated classes it 
+container seems to be a lot cleverer about the search of annotated classes, it 
 seems to lack the needed option of extending the configuration aspects from the 
 annotations with properties files - defaults and overridden values and references.
