@@ -664,8 +664,8 @@ concept phase, but it took me that much work to get something to run with it
 (not everything can be plugged together programmatically in my case), that I 
 came out faster with my own Dependency Injection Container. Rather minimalistic 
 and only suited for the setup of components.
-result
-Its advantage over Guice is that it's smaller and easier configurable with 
+
+Its advantage over Guice is that it's smaller and easier to configure with 
 properties files. Weeks later I discovered TinyDI as another option. While this 
 container seems to be a lot cleverer about the search of annotated classes it 
 seems to lack the needed option of extending the configuration aspects from the 
