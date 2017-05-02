@@ -1,0 +1,8 @@
+title: dinistiq
+description: "Minimalistic Dependency Injection - Or: what I got wrong about dependency injection. dinistiq is a minimalistic approach to component based application setup done in Java. With only few external dependencies and a very small footprint it is based on the JSR 330 annotations for the Java SE using only one scope with mostly singletons."
+google_analytics: UA-59511125-1
+show_downloads: true
+theme: jekyll-theme-dinky
+
+gems:
+  - jekyll-mentions
