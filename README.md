@@ -667,6 +667,6 @@ and only suited for the setup of components.
 
 Its advantage over Guice is that it's smaller and easier to configure with 
 properties files. Weeks later I discovered TinyDI as another option. While this 
-container seems to be a lot cleverer about the search of annotated classes it 
+container seems to be a lot cleverer about the search of annotated classes, it 
 seems to lack the needed option of extending the configuration aspects from the 
 annotations with properties files - defaults and overridden values and references.
