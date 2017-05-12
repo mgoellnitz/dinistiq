@@ -25,9 +25,9 @@ language: java
 jdk:
   - oraclejdk8
 
-before_build:
-  - bash chmod 755 gradlew
-
+before_install:
+ - chmod +x gradlew
+ 
 after_success:
   - gradle jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
   - bash <(curl -s https://codecov.io/bash)
