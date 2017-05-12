@@ -235,7 +235,8 @@ public class Dinistiq {
                 for (Annotation a : beanClass.getAnnotations()) {
                     Class<? extends Annotation> type = a.annotationType();
                     if (type.getAnnotation(Qualifier.class)!=null) {
-                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), type==Named.class);
+                        // Note: PMD doesn't do Auto-Boxing for the last parameter on checking
+                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), Boolean.valueOf(type==Named.class));
                         // don't add if the class is qualified but no qualifier is asked for in the collection.1
                         add = add&&(type==Named.class);
                         LOG.info("findQualifiedBeans() would add {}. ({})", bean, add);
@@ -247,8 +248,11 @@ public class Dinistiq {
                 if (annotationType.getAnnotation(Qualifier.class)==null) {
                     throw new RuntimeException("Not a qualifier: "+annotationType+" ("+qualifier.getClass().getName()+")");
                 } // if
-                LOG.debug("findQualifiedBeans() checking {}|{} ({} || {})", annotationType.getSimpleName(), beanClass.getSimpleName(), beanClass.getAnnotation(annotationType)!=null, beanClass.getSimpleName().startsWith(annotationType.getSimpleName()));
-                add = add&&((beanClass.getAnnotation(annotationType)!=null)||(beanClass.getSimpleName().startsWith(annotationType.getSimpleName())));
+                String annotationTypeName = annotationType.getSimpleName();
+                String beanClassName = beanClass.getSimpleName();
+                // Note: PMD doesn't do Auto-Boxing for the last two parameters on checking
+                LOG.debug("findQualifiedBeans() checking {}|{} ({} || {})", annotationTypeName, beanClassName, Boolean.valueOf(beanClass.getAnnotation(annotationType)!=null), Boolean.valueOf(beanClassName.startsWith(annotationTypeName)));
+                add = add&&((beanClass.getAnnotation(annotationType)!=null)||(beanClassName.startsWith(annotationTypeName)));
             } // for
             if (add) {
                 LOG.debug("findQualifiedBeans() found qualified bean {}", bean);
@@ -438,7 +442,8 @@ public class Dinistiq {
         Constructor<?>[] constructors = cls.getDeclaredConstructors();
         LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
         for (Constructor<?> ctor : constructors) {
-            LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, ctor.getAnnotation(Inject.class)!=null);
+            // Note: PMD doesn't do Auto-Boxing for the last parameter on checking
+            LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, Boolean.valueOf(ctor.getAnnotation(Inject.class)!=null));
             c = (ctor.getAnnotation(Inject.class)!=null) ? ctor : c;
         } // for
         c = (c==null) ? cls.getConstructor() : c;
