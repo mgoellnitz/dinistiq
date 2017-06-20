@@ -36,8 +36,8 @@ The missing bits can be configured by a set of properties files, describing
 ## Convention over Configuration
 
 First of all the most important thing to use dinistiq is to annotate your 
-dependencies with JSR @Inject so that dinistiq can find out which components are 
-needed.
+dependencies with JSR @Inject so that dinistiq can find out which components 
+are needed.
 
 ```Java
 public class TestComponentB {
@@ -144,34 +144,37 @@ properties files.
 unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 ```
 
-Those files must simply be put in the folder dinistiq/ anywhere on your classpath.
-This example will instanciate the class dinistiq.test.components.UnannotatedComponent
-and store this bean with the name unannotatedComponent in the set of available 
-beans.
+Those files must simply be put in the folder `dinistiq/` anywhere on your 
+classpath. This example will instanciate the class 
+`dinistiq.test.components.UnannotatedComponent` and store this bean with the 
+name `unannotatedComponent` in the set of available beans.
 
 The properties files are scanned in alphabetical order, so you can override the 
-class for e.g. unannotatedComponent in a latter properties file, so classes given 
-for bean names used in mybeans.properties can be overridden in override-mybeans.properties.
+class for e.g. `unannotatedComponent` in a latter properties file, so classes 
+given for bean names used in `mybeans.properties` can be overridden in 
+`override-mybeans.properties`.
 
 For any of the instanciated beans you can provide more values to explicitly 
 inject - again by the use of properties files.
 
-After instanciation of the bean a properties file with the bean's name as its 
-base filename is searched - first in the dinistiq/defaults/ and then in the 
-dinistiq/beans/ folders on the classpath. Thus you can deliver your components 
+After instanciation of the bean, a properties file with the bean's name as its 
+base filename is searched - first in the `dinistiq/defaults/` and then in the 
+`dinistiq/beans/` folders on the classpath. Thus you can deliver your components 
 with a reasonable defaults and necessary overrides for the specific application.
 
 file dinistiq/beans/example.properties
+
 ```
 activateCaching=true
 ```
 
-This will call the property setter setActivateCaching() on the bean named 
-example. The grammar of the properties files describing the explicit injection 
+This will call the property setter `setActivateCaching()` on the bean named 
+`example`. The grammar of the properties files describing the explicit injection 
 supports set and list type collections, boolean values, numeric value, strings, 
 and references to other beans.
 
 file dinistiq/beans/example.properties
+
 ```
 # numerics
 intValue=42
@@ -185,8 +188,8 @@ replacement=a string
 replacementTest=here comes ${replacement}
 ```
 
-The bean named example is either a result of the automatic discovery of a class 
-named Example
+The bean named `example` is either a result of the automatic discovery of a class 
+named `Example`
 
 ```Java
 @Named
@@ -209,6 +212,7 @@ public class ExampleComponent  {
 or taken from the naming in a configuration properties file
 
 file dinistiq/demo.properties
+
 ```
 example=some.package.ExampleComponent
 ```
@@ -220,12 +224,10 @@ unannotatedComponent=dinistiq.test.components.UnannotatedComponent
 ```
 
 showed. If you need some typical configuration types at this level - like e.g. 
-Strings, Booleans, Lists, and Maps some extensions of this mere class based 
-syntax had to be introduced. Any simple type found in the java.lang package can 
-be intanciated with a value bound to it since these values are immutable and 
-there are thus no modifiable fields or setters in these classes.
-
-So
+Strings, Booleans, Lists, and Maps, some extensions of this mere class based 
+syntax had to be introduced. Any simple type found in the `java.lang` package 
+can be intanciated with a value bound to it, since these values are immutable 
+and there are thus no modifiable fields or setters in these classes.
 
 ```
 booleanValue=java.lang.Boolean("false")
@@ -239,9 +241,9 @@ are some examples for this. While
 mapTest=java.util.Map
 ```
 
-creates and empty map instance. Like any other beans the contents of this map can
-be modified by a properties file. In this case the contents of the properties 
-file's key / value pairs will be used as content for the whole map.
+creates and empty map instance. Like with any other bean, the contents of this 
+map can be modified by a properties file. In this case the contents of the 
+properties file's key / value pairs will be used as content for the whole map.
 
 Lists of strings can be created by
 
@@ -272,6 +274,7 @@ compile "dinistiq:dinistiq:0.6"
 Projects built with Apache Maven need the following steps:
 
 module pom.xml
+
 ```xml
 ...
 <dependencies>
@@ -285,6 +288,7 @@ module pom.xml
 ```
 
 base  pom.xml
+
 ```xml
 ...
 <dependencyManagement>
@@ -311,7 +315,8 @@ base  pom.xml
 
 Dinistiq uses slf4j for logging and logback as an instance for testing.
 
-Snapshot artifacts are available from the OJO repository:
+Snapshot artifacts currently for version 0.7-SNAPSHOT are available from the 
+OJO repository:
 
 ```
 https://oss.jfrog.org/oss-snapshot-local/
@@ -411,9 +416,9 @@ public interface RegisterableServlet extends Servlet, Comparable<RegisterableSer
 } // RegisterableServlet
 ```
 
-So a servlet has to tell which url patterns its request should meet to be able to
-handle them. Additionally it tells an order number to sort all available servlets
-to provide a certain precedency rule for them.
+So a servlet has to tell which url patterns its requests should meet, to be 
+able to handle them. Additionally it tells an order number to sort all 
+available servlets to provide a certain precedency rule for them.
 
 ## Custom Class Resolver
 
@@ -476,15 +481,15 @@ loader listener configuration for dinistiq.
 </web-app>
 ```
 
-Within the web application all beans from the dinistiq scope are available in the
-application scope (servlet context) as attributes.
+Within the web application all beans from the dinistiq scope are available in 
+the application scope (servlet context) as attributes.
 
 ## External Components
 
 If your software needs to use some components which cannot be instanciated or 
-obtained using all of the means presented here, you can pass over a named set of 
-instances as a base set of beans for dinistiq to add the scanned and configured 
-beans to.
+obtained using all of the means presented here, you can pass over a named set 
+of  instances as a base set of beans for dinistiq to add the scanned and 
+configured beans to.
 
 We use this to e.g. put the servlet context in the set of beans for web 
 integration (see below).
@@ -515,7 +520,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
 Dinistiq defines just one scope of beans you can grab beans from. If you need 
 fresh instances of beans where the members of this scope should be injected on 
 creation and optional post construct methods should be called just following the 
-same rules as the beans from the dinistiq scope, you will find a createBeans 
+same rules as the beans from the dinistiq scope, you will find a `createBeans()`
 method besides all the options to find existing beans in the scope.
 
 ```Java
@@ -536,12 +541,14 @@ dinistiq.initBean(myNewInstance, null);
 While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be 
 compiled and tested with Java 8.
 
+Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a 
+subsequent switch to Java 8. This also results in the fact, that the classic 
+version of Google App Engine is only supported up to version 0.4.
+
 The code for dinistiq is prepared for building with Gradle. Gradle versions up 
 to 3.2.1 are tested to be working, while dinistiq starting from version 0.7
-at least needs Gradle 2.12.
-
-Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a subsequent
-switch to Java 8.
+at least needs Gradle 2.12. We now use the gradle wrapper on CI servers and
+switched to Gradle version 4.0 for all builds.
 
 |dinistiq Version|Works with |Compiles with|GAE support|
 |:--------------:|:---------:|:-----------:|:---------:|
@@ -552,9 +559,9 @@ switch to Java 8.
 
 ## Comparison
 
-The developer of [SilkDI](https://github.com/jbee/silk/blob/6a739b44973de964013d320c174a333e2f70665c/help/comparison.md) presents an
-interesting comparison of some DI implementations done in Java and we want to add
-some  values for dinistiq to this list:
+The developer of [SilkDI](https://github.com/jbee/silk/blob/6a739b44973de964013d320c174a333e2f70665c/help/comparison.md) 
+presents an interesting comparison of some DI implementations done in Java and 
+we want to add some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
