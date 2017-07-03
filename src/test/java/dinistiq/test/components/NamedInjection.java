@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2014-2016 Martin Goellnitz
+ * Copyright 2014-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -51,14 +51,13 @@ public class NamedInjection {
     @Getter
     private String namedValue;
 
+    @Getter
     private String someValue;
 
 
-    public String getSomeValue() {
-        return someValue;
-    }
-
-
+    /**
+     * Setter with injection point and named injection.
+     */
     @Inject
     public void setSomeValue(@Named("another") String someValue) {
         this.someValue = someValue;

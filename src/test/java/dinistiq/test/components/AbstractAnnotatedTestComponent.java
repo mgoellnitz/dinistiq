@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2015 Martin Goellnitz
+ * Copyright 2015-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,9 @@ import javax.inject.Singleton;
 @Singleton
 public abstract class AbstractAnnotatedTestComponent extends TestComponent {
 
+    /**
+     * Abstract method declaration just that something is in here.
+     */
     public abstract void doSomethingElse();
 
 } // AbstractAnnotatedTestComponent

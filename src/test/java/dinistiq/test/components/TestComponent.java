@@ -32,6 +32,9 @@ public class TestComponent implements TestInterface {
     private static final Logger LOG = LoggerFactory.getLogger(TestComponent.class);
 
 
+    /**
+     * Post construct implementation doing nothing but logging.
+     */
     @PostConstruct
     public void afterPropertiesSet() {
         LOG.info("afterPropertiesSet() YEAH!");

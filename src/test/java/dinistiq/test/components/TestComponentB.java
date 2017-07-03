@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2016 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -45,6 +45,9 @@ public class TestComponentB {
     private String hallo;
 
 
+    /**
+     * Getter for static field injection point.
+     */
     public static TestInterface getTestInterface() {
         return testInterface;
     } // getTestInterface()

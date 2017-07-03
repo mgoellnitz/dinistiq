@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2016 Martin Goellnitz
+ * Copyright 2016-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -37,11 +37,17 @@ public class QualifiedInjection {
     private final TestInterface constructorInjected;
 
 
+    /**
+     * Get field injected through controller injection.
+     */
     public TestInterface getConstructorInjected() {
         return constructorInjected;
     }
 
 
+    /**
+     * Contructor armored with qualifier for parameter.
+     */
     @Inject
     public QualifiedInjection(@TestQualifier TestInterface testInterface) {
         this.constructorInjected = testInterface;

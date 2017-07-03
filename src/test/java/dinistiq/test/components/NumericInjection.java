@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2016 Martin Goellnitz
+ * Copyright 2014-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -49,6 +49,10 @@ public class NumericInjection extends TestComponentB {
     private boolean booleanValue;
 
 
+    /**
+     * Method with setter name patter but not parameter.
+     * It should be ignored on injection.
+     */
     public void setIntValue() {
         // This method should not be consired on injection
     }

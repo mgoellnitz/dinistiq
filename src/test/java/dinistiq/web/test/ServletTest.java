@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2015 Martin Goellnitz
+ * Copyright 2014-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -35,6 +35,9 @@ import org.testng.annotations.Test;
  */
 public class ServletTest {
 
+    /**
+     * Test context loader listener based initialization of dinistiq and its servlet integration.
+     */
     @Test
     public void testContextLoaderListener() {
         Set<String> packages = new HashSet<>();

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2016 Martin Goellnitz
+ * Copyright 2014-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,8 +28,16 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
+/**
+ * Test usage of custom class loader.
+ *
+ * Still using the default implementation.
+ */
 public class ClassResolverTest {
 
+    /**
+     * Test class loading with a given class loader.
+     */
     @Test
     public void testClassLoader() {
         Set<String> packages = new HashSet<>();

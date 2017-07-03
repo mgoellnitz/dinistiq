@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2016 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -53,6 +53,13 @@ public class InjectorTest {
     private final Set<String> packages;
 
 
+    /**
+     * Prepare a map of beans used as initial beans on dinistiq instanciation.
+     *
+     * Used to be interoperable with one set of properties files and the other test scenrios.
+     *
+     * @return map of named beans.
+     */
     public static Map<String, Object> prepareInitialBeans() {
         Map<String, Object> initialBeans = new HashMap<>();
         initialBeans.put("initialBean", new InitialBean());
@@ -61,6 +68,9 @@ public class InjectorTest {
     } // prepareInitialBeans()
 
 
+    /**
+     * Set up this test execution class with a special dinisitq setup for reflecting the TCK and the test package path.
+     */
     public InjectorTest() {
         packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
@@ -74,6 +84,9 @@ public class InjectorTest {
     } // InjectorTest()
 
 
+    /**
+     * Test finding of implementations of a given interface.
+     */
     @Test
     public void testFindImplementedInterface() {
         TestInterface testInterface = d.findBean(TestInterface.class);
@@ -82,6 +95,10 @@ public class InjectorTest {
     } // testFindImplementedInterface()
 
 
+    /**
+     * Test finding of explicitly instanciated component with a given name.
+     * It also implements a given interface and additionally there still is the automatically generated instance.
+     */
     @Test
     public void testFindExplicitlyInstanciatedComponent() {
         TestInterface ti = d.findBean(TestInterface.class);
@@ -95,6 +112,9 @@ public class InjectorTest {
     } // testFindExplicitlyInstanciatedComponent()
 
 
+    /**
+     * Test finding of names for components implementing or deriving given interfaces or classes.
+     */
     @Test
     public void testFindNames() {
         Set<String> tis = d.findNames(TestInterface.class);
@@ -107,6 +127,9 @@ public class InjectorTest {
     } // testFindNames()
 
 
+    /**
+     * Test injection points with names.
+     */
     @Test
     public void testNamedInjection() {
         TestComponentB testComponentB = d.findBean(TestComponentB.class);
@@ -115,6 +138,9 @@ public class InjectorTest {
     } // testNamedInjection()
 
 
+    /**
+     * Test if values references in properties files work.
+     */
     @Test
     public void testReferenceValue() {
         UnannotatedComponent withoutName = d.findBean(UnannotatedComponent.class);
@@ -130,6 +156,9 @@ public class InjectorTest {
     } // testReferenceValue()
 
 
+    /**
+     * Test creation of map beans from properties.
+     */
     @Test
     @SuppressWarnings("rawtypes")
     public void testMapBeans() {
@@ -142,6 +171,9 @@ public class InjectorTest {
     } // testMapBeans()
 
 
+    /**
+     * Test literal collection values in properties files.
+     */
     @Test
     @SuppressWarnings("rawtypes")
     public void testLiteralCollections() {
@@ -168,6 +200,9 @@ public class InjectorTest {
     } // testLiteralCollections()
 
 
+    /**
+     * Test named string beans with values from properties files.
+     */
     @Test
     public void testStringValue() {
         String stringValue = d.findBean(String.class, "stringTest");
@@ -176,6 +211,9 @@ public class InjectorTest {
     } // testStringValue()
 
 
+    /**
+     * Test insertion of additional beans during initialization.
+     */
     @Test
     public void testInitialBeans() {
         InitialBean ib = d.findBean(InitialBean.class);
@@ -187,6 +225,9 @@ public class InjectorTest {
     } // testInitialBeans()
 
 
+    /**
+     * Test more named injection points.
+     */
     @Test
     public void testNamedInjections() {
         NamedInjection ni = d.findBean(NamedInjection.class);
@@ -199,6 +240,9 @@ public class InjectorTest {
     } // testNamedInjections()
 
 
+    /**
+     * Test boolean handling including literals.
+     */
     @Test
     public void testBooleans() {
         Map<String, Object> initialBeans = prepareInitialBeans();
@@ -226,6 +270,9 @@ public class InjectorTest {
     } // testBooleans()
 
 
+    /**
+     * Test string replacement during reading of properties files.
+     */
     @Test
     @SuppressWarnings("unchecked")
     public void testStringReplacement() {
@@ -240,12 +287,18 @@ public class InjectorTest {
     } // testStringReplacement()
 
 
+    /**
+     * Test injection into a static field.
+     */
     @Test
     public void testStaticInjection() {
         Assert.assertNotNull(TestComponentB.getTestInterface(), "Static field not injected");
     } // testStaticInjection()
 
 
+    /**
+     * Test injections of numeric values into base type fields.
+     */
     @Test
     public void testNumericInjection() {
         NumericInjection numerics = d.findBean(NumericInjection.class);
@@ -257,6 +310,10 @@ public class InjectorTest {
     } // testNumericInjection()
 
 
+    /**
+     * Test injection of collection values.
+     * Includes collection collected from all values of a given type.
+     */
     @Test
     public void testCollectionInjection() {
         TestComponentB cb = d.findBean(TestComponentB.class);
@@ -271,6 +328,9 @@ public class InjectorTest {
     } // testCollectionInjection()
 
 
+    /**
+     * Test finding of beans depending on their anotation.
+     */
     @Test
     public void testAnnotationLookup() {
         Collection<Object> beans = d.findAnnotatedBeans(Singleton.class);
@@ -278,6 +338,9 @@ public class InjectorTest {
     } // testAnnotationLookup()
 
 
+    /**
+     * Test injection of values as constructor parameters.
+     */
     @Test
     public void testConstructorInjection() {
         ConstructorInjection constructorInjection = d.findBean(ConstructorInjection.class);
@@ -285,6 +348,9 @@ public class InjectorTest {
     } // testConstructorInjection()
 
 
+    /**
+     * Test injections in instances which are explicitly programmatically created.
+     */
     @Test
     public void testInstanceCreation() {
         MultiInstanceComponent instance = d.createBean(MultiInstanceComponent.class, null);
@@ -299,6 +365,9 @@ public class InjectorTest {
     } // testInstanceCreation()
 
 
+    /**
+     * Test initialization of externally created bean instance.
+     */
     @Test
     public void testInstanceInit() {
         MultiInstanceComponent instance = new MultiInstanceComponent();
@@ -310,6 +379,9 @@ public class InjectorTest {
     } // testInstanceInit()
 
 
+    /**
+     * Test triggering of injection failures.
+     */
     @Test
     public void testInjectionFailures() {
         ManualBean bean = new ManualBean();
@@ -321,6 +393,9 @@ public class InjectorTest {
     } // testInjectionFailures()
 
 
+    /**
+     * Call Technology Compatibility Kitfor JRS-330.
+     */
     @Test
     public void testUsingTck() {
         Car car = d.findBean(Car.class);

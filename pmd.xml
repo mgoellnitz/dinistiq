@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
- Copyright 2015 Martin Goellnitz
+ Copyright 2015-2017 Martin Goellnitz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
@@ -17,8 +17,16 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<ruleset xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://pmd.sourceforge.net/ruleset/2.0.0'
+<ruleset name="Custom Ruleset for Dinistiq"
+         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+         xmlns='http://pmd.sourceforge.net/ruleset/2.0.0'
          xsi:schemaLocation='http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd'>
+         
+  <description>
+  Nearly default setup of PMD rules with some exceptions.
+  Some of the default rules of PMD don't help in parts of the code to improve readability and correctness.
+  It may well not be in sync with latest changes of PMD and partly is copied from other projects.
+  </description>
 
   <rule ref="rulesets/java/android.xml"/>
   <rule ref="rulesets/java/basic.xml">
@@ -33,8 +41,12 @@
     <exclude name="ModifiedCyclomaticComplexity"/>
     <exclude name="NcssConstructorCount"/>
     <exclude name="TooManyMethods"/>
-    <exclude name="ExcessiveParameterList"/>
-    <exclude name="ExcessiveMethodLength"/>
+    <exclude name="ExcessivePublicCount"/>
+  </rule>
+  <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount">
+    <properties>
+      <property name="minimum" value="55" />
+    </properties>
   </rule>
   <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">
     <properties>
@@ -91,11 +103,8 @@
   <rule ref="rulesets/java/junit.xml"/>
   <rule ref="rulesets/java/logging-jakarta-commons.xml">
     <exclude name="GuardLogStatement"/>
-    <exclude name="GuardDebugLogging"/>
   </rule>
-  <rule ref="rulesets/java/logging-java.xml">
-    <exclude name="GuardLogStatementJavaUtil"/>
-  </rule>
+  <rule ref="rulesets/java/logging-java.xml"/>
   <rule ref="rulesets/java/migrating.xml">
     <exclude name="LongInstantiation"/>
     <exclude name="IntegerInstantiation"/>
@@ -104,7 +113,6 @@
     <exclude name="LongVariable"/>
     <exclude name="ShortVariable"/>
     <exclude name="ShortClassName"/>
-    <exclude name="AbstractNaming"/>
     <exclude name="AvoidFieldNameMatchingTypeName"/>
   </rule>
   <rule ref="rulesets/java/naming.xml/LongVariable">
@@ -116,10 +124,7 @@
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="LocalVariableCouldBeFinal"/>
     <exclude name="MethodArgumentCouldBeFinal"/>
-    <exclude name="UseStringBufferForStringAppends"/>
-    <exclude name="RedundantFieldInitializer"/>
     <exclude name="AddEmptyString"/>
-    <exclude name="SimplifyStartsWith"/>
   </rule>
   <rule ref="rulesets/java/strictexception.xml">
     <exclude name="AvoidThrowingRawExceptionTypes"/>
@@ -130,10 +135,7 @@
   <rule ref="rulesets/java/strings.xml">
     <exclude name="AvoidDuplicateLiterals"/>
   </rule>
-  <rule ref="rulesets/java/sunsecure.xml">
-    <exclude name="ArrayIsStoredDirectly"/>
-    <exclude name="MethodReturnsInternalArray"/>
-  </rule>
+  <rule ref="rulesets/java/sunsecure.xml"/>
   <rule ref="rulesets/java/typeresolution.xml">
     <exclude name="SignatureDeclareThrowsException"/>
   </rule>

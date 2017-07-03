@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2016 Martin Goellnitz
+ * Copyright 2016-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -39,6 +39,13 @@ public class ErrorConditionTest {
     private Dinistiq d;
 
 
+    /**
+     * Prepare a map of beans used as initial beans on dinistiq instanciation.
+     *
+     * Used to be interoperable with one set of properties files and the other test scenrios.
+     *
+     * @return map of named beans.
+     */
     public static Map<String, Object> prepareInitialBeans() {
         Map<String, Object> initialBeans = new HashMap<>();
         initialBeans.put("initialBean", new InitialBean());
@@ -47,6 +54,9 @@ public class ErrorConditionTest {
     } // prepareInitialBeans()
 
 
+    /**
+     * Set up this test execution class with a special dinisitq setup to trigger error conditions.
+     */
     public ErrorConditionTest() {
         Set<String> packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
@@ -60,6 +70,9 @@ public class ErrorConditionTest {
     } // ErrorConditionTest()
 
 
+    /**
+     * Test if no component gets found accidentally.
+     */
     @Test
     public void testDontFind() {
         String negativeTest = d.findBean(String.class, "unannotatedComponent");
@@ -72,6 +85,9 @@ public class ErrorConditionTest {
     } // testDontFind()
 
 
+    /**
+     * Test if no component gets injected accidentally.
+     */
     @Test
     public void testInjectionFailures() {
         ManualBean bean = new ManualBean();
@@ -83,6 +99,9 @@ public class ErrorConditionTest {
     } // testInjectionFailures()
 
 
+    /**
+     * Test if init failed intentionally in broken setup.
+     */
     @Test
     public void testFailures() {
         Singleton failure = d.createBean(Singleton.class, null);

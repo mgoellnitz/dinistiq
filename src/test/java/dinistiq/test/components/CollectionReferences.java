@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2015 Martin Goellnitz
+ * Copyright 2015-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -33,36 +35,16 @@ import javax.inject.Singleton;
 @Singleton
 public class CollectionReferences {
 
+    @Getter
+    @Setter
     private Set<String> stringSet;
 
+    @Getter
+    @Setter
     private List<String> stringList;
 
     @Inject
+    @Getter
     private Collection<TestInterface> testInstances;
-
-
-    public void setStringSet(Set<String> stringSet) {
-        this.stringSet = stringSet;
-    }
-
-
-    public Set<String> getStringSet() {
-        return stringSet;
-    }
-
-
-    public List<String> getStringList() {
-        return stringList;
-    }
-
-
-    public void setStringList(List<String> stringList) {
-        this.stringList = stringList;
-    }
-
-
-    public Collection<TestInterface> getTestInstances() {
-        return testInstances;
-    }
 
 } // CollectionReferences

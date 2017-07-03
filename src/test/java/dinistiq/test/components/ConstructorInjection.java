@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014 Martin Goellnitz
+ * Copyright 2014-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,28 +21,31 @@ package dinistiq.test.components;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import lombok.Getter;
 
 
 @Named
 @Singleton
 public class ConstructorInjection {
 
+    @Getter
     private String string;
 
 
+    /**
+     * Constructor with injection point in parameter list.
+     */
     @Inject
     public ConstructorInjection(@Named("b") String string) {
         this.string = string;
     }
 
 
+    /**
+     * Unused constrctor - exception in error cases.
+     */
     public ConstructorInjection() {
         this("wrong default");
-    }
-
-
-    public String getString() {
-        return string;
     }
 
 } // ConstructorInjection

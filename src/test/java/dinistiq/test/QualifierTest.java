@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2016 Martin Goellnitz
+ * Copyright 2016-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -43,6 +43,11 @@ public class QualifierTest {
     private Dinistiq d;
 
 
+    /**
+     * Prepare a map of beans used as initial beans on dinistiq instanciation.
+     *
+     * @return map of named beans.
+     */
     public static Map<String, Object> prepareInitialBeans() {
         Map<String, Object> initialBeans = new HashMap<>();
         initialBeans.put("initialBean", new InitialBean());
@@ -51,6 +56,9 @@ public class QualifierTest {
     } // prepareInitialBeans()
 
 
+    /**
+     * Set up this test execution class with a special dinisitq setup for qualifiers.
+     */
     public QualifierTest() {
         Set<String> packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
@@ -64,15 +72,24 @@ public class QualifierTest {
     } // QualifierTest()
 
 
+    /**
+     * Test if beans get handled depending on their respective given qualifiers.
+     */
     @Test
     public void testQualifiedBeans() {
         Named n = new Named() {
+            /**
+             * Get named for named annotation.
+             */
             @Override
             public String value() {
                 return "test";
             }
 
 
+            /**
+             * Get annotation type for named annotation.
+             */
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Named.class;
@@ -86,6 +103,9 @@ public class QualifierTest {
         boolean thrown = false;
         try {
             Scope s = new Scope() {
+                /**
+                 * Get annotation type.
+                 */
                 @Override
                 public Class<? extends Annotation> annotationType() {
                     return Scope.class;
@@ -104,6 +124,9 @@ public class QualifierTest {
     } // testQualifiedBeans()
 
 
+    /**
+     * Test scope handling with the given single scope of dinistiq.
+     */
     @Test
     public void testScopes() {
         Set<String> packs = new HashSet<>();
@@ -114,6 +137,9 @@ public class QualifierTest {
     } // testScopes()
 
 
+    /**
+     * Test injection of beans depending on a given qualifier.
+     */
     @Test
     public void testQualifiedInjection() {
         QualifiedInjection qualifiedInjection = d.findBean(QualifiedInjection.class);

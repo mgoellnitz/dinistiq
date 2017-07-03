@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2014 Martin Goellnitz
+ * Copyright 2013-2017 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,77 +21,63 @@ package dinistiq.test.components;
 import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.Getter;
+import lombok.Setter;
 
 
 public class UnannotatedComponent {
 
     @Inject
+    @Getter
     private TestComponentB b;
 
     private TestInterface testInterface;
 
     private TestInterface handWritten;
 
+    @Getter
+    @Setter
     private boolean basetypeBooleanValue;
 
+    @Getter
+    @Setter
     private Collection<Object> manuallyInjectedCollection;
 
+    @Getter
+    @Setter
     private List<String> manuallyInjectedList;
 
 
-    public TestComponentB getB() {
-        return b;
-    }
-
-
+    /**
+     * Get value from injection point below.
+     */
     public TestInterface getAutoInjected() {
         return testInterface;
     } // getAutoInjected()
 
 
+    /**
+     * Injection point which is not a setter by naming.
+     */
     @Inject
     public void autoInjected(TestInterface testInterface) {
         this.testInterface = testInterface;
     } // autoInjected()
 
 
+    /**
+     * Getter for property with different name than getter.
+     */
     public TestInterface getTestInterface() {
         return handWritten;
     } // getTestInterface()
 
 
+    /**
+     * Setter for property with different name than getter.
+     */
     public void setTestInterface(TestInterface testInterface) {
         this.handWritten = testInterface;
     } // autoInjected()
-
-
-    public boolean isBasetypeBooleanValue() {
-        return basetypeBooleanValue;
-    }
-
-
-    public void setBasetypeBooleanValue(boolean basetypeBooleanValue) {
-        this.basetypeBooleanValue = basetypeBooleanValue;
-    }
-
-
-    public Collection<Object> getManuallyInjectedCollection() {
-        return manuallyInjectedCollection;
-    }
-
-
-    public void setManuallyInjectedCollection(Collection<Object> manuallyInjectedCollection) {
-        this.manuallyInjectedCollection = manuallyInjectedCollection;
-    }
-
-
-    public List<String> getManuallyInjectedList() {
-        return manuallyInjectedList;
-    }
-
-
-    public void setManuallyInjectedList(List<String> manuallyInjectedList) {
-        this.manuallyInjectedList = manuallyInjectedList;
-    }
 
 } // UnannotatedComponent
