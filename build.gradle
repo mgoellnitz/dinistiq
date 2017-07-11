@@ -64,7 +64,7 @@ dependencies {
 
   testCompile 'javax.servlet:javax.servlet-api:3.1.0'
   testCompile 'org.testng:testng:6.11'
-  testCompile 'org.projectlombok:lombok:1.16.16'
+  testCompile 'org.projectlombok:lombok:1.16.18'
   // Some servlet API elements
   testCompile 'org.mockito:mockito-core:2.8.47'
   // integrate tck into unit tests
