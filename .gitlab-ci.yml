@@ -21,9 +21,6 @@
 #
 image: provocon/gitlabci-gradle-java
 
-before_script:
-  - export GRADLE_USER_HOME=$HOME/.gradle
-
 stages:
   - dinistiq
 
