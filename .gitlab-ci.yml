@@ -21,6 +21,9 @@
 #
 image: provocon/gitlabci-gradle-java
 
+before_script:
+  - export GRADLE_USER_HOME=/tmp/.gradle
+
 stages:
   - dinistiq
 
@@ -35,5 +38,5 @@ build:
 
 cache:
   paths:
-  - $HOME/.gradle/caches/
-  - $HOME/.gradle/wrapper/
+  - /tmp/.gradle/caches/
+  - /tmp/.gradle/wrapper/
