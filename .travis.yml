@@ -30,5 +30,5 @@ before_install:
  - chmod +x gradlew
  
 after_success:
-  - gradle jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
+  - ./gradlew jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
   - bash <(curl -s https://codecov.io/bash)
