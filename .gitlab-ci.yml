@@ -17,6 +17,7 @@
 # Environment variables needed:
 # ORG_GRADLE_PROJECT_bintrayUser
 # ORG_GRADLE_PROJECT_bintrayKey
+# COVERALLS_REPO_TOKEN
 #
 image: provocon/gitlabci-gradle-java
 
