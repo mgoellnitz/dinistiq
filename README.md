@@ -268,7 +268,7 @@ if it's not there already and the dependency to the artifact in the dependencies
 section.
 
 ```
-compile "dinistiq:dinistiq:0.6"
+compile "dinistiq:dinistiq:0.7"
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -296,7 +296,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.6</version>
+    <versions>0.7</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -546,7 +546,7 @@ subsequent switch to Java 8. This also results in the fact, that the classic
 version of Google App Engine is only supported up to version 0.4.
 
 The code for dinistiq is prepared for building with Gradle. Gradle versions up 
-to 3.2.1 are tested to be working, while dinistiq starting from version 0.7
+to 4.0 are tested to be working, while dinistiq starting from version 0.7
 at least needs Gradle 2.12. We now use the gradle wrapper on CI servers and
 switched to Gradle version 4.0 for all builds.
 
@@ -556,6 +556,7 @@ switched to Gradle version 4.0 for all builds.
 |0.5|Java 7 / 8|Java 7 / 8|-|
 |0.6|Java 8|Java 8|-|
 |0.7|Java 8|Java 8|-|
+|0.8|Java 8|Java 8|-|
 
 ## Comparison
 
