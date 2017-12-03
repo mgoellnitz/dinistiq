@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package dinistiq.web.test;
+package dinistiq.web.test; // NO PMD - ignore bunch of public methods warning since this has to be implemented
 
 import dinistiq.Dinistiq;
 import dinistiq.SimpleClassResolver;
@@ -255,6 +255,7 @@ public class MockServletContext implements ServletContext {
 
     /**
      * Get real path mock while pretending our base path is /x.
+     *
      * @param path path to find real path for
      * @return path prepended by /x
      */
@@ -656,6 +657,83 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getVirtualServerName() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#addJspFile(java.lang.String, java.lang.String)
+     */
+    @Override
+    public ServletRegistration.Dynamic addJspFile(String string, String string1) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#getSessionTimeout()
+     */
+    @Override
+    public int getSessionTimeout() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#setSessionTimeout(int)
+     */
+    @Override
+    public void setSessionTimeout(int i) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#getRequestCharacterEncoding()
+     */
+    @Override
+    public String getRequestCharacterEncoding() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#setRequestCharacterEncoding(java.lang.String)
+     */
+    @Override
+    public void setRequestCharacterEncoding(String string) {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#getResponseCharacterEncoding()
+     */
+    @Override
+    public String getResponseCharacterEncoding() {
+        throw new UnsupportedOperationException("NYI");
+    }
+
+
+    /**
+     * Not implemented.
+     *
+     * @see ServletContext#setResponseCharacterEncoding(java.lang.String)
+     */
+    @Override
+    public void setResponseCharacterEncoding(String string) {
         throw new UnsupportedOperationException("NYI");
     }
 

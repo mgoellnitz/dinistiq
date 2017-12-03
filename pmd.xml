@@ -45,7 +45,7 @@
   </rule>
   <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount">
     <properties>
-      <property name="minimum" value="55" />
+      <property name="minimum" value="60" />
     </properties>
   </rule>
   <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">
