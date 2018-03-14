@@ -548,7 +548,7 @@ version of Google App Engine is only supported up to version 0.4.
 The code for dinistiq is prepared for building with Gradle. Gradle versions up 
 to 4.4.1 are tested to be working, while dinistiq starting from version 0.7
 at least needs Gradle 2.12. We now use the gradle wrapper on CI servers and
-switched to Gradle version 4.4 for all builds.
+switched to Gradle version 4.6 for all builds.
 
 |dinistiq Version|Works with |Compiles with|GAE support|
 |:--------------:|:---------:|:-----------:|:---------:|
