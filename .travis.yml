@@ -1,5 +1,5 @@
 # 
-# Copyright 2016-2017 Martin Goellnitz
+# Copyright 2016-2019 Martin Goellnitz
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -26,10 +26,12 @@ language: java
 jdk:
   - oraclejdk8
 
+# Uggly hack to deal with detached state on travis environment for coveralls indication
 before_install:
  - chmod +x gradlew
- - git branch -l
- 
+ - git branch -l|tail -1
+ - git checkout $(git branch -l|tail -1) 
+
 after_success:
   - ./gradlew jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
   - bash <(curl -s https://codecov.io/bash)
