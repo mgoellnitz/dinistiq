@@ -28,6 +28,7 @@ jdk:
 
 before_install:
  - chmod +x gradlew
+ - git branch -l
  
 after_success:
   - ./gradlew jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
