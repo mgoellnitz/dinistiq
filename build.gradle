@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2017 Martin Goellnitz
+ * Copyright 2013-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,8 +22,8 @@ import org.gradle.api.tasks.compile.AbstractCompile
 plugins {
   // id 'net.saliman.cobertura' version '2.4.0' - breaks audit with oldish references
   id 'com.jfrog.artifactory' version '4.4.0'
-  id 'com.github.kt3k.coveralls' version '2.7.1'
-  id "net.ossindex.audit" version "0.1.1"
+  id 'com.github.kt3k.coveralls' version '2.8.1'
+  id "net.ossindex.audit" version "0.3.21"
 }
 
 apply plugin: 'java'
@@ -59,19 +59,20 @@ configurations {
 dependencies {
   compile 'org.slf4j:slf4j-api:1.7.25'
   compile 'javax.inject:javax.inject:1'
+  compile 'javax.annotation:javax.annotation-api:1.3.2'
 
   optional 'javax.servlet:javax.servlet-api:4.0.0'
 
   testCompile 'javax.servlet:javax.servlet-api:3.1.0'
   testCompile 'org.testng:testng:6.13.1'
-  testCompile 'org.projectlombok:lombok:1.16.18'
+  testCompile 'org.projectlombok:lombok:1.18.4'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:2.13.0'
+  testCompile 'org.mockito:mockito-core:2.23.4'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
   testRuntime 'ch.qos.logback:logback-classic:1.2.3'
-  testRuntime 'org.codehaus.groovy:groovy:2.4.13'
+  testRuntime 'org.codehaus.groovy:groovy:2.5.5'
 }
 
 pmd {
