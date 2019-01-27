@@ -804,16 +804,16 @@ public class Dinistiq {
                         parameters[0] = Boolean.valueOf(propertyValue);
                     } // if
                     if ("long".equals(parameterType.getName())) {
-                        parameters[0] = new Long(propertyValue);
+                        parameters[0] = Long.valueOf(propertyValue);
                     } // if
                     if ("int".equals(parameterType.getName())) {
-                        parameters[0] = new Integer(propertyValue);
+                        parameters[0] = Integer.valueOf(propertyValue);
                     } // if
                     if ("float".equals(parameterType.getName())) {
-                        parameters[0] = new Float(propertyValue);
+                        parameters[0] = Float.valueOf(propertyValue);
                     } // if
                     if ("double".equals(parameterType.getName())) {
-                        parameters[0] = new Double(propertyValue);
+                        parameters[0] = Double.valueOf(propertyValue);
                     } // if
                     if (isCollection) {
                         if (!Collection.class.isAssignableFrom(parameters[0].getClass())) {
