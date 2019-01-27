@@ -30,7 +30,7 @@ jdk:
 before_install:
  - chmod +x gradlew
  - git branch -l|tail -1
- - git checkout $(git branch -l|tail -1) 
+ - git checkout $(git branch -l|tail -1)
 
 after_success:
   - ./gradlew jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
