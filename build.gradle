@@ -44,7 +44,7 @@ if (project.hasProperty('jdk')) {
   def bootClasspathStr = "${jdk}/jre/lib/rt.jar"
   project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
       ac.options.bootClasspath = bootClasspathStr
-  })
+    })
 }
 
 repositories {
@@ -57,25 +57,25 @@ configurations {
 }
 
 lombok {
-    version = "1.18.4"
-    sha256 = "39f3922deb679b1852af519eb227157ef2dd0a21eec3542c8ce1b45f2df39742"
+  version = "1.18.6"
+  sha256 = "39f3922deb679b1852af519eb227157ef2dd0a21eec3542c8ce1b45f2df39742"
 }
 
 dependencies {
   compile 'org.slf4j:slf4j-api:1.7.25'
   compile 'javax.inject:javax.inject:1'
 
-  optional 'javax.servlet:javax.servlet-api:4.0.0'
+  optional 'javax.servlet:javax.servlet-api:4.0.1'
 
-  testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-  testCompile 'org.testng:testng:6.13.1'
+  testCompile 'javax.servlet:javax.servlet-api:4.0.1'
+  testCompile 'org.testng:testng:6.14.3'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:2.23.4'
+  testCompile 'org.mockito:mockito-core:2.24.0'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
   testRuntime 'ch.qos.logback:logback-classic:1.2.3'
-  testRuntime 'org.codehaus.groovy:groovy:2.5.5'
+  testRuntime 'org.codehaus.groovy:groovy:2.5.6'
 }
 
 pmd {
