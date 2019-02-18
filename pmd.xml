@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
- Copyright 2015-2017 Martin Goellnitz
+ Copyright 2015-2019 Martin Goellnitz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
@@ -23,125 +23,111 @@
          xsi:schemaLocation='http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd'>
          
   <description>
-  Nearly default setup of PMD rules with some exceptions.
-  Some of the default rules of PMD don't help in parts of the code to improve readability and correctness.
-  It may well not be in sync with latest changes of PMD and partly is copied from other projects.
+    Nearly default setup of PMD rules with some exceptions.
+    Some of the default rules of PMD don't help in parts of the code to improve 
+    readability and correctness. It may well not be in sync with latest changes
+    of PMD and partly is copied from other projects.
   </description>
 
-  <rule ref="rulesets/java/android.xml"/>
-  <rule ref="rulesets/java/basic.xml">
-    <exclude name="CollapsibleIfStatements"/>
-  </rule>
-  <rule ref="rulesets/java/braces.xml"/>
-  <rule ref="rulesets/java/clone.xml"/>
-  <rule ref="rulesets/java/codesize.xml">
-    <exclude name="NPathComplexity"/>
-    <exclude name="CyclomaticComplexity"/>
-    <exclude name="StdCyclomaticComplexity"/>
-    <exclude name="ModifiedCyclomaticComplexity"/>
-    <exclude name="NcssConstructorCount"/>
-    <exclude name="TooManyMethods"/>
-    <exclude name="ExcessivePublicCount"/>
-  </rule>
-  <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount">
-    <properties>
-      <property name="minimum" value="60" />
-    </properties>
-  </rule>
-  <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">
-    <properties>
-      <property name="minimum" value="12" />
-    </properties>
-  </rule>
-  <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
-    <properties>
-      <property name="minimum" value="150" />
-    </properties>
-  </rule>
-  <rule ref="rulesets/java/comments.xml">
-    <exclude name="CommentSize"/>
-  </rule>
-  <rule ref="rulesets/java/comments.xml/CommentRequired">
-    <properties>
-      <property name="fieldCommentRequirement" value="Ignored" />
-    </properties>
-  </rule>
-  <rule ref="rulesets/java/controversial.xml">
-    <exclude name="DataflowAnomalyAnalysis"/>
-    <exclude name="UseConcurrentHashMap"/>
-    <exclude name="NullAssignment"/>
-    <exclude name="AvoidLiteralsInIfCondition"/>
-    <exclude name="OnlyOneReturn"/>
-    <exclude name="UseObjectForClearerAPI"/>
-    <exclude name="CallSuperInConstructor"/>
-    <exclude name="AtLeastOneConstructor"/>
-  </rule>
-  <rule ref="rulesets/java/coupling.xml">
-    <exclude name="LawOfDemeter"/>
-    <exclude name="ExcessiveImports"/>
-    <exclude name="LoosePackageCoupling"/>
-  </rule>
-  <rule ref="rulesets/java/design.xml">
-    <exclude name="UncommentedEmptyConstructor"/>
-    <exclude name="AvoidReassigningParameters"/>
-    <exclude name="GodClass"/>
-    <exclude name="UseCollectionIsEmpty"/>
-    <exclude name="AvoidDeeplyNestedIfStmts"/>
-    <exclude name="ConfusingTernary"/>
-    <exclude name="SimpleDateFormatNeedsLocale"/>
-    <exclude name="UseLocaleWithCaseConversions"/>
-    <exclude name="CompareObjectsWithEquals"/>
+  <rule ref="category/java/bestpractices.xml">
+    <exclude name="GuardLogStatement"/>
     <exclude name="UseVarargs"/>
   </rule>
-  <rule ref="rulesets/java/empty.xml"/>
-  <rule ref="rulesets/java/finalizers.xml"/>
-  <rule ref="rulesets/java/imports.xml"/>
-  <rule ref="rulesets/java/j2ee.xml"/>
-  <rule ref="rulesets/java/javabeans.xml">
-    <exclude name="BeanMembersShouldSerialize"/>
-  </rule>
-  <rule ref="rulesets/java/junit.xml"/>
-  <rule ref="rulesets/java/logging-jakarta-commons.xml">
-    <exclude name="GuardLogStatement"/>
-  </rule>
-  <rule ref="rulesets/java/logging-java.xml"/>
-  <rule ref="rulesets/java/migrating.xml">
-    <exclude name="LongInstantiation"/>
-    <exclude name="IntegerInstantiation"/>
-  </rule>
-  <rule ref="rulesets/java/naming.xml">
-    <exclude name="LongVariable"/>
-    <exclude name="ShortVariable"/>
-    <exclude name="ShortClassName"/>
-    <exclude name="AvoidFieldNameMatchingTypeName"/>
-  </rule>
-  <rule ref="rulesets/java/naming.xml/LongVariable">
-    <properties>
-      <property name="minimum" value="34" />
-    </properties>
-  </rule>
-  <rule ref="rulesets/java/optimizations.xml">
-    <exclude name="AvoidInstantiatingObjectsInLoops"/>
+  <rule ref="category/java/codestyle.xml">
+    <exclude name="AtLeastOneConstructor"/>
     <exclude name="LocalVariableCouldBeFinal"/>
     <exclude name="MethodArgumentCouldBeFinal"/>
+    <exclude name="OnlyOneReturn"/>
+    <exclude name="ShortVariable"/>
+    <exclude name="UselessParentheses"/>
+    <exclude name="UseUnderscoresInNumericLiterals"/>
+  </rule>
+  <rule ref="category/java/codestyle.xml/LinguisticNaming">
+    <properties>
+      <property name="checkSetters" value="false"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/codestyle.xml/LongVariable">
+    <properties>
+      <property name="minimum" value="34"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml">
+    <exclude name="AvoidCatchingGenericException"/>
+    <exclude name="AvoidThrowingRawExceptionTypes"/>
+    <exclude name="CyclomaticComplexity"/>
+    <exclude name="LoosePackageCoupling"/>
+    <exclude name="LawOfDemeter"/>
+    <!-- not necessarily a good ideas for other projects -->
+    <exclude name="NPathComplexity"/>
+  </rule>
+  <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts">
+    <properties>
+      <property name="problemDepth" value="5"/>
+    </properties>
+  </rule>
+  <!-- settings don't work
+  <rule ref="category/java/design.xml/CyclomaticComplexity">
+    <properties>
+      <property name="classReportLevel" value="165"/>
+      <property name="methodReportLevel" value="40"/>
+    </properties>
+  </rule>
+  -->
+  <rule ref="category/java/design.xml/ExcessiveImports">
+    <properties>
+      <property name="minimum" value="35"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/ExcessiveMethodLength">
+    <properties>
+      <property name="minimum" value="200"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/ExcessivePublicCount">
+    <properties>
+      <property name="minimum" value="65"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/NcssCount" >
+    <properties>
+      <property name="classReportLevel" value="1500"/>
+      <property name="methodReportLevel" value="130"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <property name="maxmethods" value="25"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/documentation.xml">
+    <exclude name="CommentSize"/>
+  </rule>
+  <rule ref="category/java/documentation.xml/CommentRequired">
+    <properties>
+      <property name="fieldCommentRequirement" value="Ignored"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/errorprone.xml">
+    <exclude name="AvoidLiteralsInIfCondition"/>
+    <exclude name="BeanMembersShouldSerialize"/>
+    <exclude name="DataflowAnomalyAnalysis"/>
+  </rule>
+  <!-- too many false positives
+  <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
+    <properties>
+      <property name="maxPaths" value="8000"/>
+      <property name="maxViolations" value="500"/>
+    </properties>
+  </rule>
+  -->
+  <rule ref="category/java/multithreading.xml">
+    <exclude name="UseConcurrentHashMap"/>
+  </rule>
+  <rule ref="category/java/performance.xml">
+    <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="AddEmptyString"/>
   </rule>
-  <rule ref="rulesets/java/strictexception.xml">
-    <exclude name="AvoidThrowingRawExceptionTypes"/>
-    <exclude name="AvoidCatchingGenericException"/>
-    <exclude name="AvoidCatchingThrowable"/>
-    <exclude name="SignatureDeclareThrowsException"/>
-  </rule>
-  <rule ref="rulesets/java/strings.xml">
-    <exclude name="AvoidDuplicateLiterals"/>
-  </rule>
-  <rule ref="rulesets/java/sunsecure.xml"/>
-  <rule ref="rulesets/java/typeresolution.xml">
-    <exclude name="SignatureDeclareThrowsException"/>
-  </rule>
-  <rule ref="rulesets/java/unnecessary.xml">
-    <exclude name="UselessParentheses"/>
-  </rule>
-  <rule ref="rulesets/java/unusedcode.xml"/>
+  <rule ref="category/java/security.xml"/>
 
 </ruleset>

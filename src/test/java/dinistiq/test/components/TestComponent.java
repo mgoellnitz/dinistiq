@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -43,11 +43,10 @@ public class TestComponent implements TestInterface {
 
     /**
      * setMeUp method - not a setter.
-     *
-     * @throws Exception
      */
-    public void setMeUp() throws Exception {
+    public void setMeUp() {
         // It's just the name that counts
+        throw new RuntimeException("Should never happen.");
     } // setMeUp()
 
 } // TestComponent

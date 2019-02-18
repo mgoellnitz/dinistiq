@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2015 Martin Goellnitz
+ * Copyright 2013-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,7 @@ package dinistiq.web;
 import dinistiq.ClassResolver;
 import dinistiq.Dinistiq;
 import dinistiq.SimpleClassResolver;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,8 +84,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
         String packagNameString = context.getInitParameter(DINISTIQ_PACKAGES);
         if (Dinistiq.isNotBlank(packagNameString)) {
             for (String packageName : packagNameString.split(",")) {
-                packageName = packageName.trim();
-                packages.add(packageName);
+                packages.add(packageName.trim());
             } // for
         } // if
         String classResolverName = context.getInitParameter(DINISTIQ_CLASSRESOLVER);
@@ -95,7 +95,7 @@ public class DinistiqContextLoaderListener implements ServletContextListener {
                 Object[] args = new Object[1];
                 args[0] = packages;
                 classResolver = (ClassResolver) forName.getConstructors()[0].newInstance(args);
-            } catch (Exception e) {
+            } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|InvocationTargetException e) {
                 LOG.error("contextInitialized() cannot obtain custom class resolver", e);
             } // try/catch
         } // if

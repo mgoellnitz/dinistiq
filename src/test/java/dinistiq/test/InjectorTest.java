@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2017 Martin Goellnitz
+ * Copyright 2013-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -40,13 +40,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
+@Slf4j
 public class InjectorTest {
+
+    private static final String A_STRING_VALUE = "a string value";
+
+    private static final String CANNOT_FIND_INSTANCE = "Cannot find instance of un-annotated component mentioned in config file";
 
     private Dinistiq d;
 
@@ -78,6 +84,7 @@ public class InjectorTest {
         try {
             d = new Dinistiq(packages, prepareInitialBeans());
         } catch (Exception e) {
+            LOG.error("()", e);
             Assert.fail(e.getClass().getSimpleName()+": "+e.getMessage());
             Assert.assertNotNull(d, "DI container could not be initialized");
         } // try/catch
@@ -107,7 +114,7 @@ public class InjectorTest {
         Assert.assertNull(test, "Should not be able to find test interface instance by type and name");
         Set<TestInterface> tis = d.findBeans(TestInterface.class);
         Assert.assertNotNull(tis, "Cannot find test interface set");
-        Assert.assertNotNull(d.findBean(UnannotatedComponent.class), "Cannot find instance of un-annotated component mentioned in config file ");
+        Assert.assertNotNull(d.findBean(UnannotatedComponent.class), CANNOT_FIND_INSTANCE);
         Assert.assertNull(d.findBean(Object.class, "nonsense"), "not fully specified instance should not be available");
     } // testFindExplicitlyInstanciatedComponent()
 
@@ -144,10 +151,10 @@ public class InjectorTest {
     @Test
     public void testReferenceValue() {
         UnannotatedComponent withoutName = d.findBean(UnannotatedComponent.class);
-        Assert.assertNotNull(withoutName, "Cannot find instance of un-annotated component mentioned in config file ");
+        Assert.assertNotNull(withoutName, CANNOT_FIND_INSTANCE);
         // In this case in order to let the reference injection work, the bean MUST be named to find the correct properties file
         UnannotatedComponent unannotatedComponent = d.findBean(UnannotatedComponent.class, "unannotatedComponent");
-        Assert.assertNotNull(unannotatedComponent, "Cannot find instance of un-annotated component mentioned in config file ");
+        Assert.assertNotNull(unannotatedComponent, CANNOT_FIND_INSTANCE);
         Assert.assertNotNull(unannotatedComponent.getAutoInjected(), "Cannot find auto-injected value ");
         Assert.assertNotNull(unannotatedComponent.getTestInterface(), "Cannot find value injected as a reference ");
         // Check that bean cannot be found with different name
@@ -163,7 +170,7 @@ public class InjectorTest {
     @SuppressWarnings("rawtypes")
     public void testMapBeans() {
         Set<Map> maps = d.findBeans(Map.class);
-        Assert.assertTrue(maps.size()>0, "no maps at all found");
+        Assert.assertFalse(maps.isEmpty(), "no maps at all found");
         Map map = d.findBean(Map.class, "mapTest");
         Assert.assertNotNull(map, "test map not found");
         Assert.assertEquals(map.get("keyA"), "defaultValueA", "default value not correct");
@@ -178,8 +185,8 @@ public class InjectorTest {
     @SuppressWarnings("rawtypes")
     public void testLiteralCollections() {
         Set<List> lists = d.findBeans(List.class);
-        Assert.assertTrue(lists.size()>0, "no lists at all found");
-        Assert.assertNull(d.findBean(List.class, "noList"), "not fully specified lis should not be found.");
+        Assert.assertFalse(lists.isEmpty(), "no lists at all found");
+        Assert.assertNull(d.findBean(List.class, "noList"), "not fully specified list should not be found.");
 
         List list = d.findBean(List.class, "listTest");
         Assert.assertNotNull(list, "test list not found");
@@ -187,7 +194,7 @@ public class InjectorTest {
         Assert.assertEquals(list.get(1), "second", "second value not correct");
 
         Set<Set> sets = d.findBeans(Set.class);
-        Assert.assertTrue(sets.size()>0, "no sets at all found");
+        Assert.assertFalse(sets.isEmpty(), "no sets at all found");
         Set set = d.findBean(Set.class, "setTest");
         Assert.assertNotNull(set, "test set not found");
         Assert.assertEquals(set.size(), 2, "set should contain two elements");
@@ -233,10 +240,10 @@ public class InjectorTest {
         NamedInjection ni = d.findBean(NamedInjection.class);
         Assert.assertNotNull(ni, "Named injection test component not found");
         Assert.assertEquals(ni.getStringTest(), "stringValue", "Named inection with default name failed");
-        Assert.assertEquals(ni.getStringValue(), "a string value", "Named inection with passed name failed");
+        Assert.assertEquals(ni.getStringValue(), A_STRING_VALUE, "Named inection with passed name failed");
         Assert.assertEquals(ni.getDirectValue(), "This is a direct value", "Named inection with default name failed");
-        Assert.assertEquals(ni.getNamedValue(), "a string value", "Named inection with passed name failed");
-        Assert.assertEquals(ni.getSomeValue(), "a string value", "Named inection with passed name failed");
+        Assert.assertEquals(ni.getNamedValue(), A_STRING_VALUE, "Named inection with passed name failed");
+        Assert.assertEquals(ni.getSomeValue(), A_STRING_VALUE, "Named inection with passed name failed");
     } // testNamedInjections()
 
 
@@ -265,7 +272,7 @@ public class InjectorTest {
         Assert.assertFalse(di.findBean(Boolean.class, "booleanTypedValueFalse"), "Boolean typed value cannot be set to false");
 
         UnannotatedComponent unannotatedComponent = di.findBean(UnannotatedComponent.class);
-        Assert.assertNotNull(unannotatedComponent, "Cannot find instance of un-annotated component mentioned in config file ");
+        Assert.assertNotNull(unannotatedComponent, CANNOT_FIND_INSTANCE);
         Assert.assertTrue(unannotatedComponent.isBasetypeBooleanValue(), "Boolean value could not be referenced in other bean");
     } // testBooleans()
 

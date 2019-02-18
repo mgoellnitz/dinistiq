@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2017 Martin Goellnitz
+ * Copyright 2014-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -47,6 +47,8 @@ import org.mockito.Mockito;
  */
 @SuppressWarnings("deprecation")
 public class MockServletContext implements ServletContext {
+
+    private static final UnsupportedOperationException NYI = new UnsupportedOperationException("NYI");
 
     private final Map<String, Object> attributes = new HashMap<>();
 
@@ -95,7 +97,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public ServletContext getContext(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -106,7 +108,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public int getMajorVersion() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -117,7 +119,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public int getMinorVersion() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -128,7 +130,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getMimeType(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -139,7 +141,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Set<String> getResourcePaths(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -150,7 +152,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public URL getResource(String string) throws MalformedURLException {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -161,7 +163,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public InputStream getResourceAsStream(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -172,7 +174,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public RequestDispatcher getRequestDispatcher(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -183,7 +185,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public RequestDispatcher getNamedDispatcher(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -194,7 +196,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Servlet getServlet(String string) throws ServletException {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -205,7 +207,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Enumeration<Servlet> getServlets() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -216,7 +218,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Enumeration<String> getServletNames() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -227,7 +229,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void log(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -238,7 +240,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void log(Exception excptn, String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -249,7 +251,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void log(String string, Throwable thrwbl) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -273,7 +275,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getServerInfo() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -293,7 +295,7 @@ public class MockServletContext implements ServletContext {
         if (DinistiqContextLoaderListener.DINISTIQ_CLASSRESOLVER.equals(string)) {
             return emptyInit ? resolverClassName : SimpleClassResolver.class.getName();
         } // if
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -304,7 +306,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Enumeration<String> getInitParameterNames() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -326,7 +328,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Enumeration<String> getAttributeNames() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -359,7 +361,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getServletContextName() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -370,7 +372,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public int getEffectiveMajorVersion() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -381,7 +383,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public int getEffectiveMinorVersion() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -392,7 +394,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public boolean setInitParameter(String string, String string1) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -403,7 +405,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public ServletRegistration.Dynamic addServlet(String string, String string1) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -426,7 +428,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public ServletRegistration.Dynamic addServlet(String string, Class<? extends Servlet> type) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -437,7 +439,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public <T extends Servlet> T createServlet(Class<T> type) throws ServletException {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -448,7 +450,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public ServletRegistration getServletRegistration(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -459,7 +461,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Map<String, ? extends ServletRegistration> getServletRegistrations() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -470,7 +472,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public FilterRegistration.Dynamic addFilter(String string, String string1) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -481,7 +483,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public FilterRegistration.Dynamic addFilter(String string, Filter filter) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -492,7 +494,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public FilterRegistration.Dynamic addFilter(String string, Class<? extends Filter> type) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -503,7 +505,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public <T extends Filter> T createFilter(Class<T> type) throws ServletException {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -514,7 +516,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public FilterRegistration getFilterRegistration(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -525,7 +527,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Map<String, ? extends FilterRegistration> getFilterRegistrations() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -536,7 +538,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public SessionCookieConfig getSessionCookieConfig() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -547,7 +549,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void setSessionTrackingModes(Set<SessionTrackingMode> set) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -558,7 +560,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Set<SessionTrackingMode> getDefaultSessionTrackingModes() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -569,7 +571,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public Set<SessionTrackingMode> getEffectiveSessionTrackingModes() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -580,7 +582,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void addListener(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -591,7 +593,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public <T extends EventListener> void addListener(T t) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -602,7 +604,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void addListener(Class<? extends EventListener> type) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -613,7 +615,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public <T extends EventListener> T createListener(Class<T> type) throws ServletException {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -624,7 +626,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public JspConfigDescriptor getJspConfigDescriptor() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -635,7 +637,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public ClassLoader getClassLoader() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -646,7 +648,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void declareRoles(String... strings) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -657,7 +659,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getVirtualServerName() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -668,7 +670,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public ServletRegistration.Dynamic addJspFile(String string, String string1) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -679,7 +681,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public int getSessionTimeout() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -690,7 +692,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void setSessionTimeout(int i) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -701,7 +703,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getRequestCharacterEncoding() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -712,7 +714,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void setRequestCharacterEncoding(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -723,7 +725,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public String getResponseCharacterEncoding() {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 
@@ -734,7 +736,7 @@ public class MockServletContext implements ServletContext {
      */
     @Override
     public void setResponseCharacterEncoding(String string) {
-        throw new UnsupportedOperationException("NYI");
+        throw NYI;
     }
 
 } // MockServletContext

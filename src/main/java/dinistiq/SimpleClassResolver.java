@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2016 Martin Goellnitz
+ * Copyright 2013-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -71,7 +71,7 @@ public class SimpleClassResolver implements ClassResolver {
                 url = idx>0 ? url.substring(0, idx) : url;
                 url = url.startsWith("jar:") ? url.substring(4) : url;
                 url = url.startsWith("vfs:/") ? "file"+url.substring(3, url.length()-packagePath.length()-2) : url;
-                url = !url.endsWith(".jar") ? url.substring(0, url.length()-packagePath.length()) : url;
+                url = url.endsWith(".jar") ? url : url.substring(0, url.length()-packagePath.length());
                 LOG.info("addUrlsForPackage() resulting URL {}", url);
                 urls.add(new URL(url));
             } // while
@@ -89,8 +89,8 @@ public class SimpleClassResolver implements ClassResolver {
     protected final void checkClassAndAdd(String name) {
         LOG.debug("checkClassAndAdd() name={}", name);
         if (name.endsWith(".class")&&(name.indexOf('$')<0)) {
-            name = name.replace(File.separatorChar, '/').replace('/', '.');
-            String className = name.substring(0, name.length()-6);
+            String n = name.replace(File.separatorChar, '/').replace('/', '.');
+            String className = n.substring(0, n.length()-6);
             LOG.debug("checkClassAndAdd() class name {}", className);
             boolean add = false;
             for (String packageName : packageNames) {
@@ -196,7 +196,7 @@ public class SimpleClassResolver implements ClassResolver {
                 Class<T> cls = loadClass(className);
                 result.add(cls);
             } catch (ClassNotFoundException|Error e) {
-                LOG.error("getClasses()", e);
+                LOG.error("getClasses() file format error for class name "+className, e);
             } // try/catch
         } // for
         return result;

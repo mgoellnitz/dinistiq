@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2017 Martin Goellnitz
+ * Copyright 2013-2019 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -190,7 +190,7 @@ public class Dinistiq {
     public final <T extends Object> T findBean(Class<T> type) {
         Set<T> allBeans = findQualifiedBeans(findBeans(type), Collections.emptySet());
         LOG.info("findBean() :{} - {}", type.getSimpleName(), allBeans);
-        return (allBeans.size()>0) ? allBeans.iterator().next() : null;
+        return allBeans.isEmpty() ? null : allBeans.iterator().next();
     } // findBean()
 
 
@@ -287,7 +287,7 @@ public class Dinistiq {
      */
     public final <T extends Object, Q extends Annotation> T findBean(Class<T> type, Collection<Q> qualifiers) {
         Set<T> allBeans = findQualifiedBeans(findBeans(type), qualifiers);
-        return allBeans.size()>0 ? allBeans.iterator().next() : null;
+        return allBeans.isEmpty() ? null : allBeans.iterator().next();
     } // findBean()
 
 
@@ -354,7 +354,7 @@ public class Dinistiq {
      * @return replaced value or original string
      * @throws Exception
      */
-    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name, Collection<Annotation> qualifiers) throws Exception {
+    private Object getValue(Properties beanProperties, Map<String, Set<Object>> dependencies, String customer, Class<?> cls, Type type, String name, Collection<Annotation> qualifiers) {
         LOG.debug("getValue() expecting qualifiers {} for {} :{}", qualifiers, name, cls.getSimpleName());
         ParameterizedType parameterizedType = (type instanceof ParameterizedType) ? (ParameterizedType) type : null;
         if ((name==null)&&Collection.class.isAssignableFrom(cls)) {
@@ -388,7 +388,7 @@ public class Dinistiq {
             } // if
             return bean;
         } // if
-        throw new Exception("for "+customer+": no bean "+(name!=null ? name+" :" : "of type ")+cls.getSimpleName()+" found.");
+        throw new RuntimeException("for "+customer+": no bean "+(name==null ? "of type " : name+" :")+cls.getSimpleName()+" found.");
     } // getValue()
 
 
@@ -403,8 +403,7 @@ public class Dinistiq {
      * @return array suitable as parameter for invoke or newInstance calls
      * @throws Exception
      */
-    private Object[] getParameters(Properties beanProperties, Map<String, Set<Object>> dependencies, String beanName, Class<? extends Object>[] types, Type[] genericTypes, Annotation[][] annotations) throws Exception {
-        beanProperties = beanProperties==null ? new Properties() : beanProperties;
+    private Object[] getParameters(Properties properties, Map<String, Set<Object>> dependencies, String beanName, Class<? extends Object>[] types, Type[] genericTypes, Annotation[][] annotations) {
         Object[] parameters = new Object[types.length];
         for (int i = 0; i<types.length; i++) {
             String name = null;
@@ -423,7 +422,7 @@ public class Dinistiq {
                 } // if
             } // for
             // TODO: Deal with scopes.
-            parameters[i] = getValue(beanProperties, dependencies, beanName, types[i], genericTypes[i], name, qualifiers);
+            parameters[i] = getValue(properties==null ? new Properties() : properties, dependencies, beanName, types[i], genericTypes[i], name, qualifiers);
         } // for
         return parameters;
     } // getParameters()
@@ -436,27 +435,31 @@ public class Dinistiq {
      * @param cls type to create an instance of
      * @param beanName beans name in the scope using the given dependencies
      */
-    private <T extends Object> T createInstance(Map<String, Set<Object>> dependencies, Class<T> cls, String beanName) throws Exception {
-        LOG.info("createInstance({})", cls.getSimpleName());
-        Constructor<?> c = null;
-        Constructor<?>[] constructors = cls.getDeclaredConstructors();
-        LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
-        for (Constructor<?> ctor : constructors) {
-            // Note: PMD doesn't do Auto-Boxing for the last parameter on checking
-            LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, Boolean.valueOf(ctor.getAnnotation(Inject.class)!=null));
-            c = (ctor.getAnnotation(Inject.class)!=null) ? ctor : c;
-        } // for
-        c = (c==null) ? cls.getConstructor() : c;
-        // Don't record constructor dependencies - they MUST already be fulfilled
-        Object[] parameters = getParameters(null, null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
-        dependencies.put(beanName, new HashSet<>());
-        boolean accessible = c.isAccessible();
+    private <T extends Object> T createInstance(Map<String, Set<Object>> dependencies, Class<T> cls, String beanName) {
         try {
-            c.setAccessible(true);
-            return convert(c.newInstance(parameters));
-        } finally {
-            c.setAccessible(accessible);
-        } // try/finally
+            LOG.info("createInstance({})", cls.getSimpleName());
+            Constructor<?> c = null;
+            Constructor<?>[] constructors = cls.getDeclaredConstructors();
+            LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
+            for (Constructor<?> ctor : constructors) {
+                // Note: PMD doesn't do Auto-Boxing for the last parameter on checking
+                LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, Boolean.valueOf(ctor.getAnnotation(Inject.class)!=null));
+                c = (ctor.getAnnotation(Inject.class)==null) ? c : ctor;
+            } // for
+            c = (c==null) ? cls.getConstructor() : c;
+            // Don't record constructor dependencies - they MUST already be fulfilled
+            Object[] parameters = getParameters(null, null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
+            dependencies.put(beanName, new HashSet<>());
+            boolean accessible = c.isAccessible();
+            try {
+                c.setAccessible(true);
+                return convert(c.newInstance(parameters));
+            } finally {
+                c.setAccessible(accessible);
+            } // try/finally
+        } catch (NoSuchMethodException|InstantiationException|IllegalAccessException|InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     } // createInstance()
 
 
@@ -487,7 +490,7 @@ public class Dinistiq {
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
      * @throws Exception when instanciation is not possible for whatever reason
      */
-    private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) throws Exception {
+    private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
         LOG.info("createAndRegisterInstance({}) cls={}", name, cls);
         String beanName = getBeanName(cls, name);
         Object bean = createInstance(dependencies, cls, beanName);
@@ -710,9 +713,9 @@ public class Dinistiq {
      * @param key key / name/ id of the bean
      * @param bean bean instance
      * @param dependencies dependencies map where the dependecies of the bean are recorded with the given key
-     * @throws Exception
+     * @throws IOException - should not happen and stems from Properties access
      */
-    private void injectDependencies(Map<String, Set<Object>> dependencies, String key, Object bean) throws Exception {
+    private void injectDependencies(Map<String, Set<Object>> dependencies, String key, Object bean) throws IOException {
         // Prepare values from properties files
         Properties beanProperties = getProperties(key);
         LOG.debug("injectDependencies({}) bean properties {}", key, beanProperties.keySet());
@@ -821,10 +824,8 @@ public class Dinistiq {
                             for (String value : propertyValue.split(",")) {
                                 Object effectiveValue = getReferenceValue(value);
                                 values.add(effectiveValue);
-                                if ((dependencies!=null)&&(value.indexOf("${")>=0)) {
-                                    if (beans.containsValue(effectiveValue)) {
-                                        dependencies.get(key).add(effectiveValue);
-                                    } // if
+                                if ((dependencies!=null)&&(value.contains("${"))&&beans.containsValue(effectiveValue)) {
+                                    dependencies.get(key).add(effectiveValue);
                                 } // if
                             } // for
                             parameters[0] = values;
@@ -854,161 +855,170 @@ public class Dinistiq {
      * @param externalBeans map of beans with their id (name) as the key
      * @throws java.lang.Exception thrown with a readable message if something goes wrong
      */
-    public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) throws Exception {
-        // measure time for init process
-        long start = System.currentTimeMillis();
+    public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) {
+        try {
+            // measure time for init process
+            long start = System.currentTimeMillis();
 
-        Map<String, Set<Object>> dependencies = new HashMap<>();
+            Map<String, Set<Object>> dependencies = new HashMap<>();
 
-        // Use all externally provided beans
-        if (externalBeans!=null) {
-            beans.putAll(externalBeans);
-            for (String externalBeanName : externalBeans.keySet()) {
-                dependencies.put(externalBeanName, new HashSet<>());
-            } // for
-        } // if
-
-        // Add system properties to scope and split potential URL values
-        for (Object keyObject : System.getProperties().keySet()) {
-            String key = keyObject.toString();
-            beans.put(key, System.getProperty(key));
-            storeUrlParts(key, System.getProperty(key), beans);
-        } // for
-        // Add environment to scope and split potential URL values
-        for (String key : environment.keySet()) {
-            storeUrlParts(key, environment.get(key), beans);
-        } // for
-        LOG.debug("() initial beans {}", beans);
-
-        // Read bean list from properties files mapping names to names of the classes to be instanciated
-        Properties beanlist = new Properties();
-        SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
-        LOG.debug("() checking {} files for properties", propertiesFilenames.size());
-        for (String propertyResource : propertiesFilenames) {
-            LOG.debug("() check {}", propertyResource);
-            // ignore subfolders!
-            if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
-                LOG.debug("() resource {}", propertyResource);
-                beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
+            // Use all externally provided beans
+            if (externalBeans!=null) {
+                beans.putAll(externalBeans);
+                for (String externalBeanName : externalBeans.keySet()) {
+                    dependencies.put(externalBeanName, new HashSet<>());
+                } // for
             } // if
-        } // for
-        List<Class<?>> classList = new ArrayList<>();
-        List<String> nameList = new ArrayList<>();
-        for (String key : beanlist.stringPropertyNames()) {
-            String className = beanlist.getProperty(key);
-            if (MAP_TYPE.equals(className)) {
-                beans.put(key, new HashMap<>());
-                dependencies.put(key, new HashSet<>());
-            } else {
-                // expect java.lang.Xyz("value")
-                int idx = className.indexOf('(');
-                if (className.startsWith(JAVALANG_PREFIX)&&(idx>0)) {
-                    String value = getReferenceValue(className.substring(idx+2, className.length()-2)).toString();
-                    className = className.substring(0, idx);
-                    LOG.debug("() instanciating {} :{}", value, className);
-                    Class<? extends Object> c = Class.forName(className.substring(0, idx));
-                    Object instance = c.getConstructor(String.class).newInstance(value);
-                    LOG.info("() storing value {} :{} - {}", key, instance.getClass().getName(), instance);
-                    beans.put(key, instance);
+
+            // Add system properties to scope and split potential URL values
+            for (Object keyObject : System.getProperties().keySet()) {
+                String key = keyObject.toString();
+                beans.put(key, System.getProperty(key));
+                storeUrlParts(key, System.getProperty(key), beans);
+            } // for
+            // Add environment to scope and split potential URL values
+            for (String key : environment.keySet()) {
+                storeUrlParts(key, environment.get(key), beans);
+            } // for
+            LOG.debug("() initial beans {}", beans);
+
+            // Read bean list from properties files mapping names to names of the classes to be instanciated
+            Properties beanlist = new Properties();
+            SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
+            LOG.debug("() checking {} files for properties", propertiesFilenames.size());
+            for (String propertyResource : propertiesFilenames) {
+                LOG.debug("() check {}", propertyResource);
+                // ignore subfolders!
+                if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
+                    LOG.debug("() resource {}", propertyResource);
+                    beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
+                } // if
+            } // for
+            List<Class<?>> classList = new ArrayList<>();
+            List<String> nameList = new ArrayList<>();
+            for (String key : beanlist.stringPropertyNames()) {
+                String className = beanlist.getProperty(key);
+                if (MAP_TYPE.equals(className)) {
+                    beans.put(key, new HashMap<>());
                     dependencies.put(key, new HashSet<>());
                 } else {
-                    boolean setType = className.startsWith(SET_TYPE);
-                    if ((setType||className.startsWith(LIST_TYPE))&&(idx>0)) {
-                        String values[] = getReferenceValue(className.substring(idx+1, className.length()-1)).toString().split(",");
-                        Collection<String> instance = setType ? new HashSet<>(Arrays.asList(values)) : Arrays.asList(values);
-                        LOG.debug("() collection {} (set {}): {}", key, setType, instance);
+                    // expect java.lang.Xyz("value")
+                    int idx = className.indexOf('(');
+                    if (className.startsWith(JAVALANG_PREFIX)&&(idx>0)) {
+                        String value = getReferenceValue(className.substring(idx+2, className.length()-2)).toString();
+                        className = className.substring(0, idx);
+                        LOG.debug("() instanciating {} :{}", value, className);
+                        Class<? extends Object> c = Class.forName(className.substring(0, idx));
+                        Object instance = c.getConstructor(String.class).newInstance(value);
+                        LOG.info("() storing value {} :{} - {}", key, instance.getClass().getName(), instance);
                         beans.put(key, instance);
                         dependencies.put(key, new HashSet<>());
                     } else {
-                        LOG.debug("() listing {}", className);
-                        Class<? extends Object> c = Class.forName(className);
-                        classList.add(c);
-                        nameList.add(key);
+                        boolean setType = className.startsWith(SET_TYPE);
+                        if ((setType||className.startsWith(LIST_TYPE))&&(idx>0)) {
+                            String values[] = getReferenceValue(className.substring(idx+1, className.length()-1)).toString().split(",");
+                            Collection<String> instance = setType ? new HashSet<>(Arrays.asList(values)) : Arrays.asList(values);
+                            LOG.debug("() collection {} (set {}): {}", key, setType, instance);
+                            beans.put(key, instance);
+                            dependencies.put(key, new HashSet<>());
+                        } else {
+                            LOG.debug("() listing {}", className);
+                            Class<? extends Object> c = Class.forName(className);
+                            classList.add(c);
+                            nameList.add(key);
+                        } // if
                     } // if
                 } // if
-            } // if
-        } // for
-        LOG.info("() beanlist {}", beanlist);
-
-        // List annotated beans
-        Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
-        LOG.info("() number of annotated beans {}", classes.size());
-        for (Class<? extends Object> c : classes) {
-            classList.add(c);
-            nameList.add(null);
-        } // for
-        LOG.debug("() beans {}", beans.keySet());
-
-        // Instanciate beans from the properties files and from annotations taking constructor injection dependencies into account
-        int ripCord = 10;
-        while ((ripCord>0)&&(!classList.isEmpty())) {
-            LOG.debug("() trying {} beans: {}", nameList.size(), classList);
-            ripCord--;
-            List<Class<?>> restClassList = new ArrayList<>();
-            List<String> restNameList = new ArrayList<>();
-            for (int i = 0; i<classList.size(); i++) {
-                try {
-                    createAndRegisterInstance(dependencies, classList.get(i), nameList.get(i));
-                } catch (Exception e) {
-                    LOG.warn("() will retry {} later: {} - {}", classList.get(i).getName(), e.getClass().getName(), e.getMessage(), e);
-                    restClassList.add(classList.get(i));
-                    restNameList.add(nameList.get(i));
-                } // try/catch
             } // for
-            classList = restClassList;
-            nameList = restNameList;
-        } // while
+            LOG.info("() beanlist {}", beanlist);
 
-        // Fill in injections and note needed dependencies
-        for (String key : new HashSet<>(beans.keySet())) {
-            Object get = beans.get(key);
-            injectDependencies(dependencies, key, get);
-        } // for
+            // List annotated beans
+            Set<Class<Object>> classes = classResolver.getAnnotated(Singleton.class);
+            LOG.info("() number of annotated beans {}", classes.size());
+            for (Class<? extends Object> c : classes) {
+                classList.add(c);
+                nameList.add(null);
+            } // for
+            LOG.debug("() beans {}", beans.keySet());
 
-        // sort beans according to dependencies
-        LOG.info("() sorting beans according to dependencies");
-        ripCord = 10;
-        while ((ripCord>0)&&(!dependencies.isEmpty())) {
-            ripCord--;
-            LOG.info("() {} beans left", dependencies.size());
-            Set<String> deletions = new HashSet<>();
-            for (String key : dependencies.keySet()) {
-                LOG.debug("() checking if {} with {} dependencies can be safely put into the ordered list {}", key, dependencies.get(key).size(), dependencies.get(key));
-                boolean dependenciesMet = true;
-                for (Object dep : dependencies.get(key)) {
-                    boolean isMet = orderedBeans.contains(dep);
-                    LOG.debug("() {} depends on {} :{} met? {} {}", key, dep, dep.getClass().getName(), isMet, ((dep instanceof Collection) ? "is a collection" : ""));
-                    dependenciesMet = dependenciesMet&&isMet;
+            // Instanciate beans from the properties files and from annotations taking constructor injection dependencies into account
+            int ripCord = 10;
+            while ((ripCord>0)&&(!classList.isEmpty())) {
+                LOG.debug("() trying {} beans: {}", nameList.size(), classList);
+                ripCord--;
+                List<Class<?>> restClassList = new ArrayList<>();
+                List<String> restNameList = new ArrayList<>();
+                for (int i = 0; i<classList.size(); i++) {
+                    try {
+                        createAndRegisterInstance(dependencies, classList.get(i), nameList.get(i));
+                    } catch (Exception e) {
+                        LOG.warn("() will retry {} later: {} - {}", classList.get(i).getName(), e.getClass().getName(), e.getMessage(), e);
+                        restClassList.add(classList.get(i));
+                        restNameList.add(nameList.get(i));
+                    } // try/catch
                 } // for
-                if (dependenciesMet) {
-                    LOG.info("() adding {} to the list {}", key, orderedBeans);
-                    orderedBeans.add(beans.get(key));
-                    deletions.add(key);
+                classList = restClassList;
+                nameList = restNameList;
+            } // while
+
+            // Fill in injections and note needed dependencies
+            for (String key : new HashSet<>(beans.keySet())) {
+                Object get = beans.get(key);
+                try {
+                    injectDependencies(dependencies, key, get);
+                } catch (IOException ioe) {
+                    LOG.warn("()while injecting dependencies for "+key, ioe);
+                }
+            } // for
+
+            // sort beans according to dependencies
+            LOG.info("() sorting beans according to dependencies");
+            ripCord = 10;
+            while ((ripCord>0)&&(!dependencies.isEmpty())) {
+                ripCord--;
+                LOG.info("() {} beans left", dependencies.size());
+                Set<String> deletions = new HashSet<>();
+                for (String key : dependencies.keySet()) {
+                    LOG.debug("() checking if {} with {} dependencies can be safely put into the ordered list {}", key, dependencies.get(key).size(), dependencies.get(key));
+                    boolean dependenciesMet = true;
+                    for (Object dep : dependencies.get(key)) {
+                        boolean isMet = orderedBeans.contains(dep);
+                        LOG.debug("() {} depends on {} :{} met? {} {}", key, dep, dep.getClass().getName(), isMet, ((dep instanceof Collection) ? "is a collection" : ""));
+                        dependenciesMet = dependenciesMet&&isMet;
+                    } // for
+                    if (dependenciesMet) {
+                        LOG.info("() adding {} to the list {}", key, orderedBeans);
+                        orderedBeans.add(beans.get(key));
+                        deletions.add(key);
+                    } // if
+                } // for
+                for (String key : deletions) {
+                    dependencies.remove(key);
+                } // for
+            } // while
+            if (!dependencies.isEmpty()) {
+                throw new RuntimeException("Circular bean injection and initialization dependencies detected after "+(System.currentTimeMillis()-start)+"ms"+" "+dependencies);
+            } // if
+
+            // Call Post Construct
+            LOG.info("() calling post construct on ordered beans {}", orderedBeans);
+            for (Object bean : orderedBeans) {
+                LOG.info("() bean {}", bean);
+                callPostConstruct(bean);
+            } // for
+            LOG.info("() calling post construct for the rest of the beans");
+            for (String key : beans.keySet()) {
+                Object bean = beans.get(key);
+                if (!orderedBeans.contains(bean)&&!String.class.isAssignableFrom(bean.getClass())) {
+                    LOG.warn("() bean without dependencies to call post construct method on {} :{}", key, bean.getClass().getSimpleName());
+                    callPostConstruct(bean);
                 } // if
             } // for
-            for (String key : deletions) {
-                dependencies.remove(key);
-            } // for
-        } // while
-        if (dependencies.size()>0) {
-            throw new Exception("Circular bean injection and initialization dependencies detected after "+(System.currentTimeMillis()-start)+"ms"+" "+dependencies);
-        } // if
-
-        // Call Post Construct
-        LOG.info("() calling post construct on ordered beans {}", orderedBeans);
-        for (Object bean : orderedBeans) {
-            LOG.info("() bean {}", bean);
-            callPostConstruct(bean);
-        } // for
-        LOG.info("() calling post construct for the rest of the beans");
-        for (String key : beans.keySet()) {
-            Object bean = beans.get(key);
-            if (!orderedBeans.contains(bean)&&!String.class.isAssignableFrom(bean.getClass())) {
-                LOG.warn("() bean without dependencies to call post construct method on {} :{}", key, bean.getClass().getSimpleName());
-                callPostConstruct(bean);
-            } // if
-        } // for
-        LOG.info("() setup completed after {}ms", (System.currentTimeMillis()-start));
+            LOG.info("() setup completed after {}ms", (System.currentTimeMillis()-start));
+        } catch (ClassNotFoundException|NoSuchMethodException|InstantiationException|InvocationTargetException|IllegalAccessException|IOException e) {
+            LOG.error("()", e);
+            throw new RuntimeException(e);
+        }
     } // Dinistiq()
 
 
@@ -1021,7 +1031,7 @@ public class Dinistiq {
      * @param externalBeans Map of beans providded externally with their respective id (name) as the key
      * @throws Exception thrown when anything goes wrong with a readable message
      */
-    public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) throws Exception {
+    public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) {
         this(new SimpleClassResolver(packages), externalBeans);
     } // Dinistiq()()
 
@@ -1033,7 +1043,7 @@ public class Dinistiq {
      * @param packages set of java package names
      * @throws Exception thrown when anything goes wrong with a readable message
      */
-    public Dinistiq(Set<String> packages) throws Exception {
+    public Dinistiq(Set<String> packages) {
         this(packages, null);
     } // Dinistiq()
 
