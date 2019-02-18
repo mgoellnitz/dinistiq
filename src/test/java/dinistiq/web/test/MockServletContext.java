@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package dinistiq.web.test; // NO PMD - ignore bunch of public methods warning since this has to be implemented
+package dinistiq.web.test;
 
 import dinistiq.Dinistiq;
 import dinistiq.SimpleClassResolver;
