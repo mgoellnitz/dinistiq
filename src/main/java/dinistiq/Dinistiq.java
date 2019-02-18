@@ -853,7 +853,6 @@ public class Dinistiq {
      *
      * @param classResolver resolver to us when resolving all types of classes
      * @param externalBeans map of beans with their id (name) as the key
-     * @throws java.lang.Exception thrown with a readable message if something goes wrong
      */
     public Dinistiq(ClassResolver classResolver, Map<String, Object> externalBeans) {
         try {
@@ -1029,7 +1028,6 @@ public class Dinistiq {
      *
      * @param packages set of java package names
      * @param externalBeans Map of beans providded externally with their respective id (name) as the key
-     * @throws Exception thrown when anything goes wrong with a readable message
      */
     public Dinistiq(Set<String> packages, Map<String, Object> externalBeans) {
         this(new SimpleClassResolver(packages), externalBeans);
@@ -1041,7 +1039,6 @@ public class Dinistiq {
      * substructure of the resource path.
      *
      * @param packages set of java package names
-     * @throws Exception thrown when anything goes wrong with a readable message
      */
     public Dinistiq(Set<String> packages) {
         this(packages, null);
