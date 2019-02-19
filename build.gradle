@@ -62,7 +62,7 @@ lombok {
 }
 
 dependencies {
-  compile 'org.slf4j:slf4j-api:1.7.25'
+  compile 'org.slf4j:slf4j-api:1.7.26'
   compile 'javax.inject:javax.inject:1'
 
   optional 'javax.servlet:javax.servlet-api:4.0.1'
@@ -70,7 +70,7 @@ dependencies {
   testCompile 'javax.servlet:javax.servlet-api:4.0.1'
   testCompile 'org.testng:testng:6.14.3'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:2.24.0'
+  testCompile 'org.mockito:mockito-core:2.24.5'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
