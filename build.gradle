@@ -70,7 +70,7 @@ dependencies {
   testCompile 'javax.servlet:javax.servlet-api:4.0.1'
   testCompile 'org.testng:testng:6.14.3'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:2.24.5'
+  testCompile 'org.mockito:mockito-core:2.27.0'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
@@ -81,7 +81,7 @@ dependencies {
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '6.12.0'
+  toolVersion = '6.14.0'
 }
 
 test {
