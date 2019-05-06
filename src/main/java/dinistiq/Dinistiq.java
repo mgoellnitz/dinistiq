@@ -502,9 +502,8 @@ public class Dinistiq {
      * Calls a method annotated as post construct on a given bean if available.
      *
      * @param bean bean to check and call post contruct annotated method on
-     * @throws SecurityException
      */
-    private void callPostConstruct(Object bean) throws SecurityException {
+    private void callPostConstruct(Object bean) {
         for (Method m : bean.getClass().getMethods()) {
             if (m.getAnnotation(PostConstruct.class)!=null) {
                 LOG.info("() post construct method on {}: {}", bean, m.getName());
