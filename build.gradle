@@ -96,6 +96,10 @@ jacocoTestReport {
   }
 }
 
+jacoco {
+  toolVersion = '0.8.4'
+}
+
 // Triggers some unit test elements
 tasks.withType(Test) {
   systemProperty 'firstUrl', 'http://user:password@github.com:80/'
