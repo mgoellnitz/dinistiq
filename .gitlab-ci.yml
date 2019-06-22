@@ -29,7 +29,7 @@ stages:
 
 build:
   stage: dinistiq
-  script: gradle jacocoTestReport coveralls audit build generatePomFileForMavenJavaPublication artifactoryPublish
+  script: gradle jacocoTestReport audit build generatePomFileForMavenJavaPublication artifactoryPublish
   artifacts:
     paths:
     - build/libs/*
