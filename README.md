@@ -267,7 +267,7 @@ if it's not there already and the dependency to the artifact in the dependencies
 section.
 
 ```
-compile "dinistiq:dinistiq:0.7"
+compile "dinistiq:dinistiq:0.8"
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -295,7 +295,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.7</version>
+    <versions>0.8</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -314,7 +314,7 @@ base  pom.xml
 
 Dinistiq uses slf4j for logging and logback as an instance for testing.
 
-Snapshot artifacts currently for version 0.7-SNAPSHOT are available from the 
+Snapshot artifacts currently for version 0.9-SNAPSHOT are available from the 
 OJO repository:
 
 ```
@@ -538,7 +538,8 @@ dinistiq.initBean(myNewInstance, null);
 ## Building
 
 While dinistiq 0.4 happily works with Java 8, only dinistiq 0.5 and up can be 
-compiled and tested with Java 8.
+compiled and tested with Java 8. The old PaaS Google App Engine is only 
+supported with dinistiq 0.4.
 
 Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a 
 subsequent switch to Java 8. This also results in the fact, that the classic 
@@ -550,13 +551,14 @@ at least needs Gradle 2.12. We now use the gradle wrapper on CI servers and
 switched to Gradle version 5.4.1 for all builds. Due to breaking DSL changes
 versions 0.9 and up need at least gradle 4.3.1.
 
-|dinistiq Version|Works with |Compiles with|Servlet API|GAE support|
-|:--------------:|:---------:|:-----------:|:---------:|:---------:|
-|0.4|Java 7 / 8|Java 7|2.5|+|
-|0.5|Java 7 / 8|Java 7 / 8|3.1|-|
-|0.6|Java 8|Java 8|3.1|-|
-|0.7|Java 8|Java 8|3.1|-|
-|0.8|Java 8|Java 8|3.1|-|
+|dinistiq Version|Works with  |Compiles with|Servlet API|
+|:--------------:|:----------:|:-----------:|:---------:|
+| 0.4            | Java 7 / 8 | Java 7      | 2.5       |
+| 0.5            | Java 7 / 8 | Java 7 / 8  | 3.1       |
+| 0.6            | Java 8     | Java 8      | 3.1       |
+| 0.7            | Java 8     | Java 8      | 3.1       |
+| 0.8            | Java 8     | Java 8      | 4.0       |
+| 0.9            | Java 11    | Java 11     | 4.0       |
 
 ## Comparison
 
@@ -566,7 +568,7 @@ we want to add some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.7|
+|Version|0.8|
 |Archive size|24kB|
 |Further dependencies|3|
 |API||
