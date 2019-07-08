@@ -589,12 +589,13 @@ public class Dinistiq {
             beanProperties.load(resource.openStream());
         } // while
         String beanValuesName = PRODUCT_BASE_PATH+"/beans/"+key+".properties";
-        InputStream beanStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(beanValuesName);
-        LOG.debug("getProperties({}) searching bean values {} {}", key, beanValuesName, beanStream);
-        if (beanStream!=null) {
-            LOG.debug("getProperties({}) loading bean values from {}", key, beanValuesName);
-            beanProperties.load(beanStream);
-        } // if
+        try (InputStream beanStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(beanValuesName)) {
+            LOG.debug("getProperties({}) searching bean values {} {}", key, beanValuesName, beanStream);
+            if (beanStream!=null) {
+                LOG.debug("getProperties({}) loading bean values from {}", key, beanValuesName);
+                beanProperties.load(beanStream);
+            } // if
+        }
         return beanProperties;
     } // getProperties()
 

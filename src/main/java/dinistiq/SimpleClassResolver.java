@@ -151,12 +151,12 @@ public class SimpleClassResolver implements ClassResolver {
                 LOG.info("(): path {}", path);
                 if (path.endsWith(".jar")) {
                     LOG.info("(): scanning jar {}", path);
-                    JarInputStream is = new JarInputStream(u.openStream());
-                    for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
-                        LOG.info("(): entry {}", entry.getName());
-                        checkClassAndAdd(entry.getName());
-                    } // for
-                    is.close();
+                    try (JarInputStream is = new JarInputStream(u.openStream())) {
+                        for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
+                            LOG.info("(): entry {}", entry.getName());
+                            checkClassAndAdd(entry.getName());
+                        } // for
+                    }
                 } else {
                     File dir = new File(path);
                     int basePathLength = dir.getAbsolutePath().length()+1;
