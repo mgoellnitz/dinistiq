@@ -32,6 +32,7 @@
   <rule ref="category/java/bestpractices.xml">
     <exclude name="GuardLogStatement"/>
     <exclude name="UseVarargs"/>
+    <exclude name="JUnit4TestShouldUseTestAnnotation"/>
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
