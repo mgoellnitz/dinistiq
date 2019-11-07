@@ -70,6 +70,7 @@ dependencies {
 
   testCompile 'jakarta.servlet:jakarta.servlet-api:4.0.3'
   testCompile 'org.testng:testng:7.0.0'
+  testCompile 'com.google.guava:guava:28.1-jre'
   // Some servlet API elements
   testCompile 'org.mockito:mockito-core:3.1.0'
   // integrate tck into unit tests
