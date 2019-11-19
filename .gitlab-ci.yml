@@ -19,7 +19,7 @@
 # ORG_GRADLE_PROJECT_bintrayKey
 # COVERALLS_REPO_TOKEN
 #
-image: gradle:jdk11
+image: amazoncorretto:11
 
 before_script:
   - export GRADLE_USER_HOME=/tmp/.gradle
@@ -29,7 +29,7 @@ stages:
 
 build:
   stage: dinistiq
-  script: gradle jacocoTestReport audit build generatePomFileForMavenJavaPublication artifactoryPublish
+  script: ./gradlew jacocoTestReport audit build generatePomFileForMavenJavaPublication artifactoryPublish
   artifacts:
     paths:
     - build/libs/*
