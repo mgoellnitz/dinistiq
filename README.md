@@ -4,7 +4,7 @@
 
 [![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://github.com/mgoellnitz/dinistiq/releases/latest)
 [![Build Status](https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master)](https://travis-ci.org/mgoellnitz/dinistiq)
-[![Build Status](https://gitlab.com/mgoellnitz/dinistiq/badges/master/build.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
+[![Build Status](https://img.shields.io/gitlab/pipeline/mgoellnitz/dinistiq.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
 [![Coverage Status](https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master)](https://coveralls.io/github/mgoellnitz/dinistiq?branch=master)
 [![Coverage Status](http://codecov.io/github/mgoellnitz/dinistiq/coverage.svg?branch=master)](https://codecov.io/gh/mgoellnitz/dinistiq)
 
