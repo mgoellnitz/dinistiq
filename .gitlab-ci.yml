@@ -19,7 +19,7 @@
 # ORG_GRADLE_PROJECT_bintrayKey
 # COVERALLS_REPO_TOKEN
 #
-image: gradle:jdk8
+image: amazoncorretto:11
 
 before_script:
   - export GRADLE_USER_HOME=/tmp/.gradle
