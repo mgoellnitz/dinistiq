@@ -24,7 +24,7 @@ sudo: false
 language: java
 
 jdk:
-  - openjdk11
+  - oraclejdk8
 
 # Uggly hack to deal with detached state on travis environment for coveralls indication
 before_install:
