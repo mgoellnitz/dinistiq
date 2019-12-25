@@ -21,6 +21,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 
 plugins {
   // id 'net.saliman.cobertura' version '2.4.0' - breaks audit with oldish references
+  id "com.jfrog.bintray" version '1.8.4'
   id 'com.jfrog.artifactory' version '4.9.0'
   id 'com.github.kt3k.coveralls' version '2.8.2'
   id 'net.ossindex.audit' version '0.4.11'
@@ -136,6 +137,24 @@ artifactory {
     }
     defaults {
       publications ('mavenJava')
+    }
+  }
+}
+
+bintray {
+  user = "$bintrayUser"
+  key  = "$bintrayKey"
+  publications = ['mavenJava'] 
+  pkg {
+    repo = 'maven'
+    name = 'dinistiq'
+    userOrg = 'mgoellnitz'
+    licenses = ['LGPL-3.0']
+    vcsUrl = 'https://github.com/mgoellnitz/dinistiq.git'
+    version {
+      name = '0.8.1'
+      desc = 'Bugfix Release'
+      released  = new Date()
     }
   }
 }

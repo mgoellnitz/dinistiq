@@ -36,6 +36,17 @@ build:
     expire_in: 5 days
     name: ${CI_BUILD_STAGE}
 
+release:
+  stage: dinistiq
+  only:
+    - tags
+  script: ./gradlew build generatePomFileForMavenJavaPublication bintrayUpload
+  artifacts:
+    paths:
+    - build/libs/*
+    expire_in: 1 days
+    name: ${CI_BUILD_STAGE}
+
 cache:
   paths:
   - /tmp/.gradle/caches/
