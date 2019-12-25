@@ -18,6 +18,8 @@
  */
 package dinistiq;
 
+import dinistiq.web.DinistiqContextLoaderListener;
+import dinistiq.web.RegisterableServlet;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -48,11 +50,23 @@ public class SimpleClassResolver implements ClassResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleClassResolver.class);
 
+    private final static Set<String> CLASSES_TO_IGNORE = new HashSet<>();
+
     private final Set<String> packageNames;
 
     private final Set<String> properties;
 
     private final Set<String> classNames;
+
+
+    /**
+     * These classes must be ignored to be able to use Dinistiq without web integration
+     * and corresponding useless error entries in the log
+     */
+    static {
+        CLASSES_TO_IGNORE.add(DinistiqContextLoaderListener.class.getName());
+        CLASSES_TO_IGNORE.add(RegisterableServlet.class.getName());
+    }
 
 
     /**
@@ -93,9 +107,11 @@ public class SimpleClassResolver implements ClassResolver {
             String className = n.substring(0, n.length()-6);
             LOG.debug("checkClassAndAdd() class name {}", className);
             boolean add = false;
-            for (String packageName : packageNames) {
-                add = add||className.startsWith(packageName);
-            } // if
+            if (!CLASSES_TO_IGNORE.contains(className)) {
+                for (String packageName : packageNames) {
+                    add = add||className.startsWith(packageName);
+                } // if
+            }
             if (add) {
                 LOG.debug("checkClassAndAdd(): {}", className);
                 classNames.add(className);
@@ -151,7 +167,7 @@ public class SimpleClassResolver implements ClassResolver {
                 LOG.info("(): path {}", path);
                 if (path.endsWith(".jar")) {
                     LOG.info("(): scanning jar {}", path);
-                    try (JarInputStream is = new JarInputStream(u.openStream())) {
+                    try ( JarInputStream is = new JarInputStream(u.openStream())) {
                         for (JarEntry entry = is.getNextJarEntry(); entry!=null; entry = is.getNextJarEntry()) {
                             LOG.info("(): entry {}", entry.getName());
                             checkClassAndAdd(entry.getName());
