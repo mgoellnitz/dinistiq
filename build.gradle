@@ -36,7 +36,7 @@ defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.8.1'
+version = '0.9-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
