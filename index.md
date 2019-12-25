@@ -4,7 +4,7 @@
 
 [![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://github.com/mgoellnitz/dinistiq/releases/latest)
 [![Build Status](https://api.travis-ci.org/mgoellnitz/dinistiq.svg?branch=master)](https://travis-ci.org/mgoellnitz/dinistiq)
-[![Build Status](https://gitlab.com/mgoellnitz/dinistiq/badges/master/build.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
+[![Build Status](https://img.shields.io/gitlab/pipeline/mgoellnitz/dinistiq.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
 [![Coverage Status](https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master)](https://coveralls.io/github/mgoellnitz/dinistiq?branch=master)
 [![Coverage Status](http://codecov.io/github/mgoellnitz/dinistiq/coverage.svg?branch=master)](https://codecov.io/gh/mgoellnitz/dinistiq)
 
@@ -267,7 +267,7 @@ if it's not there already and the dependency to the artifact in the dependencies
 section.
 
 ```
-compile "dinistiq:dinistiq:0.8"
+compile "dinistiq:dinistiq:0.8.1"
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -295,7 +295,7 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.8</version>
+    <versions>0.8.1</version>
   </dependency>
 ...
 </dependencyManagement>
@@ -557,7 +557,7 @@ versions 0.9 and up need at least gradle 4.3.1.
 | 0.5            | Java 7 / 8 | Java 7 / 8  | 3.1       |
 | 0.6            | Java 8     | Java 8      | 3.1       |
 | 0.7            | Java 8     | Java 8      | 3.1       |
-| 0.8            | Java 8     | Java 8      | 4.0       |
+| 0.8.1          | Java 8     | Java 8      | 4.0       |
 | 0.9            | Java 11    | Java 11     | 4.0       |
 
 ## Comparison
@@ -568,8 +568,8 @@ we want to add some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.8|
-|Archive size|24kB|
+|Version|0.8.1|
+|Archive size|<25kB|
 |Further dependencies|3|
 |API||
 |Methods in injector/context|10|
