@@ -18,8 +18,6 @@
  */
 package dinistiq;
 
-import dinistiq.web.DinistiqContextLoaderListener;
-import dinistiq.web.RegisterableServlet;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -64,8 +62,8 @@ public class SimpleClassResolver implements ClassResolver {
      * and corresponding useless error entries in the log
      */
     static {
-        CLASSES_TO_IGNORE.add(DinistiqContextLoaderListener.class.getName());
-        CLASSES_TO_IGNORE.add(RegisterableServlet.class.getName());
+        CLASSES_TO_IGNORE.add("dinistiq.web.DinistiqContextLoaderListener");
+        CLASSES_TO_IGNORE.add("dinistiq.web.RegisterableServlet");
     }
 
 
