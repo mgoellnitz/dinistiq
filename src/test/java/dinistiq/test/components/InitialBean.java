@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2016 Martin Goellnitz
+ * Copyright 2014-2020 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,6 +22,10 @@ import javax.inject.Inject;
 import lombok.Getter;
 
 
+/**
+ * Test vehicle class used as member of the set of beans passed over before
+ * bean scan and injection application.
+ */
 public class InitialBean {
 
     @Inject

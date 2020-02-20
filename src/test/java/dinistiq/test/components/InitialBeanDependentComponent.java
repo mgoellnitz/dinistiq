@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2016 Martin Goellnitz
+ * Copyright 2014-2020 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,6 +25,11 @@ import javax.servlet.ServletContext;
 import lombok.Getter;
 
 
+/**
+ * This class will be automatically instanciated on test start and depends
+ * on a bean from the set of initial beans. Additionally this bean is
+ * part of the automatically prepared beans in a web app context.
+ */
 @Named
 @Singleton
 public class InitialBeanDependentComponent {

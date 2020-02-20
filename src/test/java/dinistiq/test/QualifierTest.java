@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2016-2017 Martin Goellnitz
+ * Copyright 2016-2020 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -38,6 +38,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
+/**
+ * Test selection of injected beans based on qualifiers.
+ */
 public class QualifierTest {
 
     private Dinistiq d;

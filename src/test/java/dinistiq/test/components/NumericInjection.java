@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2017 Martin Goellnitz
+ * Copyright 2014-2020 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+/**
+ * Test vehicle bean class as a for different types of numeric injection.
+ */
 @Named
 @Singleton
 public class NumericInjection extends TestComponentB {

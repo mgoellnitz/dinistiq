@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2017 Martin Goellnitz
+ * Copyright 2013-2020 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,6 +25,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+/**
+ * Test vehicle class to check that without annotations no bean of this class
+ * gets created automatially. Still annotations can be used inside for manual
+ * creation.
+ */
 public class UnannotatedComponent {
 
     @Inject
