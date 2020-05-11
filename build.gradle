@@ -71,20 +71,20 @@ dependencies {
 
   testCompile 'jakarta.servlet:jakarta.servlet-api:4.0.3'
   testCompile 'org.testng:testng:7.1.0'
-  testCompile 'com.google.guava:guava:28.2-jre'
+  testCompile 'com.google.guava:guava:29.0-jre'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:3.2.4'
+  testCompile 'org.mockito:mockito-core:3.3.3'
   // integrate tck into unit tests
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
   testRuntime 'ch.qos.logback:logback-classic:1.2.3'
-  testRuntime 'org.codehaus.groovy:groovy:3.0.1'
+  testRuntime 'org.codehaus.groovy:groovy:3.0.3'
 }
 
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '6.21.0'
+  toolVersion = '6.23.0'
 }
 
 test {
