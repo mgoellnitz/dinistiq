@@ -78,7 +78,7 @@ dependencies {
   testCompile 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
   testRuntime 'ch.qos.logback:logback-classic:1.2.3'
-  testRuntime 'org.codehaus.groovy:groovy:3.0.3'
+  testRuntime 'org.codehaus.groovy:groovy:[3.0,3.1)'
 }
 
 pmd {
