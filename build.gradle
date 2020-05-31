@@ -152,8 +152,8 @@ bintray {
     licenses = ['LGPL-3.0']
     vcsUrl = 'https://github.com/mgoellnitz/dinistiq.git'
     version {
-      name = '0.8.1'
-      desc = 'Bugfix Release'
+      name = '0.9'
+      desc = 'Compatibility Release'
       released  = new Date()
     }
   }
