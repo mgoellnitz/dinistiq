@@ -47,6 +47,9 @@ if (project.hasProperty('jdk')) {
       ac.options.bootstripClasspath = files(bootstripClasspathStr)
     })
 }
+// The variable is needed, even if no publication is executed
+def bintrayUser = project.hasProperty('BINTRAY_USER') ? "$BINTRAY_USER" : '-'
+def bintrayKey = project.hasProperty('BINTRAY_KEY') ? "$BINTRAY_KEY" : '-'
 
 repositories {
   jcenter()
