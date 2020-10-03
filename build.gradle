@@ -22,8 +22,8 @@ import org.gradle.api.tasks.compile.AbstractCompile
 plugins {
   // id 'net.saliman.cobertura' version '3.0.0' - breaks audit with oldish references
   id "com.jfrog.bintray" version '1.8.5'
-  id 'com.jfrog.artifactory' version '4.16.1'
-  id 'com.github.kt3k.coveralls' version '2.10.1'
+  id 'com.jfrog.artifactory' version '4.17.2'
+  id 'com.github.kt3k.coveralls' version '2.10.2'
   id 'net.ossindex.audit' version '0.4.11'
   id 'io.franzbecker.gradle-lombok' version '4.0.0'
 }
@@ -66,28 +66,30 @@ lombok {
 }
 
 dependencies {
-  compile 'org.slf4j:slf4j-api:1.7.30'
-  compile 'javax.inject:javax.inject:1'
-  compile 'jakarta.annotation:jakarta.annotation-api:1.3.5'
+  implementation 'org.slf4j:slf4j-api:1.7.30'
+  implementation 'javax.inject:javax.inject:1'
+  implementation 'jakarta.annotation:jakarta.annotation-api:1.3.5'
 
-  optional 'jakarta.servlet:jakarta.servlet-api:4.0.3'
+  optional 'jakarta.servlet:jakarta.servlet-api:4.0.4'
 
-  testCompile 'jakarta.servlet:jakarta.servlet-api:4.0.3'
-  testCompile 'org.testng:testng:7.1.0'
-  testCompile 'com.google.guava:guava:29.0-jre'
+  testImplementation 'jakarta.servlet:jakarta.servlet-api:4.0.4'
+  testImplementation 'org.testng:testng:7.3.0'
+  // TestNG 7.2 and up introduced a vulnerability, which needs this dependency override:
+  testImplementation 'org.yaml:snakeyaml:1.27'
+  testImplementation 'com.google.guava:guava:29.0-jre'
   // Some servlet API elements
-  testCompile 'org.mockito:mockito-core:3.3.3'
+  testImplementation 'org.mockito:mockito-core:3.5.13'
   // integrate tck into unit tests
-  testCompile 'javax.inject:javax.inject-tck:1'
+  testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
-  testRuntime 'ch.qos.logback:logback-classic:1.2.3'
-  testRuntime 'org.codehaus.groovy:groovy:[3.0,3.1)'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+  testRuntimeOnly 'org.codehaus.groovy:groovy:[3.0,3.1)'
 }
 
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '6.24.0'
+  toolVersion = '6.28.0'
 }
 
 test {
@@ -103,7 +105,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.5'
+  toolVersion = '0.8.6'
 }
 
 // Triggers some unit test elements
@@ -113,6 +115,11 @@ tasks.withType(Test) {
   systemProperty 'thirdUrl', 'x://:800'
   systemProperty 'firstNonUrl', '://:80'
   systemProperty 'secondNonUrl', 'x://:'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
 }
 
 // maven artifact publication stuff

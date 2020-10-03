@@ -450,7 +450,7 @@ public class Dinistiq {
             // Don't record constructor dependencies - they MUST already be fulfilled
             Object[] parameters = getParameters(null, null, beanName, c.getParameterTypes(), c.getGenericParameterTypes(), c.getParameterAnnotations());
             dependencies.put(beanName, new HashSet<>());
-            boolean accessible = c.isAccessible();
+            boolean accessible = c.canAccess(null);
             try {
                 c.setAccessible(true);
                 return convert(c.newInstance(parameters));
