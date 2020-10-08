@@ -57,7 +57,7 @@ repositories {
 
 configurations {
   optional
-  compile.extendsFrom optional
+  implementation.extendsFrom optional
 }
 
 lombok {
