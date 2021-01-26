@@ -74,11 +74,13 @@ dependencies {
 
   testImplementation 'jakarta.servlet:jakarta.servlet-api:4.0.4'
   testImplementation 'org.testng:testng:7.3.0'
+  // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
+  testImplementation 'junit:junit:4.13.1'
   // TestNG 7.2 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'org.yaml:snakeyaml:1.27'
   testImplementation 'com.google.guava:guava:30.1-jre'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:3.6.28'
+  testImplementation 'org.mockito:mockito-core:3.7.7'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
