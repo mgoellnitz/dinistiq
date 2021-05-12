@@ -61,7 +61,7 @@ configurations {
 }
 
 lombok {
-  version = "1.18.18"
+  version = "1.18.20"
   sha256 = "39f3922deb679b1852af519eb227157ef2dd0a21eec3542c8ce1b45f2df39742"
 }
 
@@ -75,9 +75,9 @@ dependencies {
   testImplementation 'jakarta.servlet:jakarta.servlet-api:4.0.4'
   testImplementation 'org.testng:testng:7.4.0'
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
-  testImplementation 'junit:junit:4.13.1'
+  testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:3.8.0'
+  testImplementation 'org.mockito:mockito-core:3.9.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
@@ -88,7 +88,7 @@ dependencies {
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '6.32.0'
+  toolVersion = '6.34.0'
 }
 
 test {
@@ -104,7 +104,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.6'
+  toolVersion = '0.8.7'
 }
 
 // Triggers some unit test elements
