@@ -212,7 +212,7 @@ publishing {
           }
 
           // fix maven-publish issue when all maven dependencies are placed into runtime scope
-          if ( project.configurations.compile.allDependencies.findAll { dep ->
+          if ( project.configurations.implementation.allDependencies.findAll { dep ->
               xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
             } ) {
             def xmlScope = xmlDep.scope[ 0 ];
