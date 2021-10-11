@@ -29,7 +29,7 @@ stages:
 
 build:
   stage: dinistiq
-  script: ./gradlew jacocoTestReport audit build generatePomFileForMavenJavaPublication artifactoryPublish
+  script: ./gradlew jacocoTestReport audit build generatePomFileForMavenJavaPublication
   artifacts:
     paths:
     - build/libs/*
@@ -40,7 +40,7 @@ release:
   stage: dinistiq
   only:
     - tags
-  script: ./gradlew build generatePomFileForMavenJavaPublication bintrayUpload
+  script: ./gradlew build generatePomFileForMavenJavaPublication
   artifacts:
     paths:
     - build/libs/*
