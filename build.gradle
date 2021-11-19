@@ -22,10 +22,10 @@ import org.gradle.api.tasks.compile.AbstractCompile
 plugins {
   // id 'net.saliman.cobertura' version '3.0.0' - breaks audit with oldish references
   id "com.jfrog.bintray" version '1.8.5'
-  id 'com.jfrog.artifactory' version '4.17.2'
-  id 'com.github.kt3k.coveralls' version '2.10.2'
+  id 'com.jfrog.artifactory' version '4.24.23'
+  id 'com.github.kt3k.coveralls' version '2.12.0'
   id 'net.ossindex.audit' version '0.4.11'
-  id 'io.franzbecker.gradle-lombok' version '4.0.0'
+  id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 apply plugin: 'java'
 apply plugin: 'jacoco'
