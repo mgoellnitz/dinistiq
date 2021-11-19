@@ -431,11 +431,11 @@ public class Dinistiq {
     /**
      * Creates an instance of the given type and registeres it with the container.
      *
-     * @param dependencies dependencies within the scope
      * @param cls type to create an instance of
      * @param beanName beans name in the scope using the given dependencies
+     * @param dependencies dependencies within the scope
      */
-    private <T extends Object> T createInstance(Map<String, Set<Object>> dependencies, Class<T> cls, String beanName) {
+    private <T extends Object> T createInstance(Class<T> cls, String beanName, Map<String, Set<Object>> dependencies) {
         try {
             LOG.info("createInstance({})", cls.getSimpleName());
             Constructor<?> c = null;
@@ -452,10 +452,10 @@ public class Dinistiq {
             dependencies.put(beanName, new HashSet<>());
             boolean accessible = c.canAccess(null);
             try {
-                c.setAccessible(true);
+                c.setAccessible(true); // NOPMD - PMD doesn't like the idea of DI frameworks
                 return convert(c.newInstance(parameters));
             } finally {
-                c.setAccessible(accessible);
+                c.setAccessible(accessible); // NOPMD - PMD doesn't like the idea of DI frameworks
             } // try/finally
         } catch (NoSuchMethodException|InstantiationException|IllegalAccessException|InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -490,10 +490,10 @@ public class Dinistiq {
      * @param name optional name - if null the name is taken from the at Named annotation or from the class name otherwise
      * @throws Exception when instanciation is not possible for whatever reason
      */
-    private void createAndRegisterInstance(Map<String, Set<Object>> dependencies, Class<? extends Object> cls, String name) {
+    private void createAndRegisterInstance(Class<? extends Object> cls, String name, Map<String, Set<Object>> dependencies) {
         LOG.info("createAndRegisterInstance({}) cls={}", name, cls);
         String beanName = getBeanName(cls, name);
-        Object bean = createInstance(dependencies, cls, beanName);
+        Object bean = createInstance(cls, beanName, dependencies);
         beans.put(beanName, bean);
     } // createAndRegisterInstance()
 
@@ -527,7 +527,7 @@ public class Dinistiq {
     private void initBean(Object bean, String name, Map<String, Set<Object>> dependencies) {
         try {
             // TODO: Deal with scopes.
-            injectDependencies(dependencies, name, bean);
+            injectDependencies(name, bean, dependencies);
             callPostConstruct(bean);
         } catch (Exception e) {
             LOG.error("initBean() "+bean.getClass(), e);
@@ -547,7 +547,7 @@ public class Dinistiq {
         try {
             String beanName = getBeanName(cls, name);
             Map<String, Set<Object>> dependencies = new HashMap<>();
-            T bean = createInstance(dependencies, cls, beanName);
+            T bean = createInstance(cls, beanName, dependencies);
             initBean(bean, beanName, dependencies);
             return bean;
         } catch (Exception e) {
@@ -708,6 +708,129 @@ public class Dinistiq {
 
 
     /**
+     * Call all methods off a given bean with injection annotations.
+     * 
+     * @param bean bean to handle
+     * @param key key of the bean in the scope
+     * @param beanProperties
+     * @param dependencies
+     * @param beanClassName full name of the class of the given bean
+     * @throws SecurityException 
+     */
+    private void callMethodsWithAnnotatedInjection(Object bean, String key, Properties beanProperties, Map<String, Set<Object>> dependencies, String beanClassName) {
+        for (Method m : bean.getClass().getMethods()) {
+            if (m.getAnnotation(Inject.class)!=null) {
+                LOG.debug("callMethodsWithAnnotatedInjection({}) inject parameters on method {}", key, m.getName());
+                Class<? extends Object>[] parameterTypes = m.getParameterTypes();
+                Type[] genericParameterTypes = m.getGenericParameterTypes();
+                Annotation[][] parameterAnnotations = m.getParameterAnnotations();
+                Object[] parameters = getParameters(beanProperties, dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
+                try {
+                    m.invoke(bean, parameters);
+                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
+                    LOG.error("callMethodsWithAnnotatedInjection() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
+                } // try/catch
+            } // if
+        } // for
+    } // callMethodsWithAnnotatedInjection()
+
+
+    /**
+     * Prepare parameters for injection call.
+     * 
+     * @param isBoolean tell if a boolean is to be injected
+     * @param propertyValue string description of the value
+     * @param parameterType type of the parameter
+     * @param isCollection tell if collection is to be injected
+     * @param dependencies dependencies in scope
+     * @param key
+     * @return parameter array of size 1
+     * @throws NumberFormatException 
+     */
+    private Object[] prepareParameter(boolean isBoolean, String propertyValue, Class<?> parameterType, boolean isCollection, Map<String, Set<Object>> dependencies, String key) {
+        Object[] parameters = new Object[1];
+        parameters[0] = getReferenceValue(propertyValue);
+        if (isBoolean&&(parameters[0] instanceof String)) {
+            parameters[0] = Boolean.valueOf(propertyValue);
+        } // if
+        if ("long".equals(parameterType.getName())) {
+            parameters[0] = Long.valueOf(propertyValue);
+        } // if
+        if ("int".equals(parameterType.getName())) {
+            parameters[0] = Integer.valueOf(propertyValue);
+        } // if
+        if ("float".equals(parameterType.getName())) {
+            parameters[0] = Float.valueOf(propertyValue);
+        } // if
+        if ("double".equals(parameterType.getName())) {
+            parameters[0] = Double.valueOf(propertyValue);
+        } // if
+        if (isCollection) {
+            if (!Collection.class.isAssignableFrom(parameters[0].getClass())) {
+                Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
+                for (String value : propertyValue.split(",")) {
+                    Object effectiveValue = getReferenceValue(value);
+                    values.add(effectiveValue);
+                    if ((dependencies!=null)&&(value.contains("${"))&&beans.containsValue(effectiveValue)) {
+                        dependencies.get(key).add(effectiveValue);
+                    } // if
+                } // for
+                parameters[0] = values;
+            } // if
+        } else {
+            if ((dependencies!=null)&&(beans.containsValue(parameters[0]))&&(propertyValue.contains("${"))) {
+                dependencies.get(key).add(parameters[0]);
+            } // if
+        } // if
+        return parameters;
+    } // prepareParameter()
+
+
+    /**
+     * Inject manually set vales from from properties files into bean.
+     * 
+     * @param bean bean to handle injection for
+     * @param beanClassName full name of class of the bean
+     * @param beanProperties properties file contents
+     * @param key key the bean was given
+     * @param dependencies already collected dependencies
+     * @throws SecurityException 
+     */
+    private void injectPropertiesFromFiles(Object bean, String beanClassName, Properties beanProperties, String key, Map<String, Set<Object>> dependencies) {
+        // TODO: Deal with scopes - do we need a second scope variable besides beans to hold "dependent" scope beans while injecting?
+        for (String property : beanProperties.stringPropertyNames()) {
+            String methodName = "set"+Character.toUpperCase(property.charAt(0))+property.substring(1);
+            LOG.debug("injectPropertiesFromFiles({}) {} -> {}", key, property, methodName);
+            Method m = null;
+            // Have to find it just by name
+            for (Method me : bean.getClass().getMethods()) {
+                if (me.getName().equals(methodName)&&(me.getParameterTypes().length>0)) {
+                    m = me;
+                } // if
+            } // for
+            if (m==null) {
+                LOG.warn("injectPropertiesFromFiles({}) no setter method found for property {}", key, property);
+            } else {
+                String propertyName = Introspector.decapitalize(m.getName().substring(3));
+                Class<?> parameterType = m.getParameterTypes()[0];
+                Type genericType = m.getGenericParameterTypes()[0];
+                LOG.debug("injectPropertiesFromFiles({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
+                String propertyValue = beanProperties.getProperty(propertyName); // Must definetely be there without additional check
+                boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
+                boolean isCollection = Collection.class.isAssignableFrom(parameterType);
+                try {
+                    Object[] parameters = prepareParameter(isBoolean, propertyValue, parameterType, isCollection, dependencies, key);
+                    LOG.debug("injectPropertiesFromFiles({}) setting value {} '{}' :{} from '{}' (bool {}) (collection {})", key, propertyName, parameters[0], parameters[0].getClass(), propertyValue, isBoolean, isCollection);
+                    m.invoke(bean, parameters);
+                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
+                    LOG.error("injectPropertiesFromFiles() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
+                } // try/catch
+            } // if
+        } // for
+    } // injectPropertiesFromFiles()
+
+
+    /**
      * Injects all available dependencies into a given bean and records all dependencies.
      *
      * @param key key / name/ id of the bean
@@ -715,7 +838,7 @@ public class Dinistiq {
      * @param dependencies dependencies map where the dependecies of the bean are recorded with the given key
      * @throws IOException - should not happen and stems from Properties access
      */
-    private void injectDependencies(Map<String, Set<Object>> dependencies, String key, Object bean) throws IOException {
+    private void injectDependencies(String key, Object bean, Map<String, Set<Object>> dependencies) throws IOException {
         // Prepare values from properties files
         Properties beanProperties = getProperties(key);
         LOG.debug("injectDependencies({}) bean properties {}", key, beanProperties.keySet());
@@ -750,99 +873,108 @@ public class Dinistiq {
                     Object b = getValue(beanProperties, dependencies, key, field.getType(), field.getGenericType(), name, qualifiers);
                     boolean accessible = field.isAccessible();
                     try {
-                        field.setAccessible(true);
+                        field.setAccessible(true); // NOPMD - PMD doesn't like the idea of DI frameworks
                         field.set(bean, b);
                     } catch (SecurityException|IllegalArgumentException|IllegalAccessException e) {
                         LOG.error("injectDependencies() error setting field "+field.getName()+" :"+field.getType().getName()+" at '"+key+"' :"+beanClassName, e);
                     } finally {
-                        field.setAccessible(accessible);
+                        field.setAccessible(accessible); // NOPMD - PMD doesn't like the idea of DI frameworks
                     } // try/catch
                 } // if
             } // for
             beanClass = beanClass.getSuperclass();
         } // while
+        callMethodsWithAnnotatedInjection(bean, key, beanProperties, dependencies, beanClassName);
+        injectPropertiesFromFiles(bean, beanClassName, beanProperties, key, dependencies);
+    }  // injectDependencies()
 
-        // call methods with annotated injections
-        for (Method m : bean.getClass().getMethods()) {
-            if (m.getAnnotation(Inject.class)!=null) {
-                LOG.debug("injectDependencies({}) inject parameters on method {}", key, m.getName());
-                Class<? extends Object>[] parameterTypes = m.getParameterTypes();
-                Type[] genericParameterTypes = m.getGenericParameterTypes();
-                Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-                Object[] parameters = getParameters(beanProperties, dependencies, key, parameterTypes, genericParameterTypes, parameterAnnotations);
-                try {
-                    m.invoke(bean, parameters);
-                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                    LOG.error("injectDependencies() error injecting for method "+m.getName()+" at '"+key+"' :"+beanClassName, ex);
-                } // try/catch
+
+    /**
+     * Read relevant properties files from class path.
+     * 
+     * @param classResolver class resolver used for properties files discovery
+     * @return joint properties files contents
+     * @throws IOException thrown on  file handling problems
+     */
+    private Properties readBeanListFromPropertiesFiles(ClassResolver classResolver) throws IOException {
+        Properties beanlist = new Properties();
+        SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
+        LOG.debug("() checking {} files for properties", propertiesFilenames.size());
+        for (String propertyResource : propertiesFilenames) {
+            LOG.debug("() check {}", propertyResource);
+            // ignore subfolders!
+            if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
+                LOG.debug("() resource {}", propertyResource);
+                beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
             } // if
         } // for
+        return beanlist;
+    } // readBeanListFromPropertiesFiles()
 
-        // Fill in manually set values from properties file
-        // TODO: Deal with scopes - do we need a second scope variable besides beans to hold "dependent" scope beans while injecting?
-        for (String property : beanProperties.stringPropertyNames()) {
-            String methodName = "set"+Character.toUpperCase(property.charAt(0))+property.substring(1);
-            LOG.debug("injectDependencies({}) {} -> {}", key, property, methodName);
-            Method m = null;
-            // Have to find it just by name
-            for (Method me : bean.getClass().getMethods()) {
-                if (me.getName().equals(methodName)&&(me.getParameterTypes().length>0)) {
-                    m = me;
+
+    /**
+     * Instanciate beans from the properties files and from annotations taking 
+     * constructor injection dependencies into account.
+     * 
+     * @param classes list of classes for instanciation
+     * @param names list of names for the instances - must be in same order as above
+     * @param dependencies already collected dependencies
+     */
+    private void instanciateBeans(List<Class<?>> classes, List<String> names, Map<String, Set<Object>> dependencies) {
+        int ripCord = 10;
+        List<Class<?>> classList = classes; 
+        List<String> nameList = names;
+        while ((ripCord>0)&&(!classList.isEmpty())) {
+            LOG.debug("instanciateBeans() trying {} beans: {}", nameList.size(), classList);
+            ripCord--;
+            List<Class<?>> restClassList = new ArrayList<>();
+            List<String> restNameList = new ArrayList<>();
+            for (int i = 0; i<classList.size(); i++) {
+                try {
+                    createAndRegisterInstance(classList.get(i), nameList.get(i), dependencies);
+                } catch (Exception e) {
+                    LOG.warn("instanciateBeans() will retry {} later: {} - {}", classList.get(i).getName(), e.getClass().getName(), e.getMessage(), e);
+                    restClassList.add(classList.get(i));
+                    restNameList.add(nameList.get(i));
+                } // try/catch
+            } // for
+            classList = restClassList;
+            nameList = restNameList;
+        } // while
+    } // instanciateBeans()
+
+
+    /**
+     * Sort beans according to dependencies.
+     * 
+     * @param dependencies dependencies in the scope
+     */
+    private void sortBeans(Map<String, Set<Object>> dependencies) {
+        LOG.info("sortBeans() sorting beans according to dependencies");
+        int ripCord = 10;
+        while ((ripCord>0)&&(!dependencies.isEmpty())) {
+            ripCord--;
+            LOG.info("sortBeans() {} beans left", dependencies.size());
+            Set<String> deletions = new HashSet<>();
+            for (String key : dependencies.keySet()) {
+                LOG.debug("sortBeans() checking if {} with {} dependencies can be safely put into the ordered list {}", key, dependencies.get(key).size(), dependencies.get(key));
+                boolean dependenciesMet = true;
+                for (Object dep : dependencies.get(key)) {
+                    boolean isMet = orderedBeans.contains(dep);
+                    LOG.debug("sortBeans() {} depends on {} :{} met? {} {}", key, dep, dep.getClass().getName(), isMet, ((dep instanceof Collection) ? "is a collection" : ""));
+                    dependenciesMet = dependenciesMet&&isMet;
+                } // for
+                if (dependenciesMet) {
+                    LOG.info("sortBeans() adding {} to the list {}", key, orderedBeans);
+                    orderedBeans.add(beans.get(key));
+                    deletions.add(key);
                 } // if
             } // for
-            if (m==null) {
-                LOG.warn("injectDependencies({}) no setter method found for property {}", key, property);
-            } else {
-                String propertyName = Introspector.decapitalize(m.getName().substring(3));
-                Class<?> parameterType = m.getParameterTypes()[0];
-                Type genericType = m.getGenericParameterTypes()[0];
-                LOG.debug("injectDependencies({}) writable property found {} :{} {}", key, propertyName, parameterType, genericType);
-                String propertyValue = beanProperties.getProperty(propertyName); // Must definetely be there without additional check
-                boolean isBoolean = (parameterType==Boolean.class)||(m.getParameterTypes()[0]==Boolean.TYPE);
-                boolean isCollection = Collection.class.isAssignableFrom(parameterType);
-                Object[] parameters = new Object[1];
-                try {
-                    parameters[0] = getReferenceValue(propertyValue);
-                    if (isBoolean&&(parameters[0] instanceof String)) {
-                        parameters[0] = Boolean.valueOf(propertyValue);
-                    } // if
-                    if ("long".equals(parameterType.getName())) {
-                        parameters[0] = Long.valueOf(propertyValue);
-                    } // if
-                    if ("int".equals(parameterType.getName())) {
-                        parameters[0] = Integer.valueOf(propertyValue);
-                    } // if
-                    if ("float".equals(parameterType.getName())) {
-                        parameters[0] = Float.valueOf(propertyValue);
-                    } // if
-                    if ("double".equals(parameterType.getName())) {
-                        parameters[0] = Double.valueOf(propertyValue);
-                    } // if
-                    if (isCollection) {
-                        if (!Collection.class.isAssignableFrom(parameters[0].getClass())) {
-                            Collection<Object> values = List.class.isAssignableFrom(parameterType) ? new ArrayList<>() : new HashSet<>();
-                            for (String value : propertyValue.split(",")) {
-                                Object effectiveValue = getReferenceValue(value);
-                                values.add(effectiveValue);
-                                if ((dependencies!=null)&&(value.contains("${"))&&beans.containsValue(effectiveValue)) {
-                                    dependencies.get(key).add(effectiveValue);
-                                } // if
-                            } // for
-                            parameters[0] = values;
-                        } // if
-                    } else {
-                        if ((dependencies!=null)&&(beans.containsValue(parameters[0]))&&(propertyValue.contains("${"))) {
-                            dependencies.get(key).add(parameters[0]);
-                        } // if
-                    } // if
-                    LOG.debug("injectDependencies({}) setting value {} '{}' :{} from '{}' (bool {}) (collection {})", key, propertyName, parameters[0], parameters[0].getClass(), propertyValue, isBoolean, isCollection);
-                    m.invoke(bean, parameters);
-                } catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                    LOG.error("injectDependencies() error setting property "+propertyName+" to '"+propertyValue+"' at "+key+" :"+beanClassName, ex);
-                } // try/catch
-            } // if
-        } // for
-    }  // injectDependencies()
+            for (String key : deletions) {
+                dependencies.remove(key);
+            } // for
+        } // while
+    } // sortBeans()
 
 
     /**
@@ -882,17 +1014,7 @@ public class Dinistiq {
             LOG.debug("() initial beans {}", beans);
 
             // Read bean list from properties files mapping names to names of the classes to be instanciated
-            Properties beanlist = new Properties();
-            SortedSet<String> propertiesFilenames = classResolver.getProperties(PRODUCT_BASE_PATH+"/");
-            LOG.debug("() checking {} files for properties", propertiesFilenames.size());
-            for (String propertyResource : propertiesFilenames) {
-                LOG.debug("() check {}", propertyResource);
-                // ignore subfolders!
-                if (propertyResource.indexOf('/', PRODUCT_BASE_PATH.length()+1)<0) {
-                    LOG.debug("() resource {}", propertyResource);
-                    beanlist.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyResource));
-                } // if
-            } // for
+            Properties beanlist = readBeanListFromPropertiesFiles(classResolver);
             List<Class<?>> classList = new ArrayList<>();
             List<String> nameList = new ArrayList<>();
             for (String key : beanlist.stringPropertyNames()) {
@@ -940,61 +1062,19 @@ public class Dinistiq {
             } // for
             LOG.debug("() beans {}", beans.keySet());
 
-            // Instanciate beans from the properties files and from annotations taking constructor injection dependencies into account
-            int ripCord = 10;
-            while ((ripCord>0)&&(!classList.isEmpty())) {
-                LOG.debug("() trying {} beans: {}", nameList.size(), classList);
-                ripCord--;
-                List<Class<?>> restClassList = new ArrayList<>();
-                List<String> restNameList = new ArrayList<>();
-                for (int i = 0; i<classList.size(); i++) {
-                    try {
-                        createAndRegisterInstance(dependencies, classList.get(i), nameList.get(i));
-                    } catch (Exception e) {
-                        LOG.warn("() will retry {} later: {} - {}", classList.get(i).getName(), e.getClass().getName(), e.getMessage(), e);
-                        restClassList.add(classList.get(i));
-                        restNameList.add(nameList.get(i));
-                    } // try/catch
-                } // for
-                classList = restClassList;
-                nameList = restNameList;
-            } // while
+            instanciateBeans(classList, nameList, dependencies);
 
             // Fill in injections and note needed dependencies
             for (String key : new HashSet<>(beans.keySet())) {
                 Object get = beans.get(key);
                 try {
-                    injectDependencies(dependencies, key, get);
+                    injectDependencies(key, get, dependencies);
                 } catch (IOException ioe) {
-                    LOG.warn("()while injecting dependencies for "+key, ioe);
+                    LOG.warn("() while injecting dependencies for "+key, ioe);
                 }
             } // for
-
-            // sort beans according to dependencies
-            LOG.info("() sorting beans according to dependencies");
-            ripCord = 10;
-            while ((ripCord>0)&&(!dependencies.isEmpty())) {
-                ripCord--;
-                LOG.info("() {} beans left", dependencies.size());
-                Set<String> deletions = new HashSet<>();
-                for (String key : dependencies.keySet()) {
-                    LOG.debug("() checking if {} with {} dependencies can be safely put into the ordered list {}", key, dependencies.get(key).size(), dependencies.get(key));
-                    boolean dependenciesMet = true;
-                    for (Object dep : dependencies.get(key)) {
-                        boolean isMet = orderedBeans.contains(dep);
-                        LOG.debug("() {} depends on {} :{} met? {} {}", key, dep, dep.getClass().getName(), isMet, ((dep instanceof Collection) ? "is a collection" : ""));
-                        dependenciesMet = dependenciesMet&&isMet;
-                    } // for
-                    if (dependenciesMet) {
-                        LOG.info("() adding {} to the list {}", key, orderedBeans);
-                        orderedBeans.add(beans.get(key));
-                        deletions.add(key);
-                    } // if
-                } // for
-                for (String key : deletions) {
-                    dependencies.remove(key);
-                } // for
-            } // while
+            
+            sortBeans(dependencies);
             if (!dependencies.isEmpty()) {
                 throw new RuntimeException("Circular bean injection and initialization dependencies detected after "+(System.currentTimeMillis()-start)+"ms"+" "+dependencies);
             } // if

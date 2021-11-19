@@ -75,6 +75,11 @@
     </properties>
   </rule>
   -->
+  <rule ref="category/java/design.xml/CognitiveComplexity">
+    <properties>
+      <property name="reportLevel" value="40"/>
+    </properties>
+  </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
       <property name="minimum" value="35"/>
@@ -88,6 +93,11 @@
   <rule ref="category/java/design.xml/ExcessivePublicCount">
     <properties>
       <property name="minimum" value="65"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/ExcessiveClassLength">
+    <properties>
+      <property name="minimum" value="1100"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/NcssCount" >

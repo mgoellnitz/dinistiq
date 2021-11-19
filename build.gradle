@@ -88,7 +88,7 @@ dependencies {
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '6.34.0'
+  toolVersion = '6.40.0'
 }
 
 test {
