@@ -38,8 +38,8 @@ println "Gradle: ${gradle.gradleVersion}"
 
 version = '0.9-SNAPSHOT'
 
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 17
+targetCompatibility = 17
 
 if (project.hasProperty('jdk')) {
   def bootstripClasspathStr = "${jdk}/jre/lib/rt.jar"
