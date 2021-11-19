@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2014-2017 Martin Goellnitz
+ * Copyright 2014-2021 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,10 +24,10 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 
 /**

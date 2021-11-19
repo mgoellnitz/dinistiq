@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2017 Martin Goellnitz
+ * Copyright 2014-2021 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,7 @@ import dinistiq.test.components.TestInterface;
 import dinistiq.web.DinistiqContextLoaderListener;
 import java.util.HashSet;
 import java.util.Set;
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextEvent;
 import org.atinject.tck.auto.Car;
 import org.testng.Assert;
 import org.testng.annotations.Test;

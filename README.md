@@ -559,6 +559,7 @@ versions 0.9 and up need at least gradle 4.3.1.
 | 0.7            | Java 8     | Java 8      | 3.1       |
 | 0.8.1          | Java 8     | Java 8      | 4.0       |
 | 0.9            | Java 11    | Java 11     | 4.0       |
+| 0.x            | Java  ?    | Java  ?     | 5.0       |
 
 ## Comparison
 
