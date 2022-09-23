@@ -56,8 +56,9 @@ import org.slf4j.LoggerFactory;
 /**
  * The dinistiq main class.
  *
- * By instanciating this class the bean creation and injection process will be started. Subsequent calls to the
- * API methods support retrieval of the singleton beans according to type, annotation, or type and annotation.
+ * By instanciating this class the bean creation and injection process will be 
+ * started. Subsequent calls to the API methods support retrieval of the 
+ * singleton beans according to type, annotation, or type and annotation.
  */
 public class Dinistiq {
 
@@ -709,13 +710,13 @@ public class Dinistiq {
 
     /**
      * Call all methods off a given bean with injection annotations.
-     * 
+     *
      * @param bean bean to handle
      * @param key key of the bean in the scope
      * @param beanProperties
      * @param dependencies
      * @param beanClassName full name of the class of the given bean
-     * @throws SecurityException 
+     * @throws SecurityException
      */
     private void callMethodsWithAnnotatedInjection(Object bean, String key, Properties beanProperties, Map<String, Set<Object>> dependencies, String beanClassName) {
         for (Method m : bean.getClass().getMethods()) {
@@ -737,7 +738,7 @@ public class Dinistiq {
 
     /**
      * Prepare parameters for injection call.
-     * 
+     *
      * @param isBoolean tell if a boolean is to be injected
      * @param propertyValue string description of the value
      * @param parameterType type of the parameter
@@ -745,7 +746,7 @@ public class Dinistiq {
      * @param dependencies dependencies in scope
      * @param key
      * @return parameter array of size 1
-     * @throws NumberFormatException 
+     * @throws NumberFormatException
      */
     private Object[] prepareParameter(boolean isBoolean, String propertyValue, Class<?> parameterType, boolean isCollection, Map<String, Set<Object>> dependencies, String key) {
         Object[] parameters = new Object[1];
@@ -788,13 +789,13 @@ public class Dinistiq {
 
     /**
      * Inject manually set vales from from properties files into bean.
-     * 
+     *
      * @param bean bean to handle injection for
      * @param beanClassName full name of class of the bean
      * @param beanProperties properties file contents
      * @param key key the bean was given
      * @param dependencies already collected dependencies
-     * @throws SecurityException 
+     * @throws SecurityException
      */
     private void injectPropertiesFromFiles(Object bean, String beanClassName, Properties beanProperties, String key, Map<String, Set<Object>> dependencies) {
         // TODO: Deal with scopes - do we need a second scope variable besides beans to hold "dependent" scope beans while injecting?
@@ -891,7 +892,7 @@ public class Dinistiq {
 
     /**
      * Read relevant properties files from class path.
-     * 
+     *
      * @param classResolver class resolver used for properties files discovery
      * @return joint properties files contents
      * @throws IOException thrown on  file handling problems
@@ -913,16 +914,16 @@ public class Dinistiq {
 
 
     /**
-     * Instanciate beans from the properties files and from annotations taking 
+     * Instanciate beans from the properties files and from annotations taking
      * constructor injection dependencies into account.
-     * 
+     *
      * @param classes list of classes for instanciation
      * @param names list of names for the instances - must be in same order as above
      * @param dependencies already collected dependencies
      */
     private void instanciateBeans(List<Class<?>> classes, List<String> names, Map<String, Set<Object>> dependencies) {
         int ripCord = 10;
-        List<Class<?>> classList = classes; 
+        List<Class<?>> classList = classes;
         List<String> nameList = names;
         while ((ripCord>0)&&(!classList.isEmpty())) {
             LOG.debug("instanciateBeans() trying {} beans: {}", nameList.size(), classList);
@@ -946,7 +947,7 @@ public class Dinistiq {
 
     /**
      * Sort beans according to dependencies.
-     * 
+     *
      * @param dependencies dependencies in the scope
      */
     private void sortBeans(Map<String, Set<Object>> dependencies) {
@@ -1073,7 +1074,7 @@ public class Dinistiq {
                     LOG.warn("() while injecting dependencies for "+key, ioe);
                 }
             } // for
-            
+
             sortBeans(dependencies);
             if (!dependencies.isEmpty()) {
                 throw new RuntimeException("Circular bean injection and initialization dependencies detected after "+(System.currentTimeMillis()-start)+"ms"+" "+dependencies);
