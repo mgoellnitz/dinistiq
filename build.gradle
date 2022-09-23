@@ -38,8 +38,8 @@ println "Gradle: ${gradle.gradleVersion}"
 
 version = '0.9-SNAPSHOT'
 
-sourceCompatibility = 17
-targetCompatibility = 17
+sourceCompatibility = 11
+targetCompatibility = 11
 
 if (project.hasProperty('jdk')) {
   def bootstripClasspathStr = "${jdk}/jre/lib/rt.jar"
@@ -66,7 +66,7 @@ lombok {
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:1.7.36'
+  implementation 'org.slf4j:slf4j-api:2.0.2'
   implementation 'javax.inject:javax.inject:1'
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -77,18 +77,18 @@ dependencies {
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:4.6.1'
+  testImplementation 'org.mockito:mockito-core:4.8.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.11'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.1'
   testRuntimeOnly 'org.codehaus.groovy:groovy:[3.0,3.1)'
 }
 
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '6.48.0'
+  toolVersion = '6.49.0'
 }
 
 test {
@@ -99,6 +99,8 @@ test {
 audit {
   // PMD still references this one - so please update PMD once it is possible
   ignore = [ 'commons-io:commons-io:2.6', 'com.beust:jcommander:1.48' ]
+  user   = "$ossindexUser"
+  token  = "$ossindexToken"
 }
 
 jacocoTestReport {
