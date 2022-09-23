@@ -28,7 +28,7 @@ stages:
 
 build:
   stage: dinistiq
-  script: ./gradlew -PossindexUser=$OSS_INDEX_USER -PossindexToken=$OSS_INDEX_TOKEN jacocoTestReport audit build generatePomFileForMavenJavaPublication
+  script: ./gradlew -PossindexUser=$OSS_INDEX_USER -PossindexToken=$OSS_INDEX_TOKEN jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
   artifacts:
     paths:
     - build/libs/*

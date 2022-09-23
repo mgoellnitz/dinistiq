@@ -21,9 +21,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 
 plugins {
   // id 'net.saliman.cobertura' version '4.0.0' - breaks audit with oldish references
-  id "com.jfrog.bintray" version '1.8.5'
-  id 'com.jfrog.artifactory' version '4.24.23'
-  id 'com.github.kt3k.coveralls' version '2.12.0'
+  id 'com.github.nbaztec.coveralls-jacoco' version '1.2.14'
   id 'net.ossindex.audit' version '0.4.11'
   id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
@@ -141,38 +139,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 artifacts {
   archives javadocJar, sourcesJar
-}
-
-artifactory {
-  contextUrl = 'https://oss.jfrog.org/artifactory'
-  publish {
-    repository {
-      repoKey = version.endsWith('SNAPSHOT') ? 'oss-snapshot-local' : 'oss-release-local'
-      username = "$bintrayUser"
-      password = "$bintrayKey"
-    }
-    defaults {
-      publications ('mavenJava')
-    }
-  }
-}
-
-bintray {
-  user = "$bintrayUser"
-  key  = "$bintrayKey"
-  publications = ['mavenJava'] 
-  pkg {
-    repo = 'maven'
-    name = 'dinistiq'
-    userOrg = 'mgoellnitz'
-    licenses = ['LGPL-3.0']
-    vcsUrl = 'https://github.com/mgoellnitz/dinistiq.git'
-    version {
-      name = '0.9'
-      desc = 'Compatibility Release'
-      released  = new Date()
-    }
-  }
 }
 
 publishing {
