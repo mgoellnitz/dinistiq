@@ -17,6 +17,8 @@
 # Environment variables needed:
 # OSS_INDEX_USER
 # OSS_INDEX_TOKEN
+# COVERALLS_REPO_TOKEN
+# CODECOV_TOKEN
 #
 image: amazoncorretto:11
 
@@ -28,7 +30,11 @@ stages:
 
 build:
   stage: dinistiq
-  script: ./gradlew -PossindexUser=$OSS_INDEX_USER -PossindexToken=$OSS_INDEX_TOKEN jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
+  script:
+  - ./gradlew -PossindexUser=$OSS_INDEX_USER -PossindexToken=$OSS_INDEX_TOKEN jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - chmod +x codecov
+  - ./codecov
   artifacts:
     paths:
     - build/libs/*
