@@ -64,7 +64,7 @@ lombok {
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:2.0.2'
+  implementation 'org.slf4j:slf4j-api:2.0.3'
   implementation 'javax.inject:javax.inject:1'
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
