@@ -96,7 +96,7 @@ test {
 
 audit {
   // PMD still references this one - so please update PMD once it is possible
-  ignore = [ 'commons-io:commons-io:2.6', 'com.beust:jcommander:1.48' ]
+  ignore = [ 'commons-io:commons-io:2.6', 'com.beust:jcommander:1.48', 'org.testng:testng:7.6.1' ]
   user   = "$ossindexUser"
   token  = "$ossindexToken"
 }
