@@ -22,16 +22,17 @@
 #
 image: amazoncorretto:11
 
-before_script:
-  - export GRADLE_USER_HOME=/tmp/.gradle
-
 stages:
   - dinistiq
+
+variables:
+    GRADLE_USER_HOME: /tmp/.gradle
 
 build:
   stage: dinistiq
   script:
-  - ./gradlew -PossindexUser=$OSS_INDEX_USER -PossindexToken=$OSS_INDEX_TOKEN jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" build jacocoTestReport audit generatePomFileForMavenJavaPublication
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco
   - curl -Os https://uploader.codecov.io/latest/linux/codecov
   - chmod +x codecov
   - ./codecov
