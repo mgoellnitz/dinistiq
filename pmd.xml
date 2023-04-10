@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
- Copyright 2015-2022 Martin Goellnitz
+ Copyright 2015-2023 Martin Goellnitz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
@@ -18,13 +18,13 @@
 
 -->
 <ruleset name="Custom Ruleset for Dinistiq"
-         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
          xmlns='http://pmd.sourceforge.net/ruleset/2.0.0'
          xsi:schemaLocation='http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd'>
-         
+
   <description>
     Nearly default setup of PMD rules with some exceptions.
-    Some of the default rules of PMD don't help in parts of the code to improve 
+    Some of the default rules of PMD don't help in parts of the code to improve
     readability and correctness. It may well not be in sync with latest changes
     of PMD and partly is copied from other projects.
   </description>
@@ -121,17 +121,9 @@
   </rule>
   <rule ref="category/java/errorprone.xml">
     <exclude name="AvoidLiteralsInIfCondition"/>
-    <exclude name="BeanMembersShouldSerialize"/>
     <exclude name="DataflowAnomalyAnalysis"/>
+    <exclude name="TestClassWithoutTestCases"/>
   </rule>
-  <!-- too many false positives
-  <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
-    <properties>
-      <property name="maxPaths" value="8000"/>
-      <property name="maxViolations" value="500"/>
-    </properties>
-  </rule>
-  -->
   <rule ref="category/java/multithreading.xml">
     <exclude name="UseConcurrentHashMap"/>
   </rule>
