@@ -60,7 +60,7 @@ configurations {
 
 lombok {
   version = "1.18.26"
-  sha256 = "39f3922deb679b1852af519eb227157ef2dd0a21eec3542c8ce1b45f2df39742"
+  sha256 = "2af1fa836848761b6e51440ec628b49dc38080e9871bb352701fb8c8358087cf"
 }
 
 dependencies {
