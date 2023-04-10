@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2022 Martin Goellnitz
+ * Copyright 2013-2023 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -59,7 +59,7 @@ configurations {
 }
 
 lombok {
-  version = "1.18.24"
+  version = "1.18.26"
   sha256 = "39f3922deb679b1852af519eb227157ef2dd0a21eec3542c8ce1b45f2df39742"
 }
 
@@ -103,13 +103,13 @@ audit {
 
 jacocoTestReport {
   reports {
-    xml.enabled = true // coveralls plugin depends on xml format report
-    html.enabled = true
+    xml.required = true // coveralls plugin depends on xml format report
+    html.required = true
   }
 }
 
 jacoco {
-  toolVersion = '0.8.8'
+  toolVersion = '0.8.9'
 }
 
 // Triggers some unit test elements
@@ -128,12 +128,12 @@ tasks.withType(JavaCompile) {
 
 // maven artifact publication stuff
 task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = 'sources'
+  archiveClassifier = 'sources'
   from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
+  archiveClassifier = 'javadoc'
   from "${buildDir}/docs/javadoc"
 }
 
