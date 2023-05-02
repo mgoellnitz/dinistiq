@@ -71,7 +71,7 @@ dependencies {
   optional 'jakarta.servlet:jakarta.servlet-api:5.0.0'
 
   testImplementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
-  testImplementation 'org.testng:testng:7.6.1'
+  testImplementation 'org.testng:testng:7.7.1'
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
@@ -96,7 +96,7 @@ test {
 
 audit {
   // PMD still references this one - so please update PMD once it is possible
-  ignore = [ 'commons-io:commons-io:2.6', 'com.beust:jcommander:1.48', 'org.testng:testng:7.6.1' ]
+  ignore = [ 'com.beust:jcommander:1.48' ]
   user   = "$ossindexUser"
   token  = "$ossindexToken"
 }
@@ -109,7 +109,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.9'
+  toolVersion = '0.8.10'
 }
 
 // Triggers some unit test elements
