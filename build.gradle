@@ -59,7 +59,7 @@ configurations {
 }
 
 lombok {
-  version = "1.18.26"
+  version = "1.18.28"
   sha256 = "2af1fa836848761b6e51440ec628b49dc38080e9871bb352701fb8c8358087cf"
 }
 
@@ -75,11 +75,11 @@ dependencies {
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:4.8.1'
+  testImplementation 'org.mockito:mockito-core:5.4.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.7'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.8'
   testRuntimeOnly 'org.codehaus.groovy:groovy:[3.0,3.1)'
 }
 
