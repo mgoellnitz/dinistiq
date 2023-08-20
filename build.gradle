@@ -78,9 +78,8 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:5.4.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
-  // tests are logging at debug level through special logback.groovy - this is why groovy is needed here
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.8'
-  testRuntimeOnly 'org.codehaus.groovy:groovy:[3.0,3.1)'
+  // tests are logging at debug level through special logback.xml
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.11'
 }
 
 pmd {
