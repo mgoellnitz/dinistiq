@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2023 Martin Goellnitz
+ * Copyright 2013-2024 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -59,27 +59,27 @@ configurations {
 }
 
 lombok {
-  version = "1.18.28"
+  version = "1.18.30"
   sha256 = "2af1fa836848761b6e51440ec628b49dc38080e9871bb352701fb8c8358087cf"
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:2.0.7'
+  implementation 'org.slf4j:slf4j-api:2.0.11'
   implementation 'javax.inject:javax.inject:1'
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
   optional 'jakarta.servlet:jakarta.servlet-api:5.0.0'
 
   testImplementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
-  testImplementation 'org.testng:testng:7.8.0'
+  testImplementation 'org.testng:testng:7.9.0'
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:5.4.0'
+  testImplementation 'org.mockito:mockito-core:5.10.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.11'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.14'
 }
 
 pmd {
@@ -108,7 +108,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.10'
+  toolVersion = '0.8.11'
 }
 
 // Triggers some unit test elements
