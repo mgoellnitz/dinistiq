@@ -71,11 +71,11 @@ dependencies {
   optional 'jakarta.servlet:jakarta.servlet-api:5.0.0'
 
   testImplementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
-  testImplementation 'org.testng:testng:7.10.1'
+  testImplementation 'org.testng:testng:7.10.2'
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:5.11.0'
+  testImplementation 'org.mockito:mockito-core:5.12.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
