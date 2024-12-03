@@ -59,7 +59,7 @@ configurations {
 }
 
 lombok {
-  version = "1.18.34"
+  version = "1.18.36"
   sha256 = ""
 }
 
@@ -79,7 +79,7 @@ dependencies {
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.11'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.12'
 }
 
 pmd {
