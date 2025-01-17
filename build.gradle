@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2024 Martin Goellnitz
+ * Copyright 2013-2025 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -75,11 +75,11 @@ dependencies {
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:5.14.2'
+  testImplementation 'org.mockito:mockito-core:5.15.2'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.12'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.15'
 }
 
 pmd {
