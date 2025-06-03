@@ -237,7 +237,7 @@ public class Dinistiq {
                     Class<? extends Annotation> type = a.annotationType();
                     if (type.getAnnotation(Qualifier.class)!=null) {
                         // Note: PMD doesn't do Auto-Boxing for the last parameter on checking
-                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), Boolean.valueOf(type==Named.class));
+                        LOG.debug("findQualifiedBeans() acceptable qualifier {}? {}", type.getSimpleName(), type==Named.class);
                         // don't add if the class is qualified but no qualifier is asked for in the collection.1
                         add = add&&(type==Named.class);
                         LOG.info("findQualifiedBeans() would add {}. ({})", bean, add);
@@ -252,7 +252,7 @@ public class Dinistiq {
                 String annotationTypeName = annotationType.getSimpleName();
                 String beanClassName = beanClass.getSimpleName();
                 // Note: PMD doesn't do Auto-Boxing for the last two parameters on checking
-                LOG.debug("findQualifiedBeans() checking {}|{} ({} || {})", annotationTypeName, beanClassName, Boolean.valueOf(beanClass.getAnnotation(annotationType)!=null), Boolean.valueOf(beanClassName.startsWith(annotationTypeName)));
+                LOG.debug("findQualifiedBeans() checking {}|{} ({} || {})", annotationTypeName, beanClassName, beanClass.getAnnotation(annotationType)!=null, beanClassName.startsWith(annotationTypeName));
                 add = add&&((beanClass.getAnnotation(annotationType)!=null)||(beanClassName.startsWith(annotationTypeName)));
             } // for
             if (add) {
@@ -444,7 +444,7 @@ public class Dinistiq {
             LOG.debug("createInstance({}) constructors.length={}", cls.getSimpleName(), constructors.length);
             for (Constructor<?> ctor : constructors) {
                 // Note: PMD doesn't do Auto-Boxing for the last parameter on checking
-                LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, Boolean.valueOf(ctor.getAnnotation(Inject.class)!=null));
+                LOG.debug("createInstance({}) {} ({})", cls.getSimpleName(), ctor, ctor.getAnnotation(Inject.class)!=null);
                 c = (ctor.getAnnotation(Inject.class)==null) ? c : ctor;
             } // for
             c = (c==null) ? cls.getConstructor() : c;
