@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
- Copyright 2015-2023 Martin Goellnitz
+ Copyright 2015-2025 Martin Goellnitz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
@@ -32,7 +32,11 @@
   <rule ref="category/java/bestpractices.xml">
     <exclude name="GuardLogStatement"/>
     <exclude name="UseVarargs"/>
-    <exclude name="JUnit4TestShouldUseTestAnnotation"/>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/UnitTestContainsTooManyAsserts">
+    <properties>
+      <property name="maximumAsserts" value="12" />
+    </properties>
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
@@ -62,19 +66,16 @@
     <!-- not necessarily a good ideas for other projects -->
     <exclude name="NPathComplexity"/>
   </rule>
+  <rule ref="category/java/design.xml/CouplingBetweenObjects">
+    <properties>
+      <property name="threshold" value="51" />
+    </properties>
+  </rule>
   <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts">
     <properties>
       <property name="problemDepth" value="5"/>
     </properties>
   </rule>
-  <!-- settings don't work
-  <rule ref="category/java/design.xml/CyclomaticComplexity">
-    <properties>
-      <property name="classReportLevel" value="165"/>
-      <property name="methodReportLevel" value="40"/>
-    </properties>
-  </rule>
-  -->
   <rule ref="category/java/design.xml/CognitiveComplexity">
     <properties>
       <property name="reportLevel" value="40"/>
@@ -85,19 +86,9 @@
       <property name="minimum" value="35"/>
     </properties>
   </rule>
-  <rule ref="category/java/design.xml/ExcessiveMethodLength">
-    <properties>
-      <property name="minimum" value="200"/>
-    </properties>
-  </rule>
   <rule ref="category/java/design.xml/ExcessivePublicCount">
     <properties>
       <property name="minimum" value="65"/>
-    </properties>
-  </rule>
-  <rule ref="category/java/design.xml/ExcessiveClassLength">
-    <properties>
-      <property name="minimum" value="1100"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/NcssCount" >
@@ -121,7 +112,6 @@
   </rule>
   <rule ref="category/java/errorprone.xml">
     <exclude name="AvoidLiteralsInIfCondition"/>
-    <exclude name="DataflowAnomalyAnalysis"/>
     <exclude name="TestClassWithoutTestCases"/>
   </rule>
   <rule ref="category/java/multithreading.xml">
