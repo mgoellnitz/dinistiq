@@ -59,27 +59,27 @@ configurations {
 }
 
 lombok {
-  version = "1.18.36"
+  version = "1.18.38"
   sha256 = ""
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:2.0.16'
+  implementation 'org.slf4j:slf4j-api:2.0.17'
   implementation 'javax.inject:javax.inject:1'
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
   optional 'jakarta.servlet:jakarta.servlet-api:5.0.0'
 
   testImplementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
-  testImplementation 'org.testng:testng:7.10.2'
+  testImplementation 'org.testng:testng:7.11.0'
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:5.15.2'
+  testImplementation 'org.mockito:mockito-core:5.18.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.15'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.18'
 }
 
 pmd {
@@ -108,7 +108,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.12'
+  toolVersion = '0.8.13'
 }
 
 // Triggers some unit test elements
