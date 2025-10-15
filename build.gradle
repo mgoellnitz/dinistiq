@@ -59,7 +59,7 @@ configurations {
 }
 
 lombok {
-  version = "1.18.38"
+  version = "1.18.42"
   sha256 = ""
 }
 
@@ -75,17 +75,17 @@ dependencies {
   // TestNG 7.3 and up introduced a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:5.18.0'
+  testImplementation 'org.mockito:mockito-core:5.20.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.18'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.19'
 }
 
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '7.15.0'
+  toolVersion = '7.17.0'
 }
 
 test {
@@ -108,7 +108,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.13'
+  toolVersion = '0.8.14'
 }
 
 // Triggers some unit test elements
