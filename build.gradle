@@ -36,9 +36,6 @@ println "Gradle: ${gradle.gradleVersion}"
 
 version = '0.9-SNAPSHOT'
 
-sourceCompatibility = 11
-targetCompatibility = 11
-
 if (project.hasProperty('jdk')) {
   def bootstripClasspathStr = "${jdk}/jre/lib/rt.jar"
   project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
@@ -48,6 +45,11 @@ if (project.hasProperty('jdk')) {
 // The variable is needed, even if no publication is executed
 def bintrayUser = project.hasProperty('BINTRAY_USER') ? "$BINTRAY_USER" : '-'
 def bintrayKey = project.hasProperty('BINTRAY_KEY') ? "$BINTRAY_KEY" : '-'
+
+java {
+  sourceCompatibility = 11
+  targetCompatibility = 11
+}
 
 repositories {
   mavenCentral()
