@@ -26,21 +26,26 @@ jobs:
   build:
 
     runs-on: provocon
+    container:
+      image: debian:stable-slim
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Prepare Tools
+        run: apt update ; apt install -yq nodejs
 
-    - name: Set up JDK 17
-      uses: https://github.com/actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Gradle
-      uses: https://github.com/gradle/actions/setup-gradle@v3
+      - name: Set up JDK 17
+        uses: https://github.com/actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Build with Gradle
-      run: ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Setup Gradle
+        uses: https://github.com/gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
