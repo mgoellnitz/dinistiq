@@ -1,5 +1,5 @@
 #
-# Copyright 2024 Martin Goellnitz
+# Copyright 2025 Martin Goellnitz
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,16 +29,16 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: https://github.com/actions/setup-java@v5
+      uses: https://github.com/actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
     - name: Setup Gradle
-      uses: https://github.com/gradle/actions/setup-gradle@v5
+      uses: https://github.com/gradle/actions/setup-gradle@v3
 
     - name: Build with Gradle
       run: ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication
