@@ -20,7 +20,7 @@
 # COVERALLS_REPO_TOKEN
 # CODECOV_TOKEN
 #
-image: amazoncorretto:11
+image: gradle:jdk17
 
 stages:
   - dinistiq
