@@ -48,7 +48,7 @@ public class SimpleClassResolver implements ClassResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleClassResolver.class);
 
-    private final static Set<String> CLASSES_TO_IGNORE = new HashSet<>();
+    private static final Set<String> CLASSES_TO_IGNORE = new HashSet<>();
 
     private final Set<String> packageNames;
 
@@ -57,7 +57,7 @@ public class SimpleClassResolver implements ClassResolver {
     private final Set<String> classNames;
 
 
-    /**
+    /*
      * These classes must be ignored to be able to use Dinistiq without web integration
      * and corresponding useless error entries in the log
      */
