@@ -21,7 +21,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 
 plugins {
   // id 'net.saliman.cobertura' version '4.0.0' - breaks audit with oldish references
-  id 'com.github.nbaztec.coveralls-jacoco' version '1.2.14'
+  id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
   id 'net.ossindex.audit' version '0.4.11'
   id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
