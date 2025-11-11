@@ -81,7 +81,7 @@ dependencies {
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.19'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.21'
 }
 
 pmd {
