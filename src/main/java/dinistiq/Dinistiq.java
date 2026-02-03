@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2021 Martin Goellnitz
+ * Copyright 2013-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -305,7 +305,7 @@ public class Dinistiq {
     /**
      * Simple private class to generate provider implementations from the dinistiq scope on the fly.
      */
-    private class ImplicitProvider implements Provider<Object> {
+    private final class ImplicitProvider implements Provider<Object> {
 
         private final Dinistiq d;
 
@@ -321,7 +321,7 @@ public class Dinistiq {
          * @param d dinistiq instance
          * @param c class to find an instance of
          */
-        public ImplicitProvider(Dinistiq d, Class<? extends Object> c, String name) {
+        private ImplicitProvider(Dinistiq d, Class<? extends Object> c, String name) {
             this.d = d;
             this.c = c;
             this.name = name;
