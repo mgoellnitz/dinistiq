@@ -46,7 +46,7 @@ release:
   stage: dinistiq
   only:
     - tags
-  script: ./gradlew build generatePomFileForMavenJavaPublication
+  script: ./gradlew build generatePomFileForMavenJavaPublication sign
   artifacts:
     paths:
     - build/libs/*

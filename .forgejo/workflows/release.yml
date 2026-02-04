@@ -1,5 +1,5 @@
 #
-# Copyright 2025-2026 Martin Goellnitz
+# Copyright 2026 Martin Goellnitz
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@ name: Build Dinistiq
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags: [ '*' ]
 
 jobs:
   build:
@@ -47,7 +45,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport audit build generatePomFileForMavenJavaPublication
+          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport audit build generatePomFileForMavenJavaPublication sign
           ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} coverallsJacoco
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

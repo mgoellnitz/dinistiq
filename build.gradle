@@ -24,6 +24,7 @@ plugins {
   id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
   id 'net.ossindex.audit' version '0.4.11'
   id 'io.franzbecker.gradle-lombok' version '5.0.0'
+  id 'signing'
 }
 apply plugin: 'java'
 apply plugin: 'jacoco'
@@ -115,8 +116,8 @@ jacoco {
 
 // Triggers some unit test elements
 tasks.withType(Test) {
-  systemProperty 'firstUrl', 'http://user:password@github.com:80/'
-  systemProperty 'secondUrl', 'http://:password@github.com'
+  systemProperty 'firstUrl', 'http://user:password@codeberg.org:80/'
+  systemProperty 'secondUrl', 'http://:password@codeberg.org'
   systemProperty 'thirdUrl', 'x://:800'
   systemProperty 'firstNonUrl', '://:80'
   systemProperty 'secondNonUrl', 'x://:'
@@ -203,4 +204,8 @@ publishing {
       artifact javadocJar
     }
   }
+}
+
+signing {
+  sign publishing.publications.mavenJava
 }
