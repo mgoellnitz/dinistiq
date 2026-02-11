@@ -82,7 +82,7 @@ dependencies {
   // inject-tck introduces a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.27'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.29'
 }
 
 pmd {
