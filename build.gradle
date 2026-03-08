@@ -76,7 +76,7 @@ dependencies {
   testImplementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
   testImplementation 'org.testng:testng:7.12.0'
   // Some servlet API elements
-  testImplementation 'org.mockito:mockito-core:5.21.0'
+  testImplementation 'org.mockito:mockito-core:5.22.0'
   // integrate tck into unit tests
   testImplementation 'javax.inject:javax.inject-tck:1'
   // inject-tck introduces a vulnerability, which needs this dependency override:
@@ -88,7 +88,7 @@ dependencies {
 pmd {
   ruleSets = []
   ruleSetFiles = files('pmd.xml')
-  toolVersion = '7.21.0'
+  toolVersion = '7.22.0'
 }
 
 test {
