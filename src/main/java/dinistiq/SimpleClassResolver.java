@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Collection;
@@ -85,7 +86,7 @@ public class SimpleClassResolver implements ClassResolver {
                 url = url.startsWith("vfs:/") ? "file"+url.substring(3, url.length()-packagePath.length()-2) : url;
                 url = url.endsWith(".jar") ? url : url.substring(0, url.length()-packagePath.length());
                 LOG.info("addUrlsForPackage() resulting URL {}", url);
-                urls.add(new URL(url));
+                urls.add(URI.create(url).toURL());
             } // while
         } catch (IOException e) {
             LOG.error("addUrlsForPackage()", e);
