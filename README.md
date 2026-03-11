@@ -22,6 +22,17 @@ As the only other option besides the single scope managed by dinistiq it allows
 for the creation of fresh instances with all dependencies filled in from the 
 scope of all beans collected.
 
+
+## Repository Home and Feedback
+
+The caninocal home of the source code is the repository at [Codeberg][codeberg]
+with mirrors at [GitLab][gitlab] and [GitHub][github]. When possible, please
+prefer references to [Codeberg][codeberg].
+
+Feel invited use the [issues][issues] section of this repository at
+[Codeberg][codeberg] for any kind of feedback.
+
+
 ## Fire up the wire up
 
 Dinistiq scans a given portion of the classpath for classes annotated with 
@@ -314,11 +325,11 @@ base  pom.xml
 
 Dinistiq uses slf4j for logging and logback as an instance for testing.
 
-Snapshot artifacts currently for version 0.9-SNAPSHOT are available from the 
-OJO repository:
+Snapshot artifacts - currently for version 0.9-SNAPSHOT - are available from
+GitHub as a repository:
 
 ```
-https://oss.jfrog.org/oss-snapshot-local/
+https://github.com/mgoellnitz/dinistiq/packages/2106022
 ```
 
 Apart from optional configuration files to be placed somehere on your classpath,
@@ -545,11 +556,13 @@ Up to dinistiq 0.5 the code is supposed to be written in Java 7 with a
 subsequent switch to Java 8. This also results in the fact, that the classic 
 version of Google App Engine is only supported up to version 0.4.
 
-The code for dinistiq is prepared for building with Gradle. Gradle versions up 
-to 5.2.1 are tested to be working, while dinistiq starting from version 0.7
-at least needs Gradle 2.12. We now use the gradle wrapper on CI servers and
-switched to Gradle version 5.4.1 for all builds. Due to breaking DSL changes
-versions 0.9 and up need at least gradle 4.3.1.
+Due to the discontinuation of JCenter the main publication target was lost and
+the subsequet flow down in development makes faster changes for the intended
+environments desirable.
+
+The code for dinistiq is prepared for building with Gradle. Since version 0.7,
+the Gradle wrapper is in use locally and in CI. Breaking changes in DSL are
+fixed synchronously on Gradle updates.
 
 |dinistiq Version|Works with  |Compiles with|Servlet API|
 |:--------------:|:----------:|:-----------:|:---------:|
@@ -681,3 +694,8 @@ properties files. Weeks later I discovered TinyDI as another option. While this
 container seems to be a lot cleverer about the search of annotated classes, it 
 seems to lack the needed option of extending the configuration aspects from the 
 annotations with properties files - defaults and overridden values and references.
+
+[issues]: https://codeberg.org/backendzeit/dinistiq/issues
+[codeberg]: https://codeberg.org/backendzeit/dinistiq
+[gitlab]: https://gitlab.com/mgoellnitz/dinistiq
+[github]: https://github.com/mgoellnitz/dinistiq
