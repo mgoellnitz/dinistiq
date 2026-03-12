@@ -31,15 +31,15 @@ jobs:
 
     steps:
       - name: Prepare Tools
-        run: apt update ; apt install -yq nodejs
+        run: apt update ; apt install -yq gnupg nodejs
 
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: https://github.com/actions/setup-java@v5
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Gradle
@@ -47,4 +47,6 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport audit build generatePomFileForCustomizedGeneratedArtifactsPublication
+          cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
+          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg jacocoTestReport audit sign
+          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} generatePomFileForCustomizedGeneratedArtifactsPublication
