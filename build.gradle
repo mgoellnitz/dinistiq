@@ -142,11 +142,7 @@ tasks.named("assemble") {
 
 publishing {
   publications {
-    mavenCustom(MavenPublication) {
-      from components.java
-      groupId = 'dinistiq'
-    }
-    mavenJava(MavenPublication) {
+    customizedGeneratedArtifacts(MavenPublication) {
       pom.withXml {
         def rootNode = asNode()
         rootNode.children().get(3).plus {
@@ -204,5 +200,5 @@ publishing {
 }
 
 signing {
-  sign publishing.publications.mavenJava
+  sign publishing.publications.customizedGeneratedArtifacts
 }

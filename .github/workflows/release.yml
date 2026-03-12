@@ -39,6 +39,6 @@ jobs:
       uses: gradle/actions/setup-gradle@v5
 
     - name: Build with Gradle
-      run: ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport coverallsJacoco audit build generatePomFileForMavenJavaPublication sign
+      run: ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport coverallsJacoco audit build generatePomFileForCustomizedGeneratedArtifactsPublication sign
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

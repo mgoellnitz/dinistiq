@@ -31,7 +31,7 @@ variables:
 build:
   stage: dinistiq
   script:
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" build jacocoTestReport audit generatePomFileForMavenJavaPublication
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" build jacocoTestReport audit generatePomFileForCustomizedGeneratedArtifactsPublication
   - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco
   - curl -Os https://uploader.codecov.io/latest/linux/codecov
   - chmod +x codecov
@@ -46,7 +46,7 @@ release:
   stage: dinistiq
   only:
     - tags
-  script: ./gradlew build generatePomFileForMavenJavaPublication sign
+  script: ./gradlew build generatePomFileForCustomizedGeneratedArtifactsPublication sign
   artifacts:
     paths:
     - build/libs/*
