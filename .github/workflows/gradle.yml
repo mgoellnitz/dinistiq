@@ -14,6 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+# Environment variables needed:
+# OSS_INDEX_USER
+# OSS_INDEX_TOKEN
+# SIGNING_KEY_FILE
+# SIGNING_KEY
+# SIGNING_PASSWORD
+# COVERALLS_REPO_TOKEN
+#
 name: Build Dinistiq
 
 on:
@@ -31,16 +39,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v5
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
 
     - name: Build with Gradle
-      run: ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} jacocoTestReport coverallsJacoco audit build generatePomFileForCustomizedGeneratedArtifactsPublication
+      run: |
+        cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
+        ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg audit build jacocoTestReport coverallsJacoco sign generatePomFileForCustomizedGeneratedArtifactsPublication
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
