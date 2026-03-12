@@ -159,12 +159,12 @@ publishing {
           license
           def issues = new Node(rootNode, 'issueManagement')
           issues.appendNode('system', 'github')
-          issues.appendNode('url', 'https://github.com/mgoellnitz/dinistiq/issues')
+          issues.appendNode('url', 'https://codeberg.org/backendzeit/dinistiq/issues')
           issues
           def scm = new Node(rootNode, 'scm')
-          scm.appendNode('connection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
-          scm.appendNode('developerConnection', 'scm:git:git@github.com:mgoellnitz/dinistiq.git')
-          scm.appendNode('url', 'https://github.com/mgoellnitz/dinistiq.git')
+          scm.appendNode('connection', 'scm:git:git@codeberg.org:backendzeit/dinistiq.git')
+          scm.appendNode('developerConnection', 'scm:git:git@codeberg.org:backendzeit/dinistiq.git')
+          scm.appendNode('url', 'https://codeberg.org/backendzeit/dinistiq.git')
           def developer = rootNode.appendNode('developers').appendNode('developer')
           developer.appendNode('name', 'Martin Goellnitz')
           developer.appendNode('organization', 'Provocon')
