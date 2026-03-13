@@ -49,9 +49,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: https://github.com/gradle/actions/setup-gradle@v5
-
       - name: Build with Gradle
         run: |
           cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
