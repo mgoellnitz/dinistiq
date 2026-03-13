@@ -17,6 +17,9 @@
 # Environment variables needed:
 # OSS_INDEX_USER
 # OSS_INDEX_TOKEN
+# SIGNING_KEY_FILE
+# SIGNING_KEY
+# SIGNING_PASSWORD
 # COVERALLS_REPO_TOKEN
 # CODECOV_TOKEN
 #
@@ -31,8 +34,9 @@ variables:
 build:
   stage: dinistiq
   script:
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" build jacocoTestReport audit generatePomFileForCustomizedGeneratedArtifactsPublication
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco
+  - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg audit build jacocoTestReport sign
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco generatePomFileForCustomizedGeneratedArtifactsPublication
   - curl -Os https://uploader.codecov.io/latest/linux/codecov
   - chmod +x codecov
   - ./codecov
