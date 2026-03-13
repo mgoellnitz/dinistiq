@@ -206,6 +206,14 @@ publishing {
         password = project.findProperty("cb.token") ?: System.getenv("CODEBERG_TOKEN")
       }
     }
+    maven {
+      name "GitHub"
+      url "https://maven.pkg.github.com/mgoellnitz/dinistiq"
+      credentials {
+        username = project.findProperty("gh.user")  ?: System.getenv("GITHUB_COM_USER")
+        password = project.findProperty("gh.token") ?: System.getenv("GITHUB_COM_TOKEN")
+      }
+    }
   }
 }
 
