@@ -25,12 +25,15 @@ scope of all beans collected.
 
 ## Repository Home and Feedback
 
-The caninocal home of the source code is the repository at [Codeberg][codeberg]
-with mirrors at [GitLab][gitlab] and [GitHub][github]. When possible, please
-prefer references to [Codeberg][codeberg].
+The caninocal home of the source code is the repository at
+[Codeberg](https://codeberg.org/backendzeit/dinistiq)
+with mirrors at [GitLab](https://gitlab.com/mgoellnitz/dinistiq) and
+[GitHub](https://github.com/mgoellnitz/dinistiq). When possible, please prefer
+references to [Codeberg](https://codeberg.org/backendzeit/dinistiq).
 
-Feel invited use the [issues][issues] section of this repository at
-[Codeberg][codeberg] for any kind of feedback.
+Feel invited use the [issues](https://codeberg.org/backendzeit/dinistiq/issues)
+section of this repository at [Codeberg](https://codeberg.org/backendzeit/dinistiq)
+for any kind of feedback.
 
 
 ## Fire up the wire up
@@ -325,11 +328,11 @@ base  pom.xml
 
 Dinistiq uses slf4j for logging and logback as an instance for testing.
 
-Snapshot artifacts - currently for version 0.9-SNAPSHOT - are available from
-GitHub as a repository:
+Snapshot artifacts - currently for version 0.9-SNAPSHOT - are available e.g.
+from Codeberg as a repository:
 
 ```
-https://github.com/mgoellnitz/dinistiq/packages/2106022
+https://codeberg.org/api/packages/backendzeit/maven
 ```
 
 Apart from optional configuration files to be placed somehere on your classpath,
@@ -584,7 +587,7 @@ we want to add some  values for dinistiq to this list:
 |:------|-------:|
 |Version|0.8.1|
 |Archive size|<25kB|
-|Further dependencies|3|
+|Further dependencies|4|
 |API||
 |Methods in injector/context|10|
 |Concept||
@@ -694,8 +697,3 @@ properties files. Weeks later I discovered TinyDI as another option. While this
 container seems to be a lot cleverer about the search of annotated classes, it 
 seems to lack the needed option of extending the configuration aspects from the 
 annotations with properties files - defaults and overridden values and references.
-
-[issues]: https://codeberg.org/backendzeit/dinistiq/issues
-[codeberg]: https://codeberg.org/backendzeit/dinistiq
-[gitlab]: https://gitlab.com/mgoellnitz/dinistiq
-[github]: https://github.com/mgoellnitz/dinistiq
