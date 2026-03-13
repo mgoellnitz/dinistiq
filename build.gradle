@@ -140,6 +140,13 @@ tasks.named("assemble") {
   dependsOn(javadocJar, sourcesJar)
 }
 
+var gitlabUser = 'Job-Token'
+var gitlabToken = System.getenv("CI_JOB_TOKEN")
+if (gitlabToken == null) {
+  gitlabUser = 'Private-Token'
+  gitlabToken = System.getenv("GITLAB_COM_TOKEN")
+}
+
 publishing {
   publications {
     customizedGeneratedArtifacts(MavenPublication) {
@@ -204,6 +211,17 @@ publishing {
       credentials {
         username = project.findProperty("cb.user")  ?: System.getenv("CODEBERG_USER")
         password = project.findProperty("cb.token") ?: System.getenv("CODEBERG_TOKEN")
+      }
+    }
+    maven {
+      name "GitLab"
+      url "https://gitlab.com/api/v4/projects/1966640/packages/maven"
+      credentials(HttpHeaderCredentials) {
+        name = gitlabUser
+        value = gitlabToken
+      }
+      authentication {
+        header(HttpHeaderAuthentication)
       }
     }
     maven {

@@ -35,8 +35,8 @@ build:
   stage: dinistiq
   script:
   - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg audit build jacocoTestReport sign
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco generatePomFileForCustomizedGeneratedArtifactsPublication
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg audit build jacocoTestReport sign publishAllPublicationsToGitLabRepository
+  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco
   - curl -Os https://uploader.codecov.io/latest/linux/codecov
   - chmod +x codecov
   - ./codecov
@@ -52,7 +52,7 @@ release:
     - tags
   script:
   - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
-  - ./gradlew -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg build sign generatePomFileForCustomizedGeneratedArtifactsPublication
+  - ./gradlew -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg build sign publishAllPublicationsToGitLabRepository
   artifacts:
     paths:
     - build/libs/*
