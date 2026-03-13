@@ -197,6 +197,16 @@ publishing {
       artifact javadocJar
     }
   }
+  repositories {
+    maven {
+      name "Codeberg"
+      url "https://codeberg.org/api/packages/backendzeit/maven"
+      credentials {
+        username = project.findProperty("cb.user")  ?: System.getenv("CODEBERG_USER")
+        password = project.findProperty("cb.token") ?: System.getenv("CODEBERG_TOKEN")
+      }
+    }
+  }
 }
 
 signing {
