@@ -50,7 +50,9 @@ release:
   stage: dinistiq
   only:
     - tags
-  script: ./gradlew build generatePomFileForCustomizedGeneratedArtifactsPublication sign
+  script:
+  - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
+  - ./gradlew -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg build sign generatePomFileForCustomizedGeneratedArtifactsPublication
   artifacts:
     paths:
     - build/libs/*
