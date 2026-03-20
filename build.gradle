@@ -35,7 +35,8 @@ defaultTasks 'clean', 'build'
 
 println "Gradle: ${gradle.gradleVersion}"
 
-version = '0.9-SNAPSHOT'
+def suffix = project.hasProperty('tag')?'':'-SNAPSHOT'
+version = "0.9$suffix"
 
 if (project.hasProperty('jdk')) {
   def bootstripClasspathStr = "${jdk}/jre/lib/rt.jar"

@@ -17,9 +17,9 @@
 # Environment variables needed:
 # OSS_INDEX_USER
 # OSS_INDEX_TOKEN
-# SIGNING_KEY_FILE
-# SIGNING_KEY
-# SIGNING_PASSWORD
+# PUBLICATION_KEY_FILE
+# PUBLICATION_KEY
+# PUBLICATION_PASSWORD
 # COVERALLS_REPO_TOKEN
 # PUBLICATION_USER
 # PUBLICATION_TOKEN
@@ -47,7 +47,7 @@ jobs:
 
     - name: Build with Gradle
       run: |
-        cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
-        ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pgh.user=${{vars.PUBLICATION_USER}} -Pgh.token=${{secrets.PUBLICATION_TOKEN}} build sign publishAllPublicationsToGitHubRepository
+        cat <(echo -e "${{ secrets.PUBLICATION_KEY_FILE }}") | gpg --dearmor > key.gpg
+        ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pgh.user=${{vars.PUBLICATION_USER}} -Pgh.token=${{secrets.PUBLICATION_TOKEN}} build sign publishAllPublicationsToGitHubRepository
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

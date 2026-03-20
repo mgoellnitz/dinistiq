@@ -15,9 +15,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # Environment variables needed:
-# SIGNING_KEY_FILE
-# SIGNING_KEY
-# SIGNING_PASSWORD
+# PUBLICATION_KEY_FILE
+# PUBLICATION_KEY
+# PUBLICATION_PASSWORD
 # CODEBERG_USER
 # CODEBERG_TOKEN
 #
@@ -49,5 +49,5 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
-          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pcb.user=${{vars.CODEBERG_USER}} -Pcb.token=${{secrets.CODEBERG_TOKEN}} build sign publishAllPublicationsToCodebergRepository
+          cat <(echo -e "${{ secrets.PUBLICATION_KEY_FILE }}") | gpg --dearmor > key.gpg
+          ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pcb.user=${{vars.CODEBERG_USER}} -Pcb.token=${{secrets.CODEBERG_TOKEN}} build sign publishAllPublicationsToCodebergRepository

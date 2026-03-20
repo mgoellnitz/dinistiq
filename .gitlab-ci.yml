@@ -20,6 +20,9 @@
 # SIGNING_KEY_FILE
 # SIGNING_KEY
 # SIGNING_PASSWORD
+# PUBLICATION_KEY_FILE
+# PUBLICATION_KEY
+# PUBLICATION_PASSWORD
 # COVERALLS_REPO_TOKEN
 # CODECOV_TOKEN
 #
@@ -52,7 +55,7 @@ release:
     - tags
   script:
   - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
-  - ./gradlew -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg build sign publishAllPublicationsToGitLabRepository
+  - ./gradlew -Ptag -Psigning.keyId=$PUBLICATION_KEY -Psigning.password=$PUBLICATION_PASSWORD -Psigning.secretKeyRingFile=key.gpg build sign publishAllPublicationsToGitLabRepository
   artifacts:
     paths:
     - build/libs/*
