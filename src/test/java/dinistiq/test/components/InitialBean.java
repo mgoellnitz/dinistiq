@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2020 Martin Goellnitz
+ * Copyright 2014-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,7 @@
  */
 package dinistiq.test.components;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import lombok.Getter;
 
 

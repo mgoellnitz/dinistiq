@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2016-2020 Martin Goellnitz
+ * Copyright 2016-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.atinject.tck.auto.Car;
 import org.testng.Assert;
 import org.testng.annotations.Test;

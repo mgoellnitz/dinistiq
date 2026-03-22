@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2013-2021 Martin Goellnitz
+ * Copyright 2013-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,8 @@
 package dinistiq.test.components;
 
 import jakarta.annotation.PostConstruct;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

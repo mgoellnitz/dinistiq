@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2021 Martin Goellnitz
+ * Copyright 2014-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -412,7 +412,7 @@ public class MockServletContext implements ServletContext {
     /**
      * Mock a servlet registration.
      *
-     * @see ServletContext#addServlet(java.lang.String, javax.servlet.Servlet)
+     * @see ServletContext#addServlet(java.lang.String, jakarta.servlet.Servlet)
      * @return mock
      */
     @Override
@@ -479,7 +479,7 @@ public class MockServletContext implements ServletContext {
     /**
      * Not implemented.
      *
-     * @see ServletContext#addFilter(java.lang.String, javax.servlet.Filter)
+     * @see ServletContext#addFilter(java.lang.String, jakarta.servlet.Filter)
      */
     @Override
     public FilterRegistration.Dynamic addFilter(String string, Filter filter) {

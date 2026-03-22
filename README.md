@@ -49,7 +49,7 @@ The missing bits can be configured by a set of properties files, describing
 ## Convention over Configuration
 
 Firstly, the most important thing to use dinistiq is to annotate your 
-dependencies with JSR @Inject so that dinistiq can find out which components 
+dependencies with JSR 330 @Inject so that dinistiq can find out which components 
 are needed.
 
 ```Java

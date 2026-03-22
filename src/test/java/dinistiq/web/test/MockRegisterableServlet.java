@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2014-2021 Martin Goellnitz
+ * Copyright 2014-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,8 +22,8 @@ import dinistiq.web.RegisterableServlet;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -62,7 +62,7 @@ public class MockRegisterableServlet implements RegisterableServlet {
     /**
      * Not implemented.
      *
-     * @see javax.servlet.Servlet#init(javax.servlet.ServletConfig)
+     * @see jakarta.servlet.Servlet#init(jakarta.servlet.ServletConfig)
      */
     @Override
     public void init(ServletConfig sc) throws ServletException {
@@ -73,7 +73,7 @@ public class MockRegisterableServlet implements RegisterableServlet {
     /**
      * Not implemented.
      *
-     * @see javax.servlet.Servlet#getServletConfig()
+     * @see jakarta.servlet.Servlet#getServletConfig()
      */
     @Override
     public ServletConfig getServletConfig() {
@@ -84,7 +84,7 @@ public class MockRegisterableServlet implements RegisterableServlet {
     /**
      * Empty mock implementation.
      *
-     * @see javax.servlet.Servlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     * @see jakarta.servlet.Servlet#service(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)
      */
     @Override
     public void service(ServletRequest sr, ServletResponse sr1) throws ServletException, IOException {

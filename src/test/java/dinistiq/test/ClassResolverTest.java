@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2014-2017 Martin Goellnitz
+ * Copyright 2014-2026 Martin Goellnitz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ import dinistiq.SimpleClassResolver;
 import dinistiq.test.components.TestInterface;
 import java.util.HashSet;
 import java.util.Set;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ public class ClassResolverTest {
     public void testClassLoader() {
         Set<String> packages = new HashSet<>();
         packages.add(TestInterface.class.getPackage().getName());
-        packages.add("javax");
+        packages.add("jakarta");
         ClassResolver resolver = new SimpleClassResolver(packages);
         Set<Class<TestInterface>> subclasses = resolver.getSubclasses(TestInterface.class);
         Assert.assertEquals(subclasses.size(), 2, "Cannot find expected number of implementing classes");
