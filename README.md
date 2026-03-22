@@ -61,6 +61,10 @@ public class TestComponentB {
 } // TestComponentB
 ```
 
+The required dependency for you package will be `javax:inject:1` for early
+version os dinistiq, and `jakarta.inject:jakarta.inject-api:2.0.1` and ulp
+later.
+
 In the next step, dinistiq resolves those components from the auto-scanned 
 portion of the classpath where it instantiates all classes annotated with 
 @Singleton. Optionally, these components may be named with @Named (with an 
