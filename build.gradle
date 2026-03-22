@@ -151,51 +151,56 @@ if (gitlabToken == null) {
 publishing {
   publications {
     customizedGeneratedArtifacts(MavenPublication) {
-      pom.withXml {
-        def rootNode = asNode()
-        rootNode.children().get(3).plus {
-          new Node(rootNode, 'name', 'dinistiq')
-          new Node(rootNode, 'description', 'JSR 330 based Java minimal footprint Dependency Injection framework')
-          new Node(rootNode, 'url', 'https://mgoellnitz.github.io/dinistiq/')
-          def license = new Node(rootNode, 'licenses').appendNode('license')
-          license.appendNode('name', 'LGPL-3.0')
-          license.appendNode('url', 'https://opensource.org/license/LGPL-3.0')
-          license
-          def issues = new Node(rootNode, 'issueManagement')
-          issues.appendNode('system', 'github')
-          issues.appendNode('url', 'https://codeberg.org/backendzeit/dinistiq/issues')
-          issues
-          def scm = new Node(rootNode, 'scm')
-          scm.appendNode('connection', 'scm:git:git@codeberg.org:backendzeit/dinistiq.git')
-          scm.appendNode('developerConnection', 'scm:git:git@codeberg.org:backendzeit/dinistiq.git')
-          scm.appendNode('url', 'https://codeberg.org/backendzeit/dinistiq.git')
-          def developer = rootNode.appendNode('developers').appendNode('developer')
-          developer.appendNode('name', 'Martin Goellnitz')
-          developer.appendNode('organization', 'Provocon')
-          developer.appendNode('organizationUrl', 'http://www.provocon.de/')
-          developer
-        }
-        rootNode.dependencies.dependency.findAll { xmlDep ->
-          // mark optional dependencies
-          if ( project.configurations.optional.allDependencies.findAll { dep ->
-              xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
-            } ) {
-            def xmlOptional = xmlDep.optional[ 0 ];
-            if ( !xmlOptional ) {
-              xmlOptional = xmlDep.appendNode( 'optional' )
-            }
-            xmlOptional.value = 'true';
+      pom {
+        name = 'dinistiq'
+        description = 'JSR 330 based Java minimal footprint Dependency Injection framework'
+        url = 'https://mgoellnitz.github.io/dinistiq/'
+        licenses {
+          license {
+            name = 'LGPL-3.0'
+            url  = 'https://opensource.org/license/LGPL-3.0'
           }
-
-          // fix maven-publish issue when all maven dependencies are placed into runtime scope
-          if ( project.configurations.implementation.allDependencies.findAll { dep ->
-              xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
-            } ) {
-            def xmlScope = xmlDep.scope[ 0 ];
-            if ( !xmlScope ) {
-              xmlScope = xmlDep.appendNode( 'scope' )
+        }
+        issueManagement {
+          system = 'Codeberg'
+          url=  'https://codeberg.org/backendzeit/dinistiq/issues'
+        }
+        scm {
+          connection = 'scm:git:git@codeberg.org:backendzeit/dinistiq.git'
+          developerConnection = 'scm:git:git@codeberg.org:backendzeit/dinistiq.git'
+          url = 'https://codeberg.org/backendzeit/dinistiq.git'
+        }
+        developers {
+          developer {
+            name = 'Martin Goellnitz'
+            organization = 'Provocon'
+            organizationUrl = 'http://www.provocon.de/'
+          }
+        }
+        withXml {
+          def rootNode = asNode()
+          rootNode.dependencies.dependency.findAll { xmlDep ->
+            // mark optional dependencies
+            if ( project.configurations.optional.allDependencies.findAll { dep ->
+                xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
+              } ) {
+              def xmlOptional = xmlDep.optional[ 0 ];
+              if ( !xmlOptional ) {
+                xmlOptional = xmlDep.appendNode( 'optional' )
+              }
+              xmlOptional.value = 'true';
             }
-            xmlScope.value = 'compile';
+
+            // fix maven-publish issue when all maven dependencies are placed into runtime scope
+            if ( project.configurations.implementation.allDependencies.findAll { dep ->
+                xmlDep.groupId.text() == dep.group && xmlDep.artifactId.text() == dep.name
+              } ) {
+              def xmlScope = xmlDep.scope[ 0 ];
+              if ( !xmlScope ) {
+                xmlScope = xmlDep.appendNode( 'scope' )
+              }
+              xmlScope.value = 'compile';
+            }
           }
         }
       }
