@@ -156,10 +156,10 @@ publishing {
         rootNode.children().get(3).plus {
           new Node(rootNode, 'name', 'dinistiq')
           new Node(rootNode, 'description', 'JSR 330 based Java minimal footprint Dependency Injection framework')
-          new Node(rootNode, 'url', 'http://mgoellnitz.github.io/dinistiq/')
+          new Node(rootNode, 'url', 'https://mgoellnitz.github.io/dinistiq/')
           def license = new Node(rootNode, 'licenses').appendNode('license')
           license.appendNode('name', 'LGPL-3.0')
-          license.appendNode('url', 'http://opensource.org/licenses/LGPL-3.0')
+          license.appendNode('url', 'https://opensource.org/license/LGPL-3.0')
           license
           def issues = new Node(rootNode, 'issueManagement')
           issues.appendNode('system', 'github')
