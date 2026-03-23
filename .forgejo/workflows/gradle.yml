@@ -54,4 +54,7 @@ jobs:
       - name: Build with Gradle
         run: |
           cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
-          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pcb.user=${{vars.CODEBERG_USER}} -Pcb.token=${{secrets.CODEBERG_TOKEN}} audit build jacocoTestReport sign publishAllPublicationsToCodebergRepository
+          ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} \
+                    -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
+                    -Pcb.user=${{vars.CODEBERG_USER}} -Pcb.token=${{secrets.CODEBERG_TOKEN}} \
+                    audit build jacocoTestReport sign publishAllPublicationsToCodebergRepository

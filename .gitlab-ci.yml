@@ -36,13 +36,18 @@ variables:
 
 build:
   stage: dinistiq
+  except:
+    - tags
   script:
-  - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg audit build jacocoTestReport sign publishAllPublicationsToGitLabRepository
-  - ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco
-  - curl -Os https://uploader.codecov.io/latest/linux/codecov
-  - chmod +x codecov
-  - ./codecov
+  - | 
+    gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
+    ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" \
+              -Psigning.keyId=$SIGNING_KEY -Psigning.password=$SIGNING_PASSWORD -Psigning.secretKeyRingFile=key.gpg \
+              audit build jacocoTestReport sign publishAllPublicationsToGitLabRepository
+    ./gradlew -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" coverallsJacoco
+    curl -Os https://uploader.codecov.io/latest/linux/codecov
+    chmod +x codecov
+    ./codecov
   artifacts:
     paths:
     - build/libs/*
@@ -54,8 +59,12 @@ release:
   only:
     - tags
   script:
-  - gpg --dearmor < $SIGNING_KEY_FILE > key.gpg
-  - ./gradlew -Ptag -Psigning.keyId=$PUBLICATION_KEY -Psigning.password=$PUBLICATION_PASSWORD -Psigning.secretKeyRingFile=key.gpg build sign publishAllPublicationsToGitLabRepository
+  - |
+    gpg --dearmor < $PUBLICATION_KEY_FILE > key.gpg
+    ./gradlew -Ptag -PossindexUser="$OSS_INDEX_USER" -PossindexToken="$OSS_INDEX_TOKEN" \
+              -Psigning.keyId=$PUBLICATION_KEY -Psigning.password=$PUBLICATION_PASSWORD -Psigning.secretKeyRingFile=key.gpg \
+              -PmavenCentralUsername=$CENTRAL_USER -PmavenCentralPassword=$CENTRAL_TOKEN \
+              build sign publishToMavenCentral
   artifacts:
     paths:
     - build/libs/*

@@ -21,8 +21,8 @@
 # PUBLICATION_KEY
 # PUBLICATION_PASSWORD
 # COVERALLS_REPO_TOKEN
-# PUBLICATION_USER
-# PUBLICATION_TOKEN
+# CENTRAL_USER
+# CENTRAL_TOKEN
 #
 name: Build Dinistiq
 
@@ -48,6 +48,9 @@ jobs:
     - name: Build with Gradle
       run: |
         cat <(echo -e "${{ secrets.PUBLICATION_KEY_FILE }}") | gpg --dearmor > key.gpg
-        ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pgh.user=${{vars.PUBLICATION_USER}} -Pgh.token=${{secrets.PUBLICATION_TOKEN}} build sign publishAllPublicationsToGitHubRepository
+        ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} \
+                  -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
+                  -PmavenCentralUsername=${{secrets.CENTRAL_USER}} -PmavenCentralPassword=${{secrets.CENTRAL_TOKEN}} \
+                  build sign publishToMavenCentral
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

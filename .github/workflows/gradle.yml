@@ -50,6 +50,9 @@ jobs:
     - name: Build with Gradle
       run: |
         cat <(echo -e "${{ secrets.SIGNING_KEY_FILE }}") | gpg --dearmor > key.gpg
-        ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Pgh.user=${{vars.PUBLICATION_USER}} -Pgh.token=${{secrets.PUBLICATION_TOKEN}} -Psigning.secretKeyRingFile=key.gpg audit build jacocoTestReport coverallsJacoco sign publishAllPublicationsToGitHubRepository
+        ./gradlew -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} \
+        -Psigning.keyId=${{secrets.SIGNING_KEY}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
+        -Pgh.user=${{vars.PUBLICATION_USER}} -Pgh.token=${{secrets.PUBLICATION_TOKEN}} \
+        audit build jacocoTestReport coverallsJacoco sign publishAllPublicationsToGitHubRepository
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

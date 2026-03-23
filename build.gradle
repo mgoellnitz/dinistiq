@@ -20,15 +20,14 @@ import groovy.util.Node;
 import org.gradle.api.tasks.compile.AbstractCompile
 
 plugins {
-  // id 'net.saliman.cobertura' version '4.0.0' - breaks audit with oldish references
   id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
   id 'net.ossindex.audit' version '0.4.11'
   id 'io.franzbecker.gradle-lombok' version '5.0.0'
   id 'signing'
+  id 'com.vanniktech.maven.publish.base' version '0.36.0'
 }
 apply plugin: 'java'
 apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
 apply plugin: 'pmd'
 
 defaultTasks 'clean', 'build'
@@ -148,6 +147,11 @@ if (gitlabToken == null) {
   gitlabToken = System.getenv("GITLAB_COM_TOKEN")
 }
 
+mavenPublishing {
+  publishToMavenCentral()
+  signAllPublications()
+}
+
 publishing {
   publications {
     customizedGeneratedArtifacts(MavenPublication) {
@@ -163,7 +167,7 @@ publishing {
         }
         issueManagement {
           system = 'Codeberg'
-          url=  'https://codeberg.org/backendzeit/dinistiq/issues'
+          url =  'https://codeberg.org/backendzeit/dinistiq/issues'
         }
         scm {
           connection = 'scm:git:git@codeberg.org:backendzeit/dinistiq.git'

@@ -18,8 +18,8 @@
 # PUBLICATION_KEY_FILE
 # PUBLICATION_KEY
 # PUBLICATION_PASSWORD
-# CODEBERG_USER
-# CODEBERG_TOKEN
+# CENTRAL_USER
+# CENTRAL_TOKEN
 #
 name: Build Dinistiq
 
@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Prepare Tools
-        run: apt update ; apt install -yq nodejs
+        run: apt update ; apt install -yq gnupg nodejs
 
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -50,4 +50,7 @@ jobs:
       - name: Build with Gradle
         run: |
           cat <(echo -e "${{ secrets.PUBLICATION_KEY_FILE }}") | gpg --dearmor > key.gpg
-          ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg -Pcb.user=${{vars.CODEBERG_USER}} -Pcb.token=${{secrets.CODEBERG_TOKEN}} build sign publishAllPublicationsToCodebergRepository
+          ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} \
+                    -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
+                    -PmavenCentralUsername=${{secrets.CENTRAL_USER}} -PmavenCentralPassword=${{secrets.CENTRAL_TOKEN}} \
+                    build sign publishToMavenCentral
