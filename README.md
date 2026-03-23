@@ -2,7 +2,7 @@
 
 # Minimalistic Dependency Injection
 
-[![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://github.com/mgoellnitz/dinistiq/releases/latest)
+[![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://codeberg.org/backendzeit/dinistiq/releases/latest)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/mgoellnitz/dinistiq/gradle.yml)](https://github.com/mgoellnitz/dinistiq/actions/workflows/gradle.yml)
 [![Build Status](https://img.shields.io/gitlab/pipeline/mgoellnitz/dinistiq.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
 [![Coverage Status](https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master)](https://coveralls.io/github/mgoellnitz/dinistiq?branch=master)
@@ -273,11 +273,20 @@ listTest=java.util.List(first,second)
 ## How to use
 
 Extend your project with the dependency to the rather small dinistiq library 
-file. Dinistiq releases used to be available from JCenter. The group id and 
-artifact id are both 'dinistiq'.
+file. Dinistiq releases used to be available from Maven Central. The group id
+and artifact id are both 'dinistiq'.
 
 Thus, for projects built with Gradle you will need to add the following lines
-to your repositories sections of the build file
+to the repositories sections of the build file:
+
+```
+maven {
+  mavenCentral()
+}
+```
+
+Older releases where provided through the discontinued JCenter facility and
+can still be obtain like with:
 
 ```
 maven {
@@ -286,11 +295,15 @@ maven {
 }
 ```
 
-if they are not already there and the dependency to the artifact in the
-dependencies  section.
+And the dependecies section need the addition of the following dependency
+description line:
 
 ```
-compile "dinistiq:dinistiq:0.8.1"
+dependencies {
+  ...
+  implementation "dinistiq:dinistiq:0.9"
+  ...
+}
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -318,27 +331,17 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.8.1</version>
+    <versions>0.9</version>
   </dependency>
 ...
 </dependencyManagement>
-
-...
-
-<repositories>
-  <repository>
-    <id>jcenter</id>
-    <name>JCenter Remains</name>
-    <url>https://releases.jfrog.io/artifactory/oss-releases/</url>
-  </repository>
-</repositories>
-...
 ```
 
 Dinistiq uses slf4j for logging and logback as an instance for testing.
 
-Snapshot artifacts - currently for version 0.9-SNAPSHOT - are available e.g.
-from Codeberg as a repository:
+Snapshot artifacts - currently for version 1.0-SNAPSHOT - are available
+from the respective GIT repository sites like e.g.
+[Codeberg](https://codeberg.org/backendzeit/dinistiq):
 
 ```
 https://codeberg.org/api/packages/backendzeit/maven
@@ -584,7 +587,7 @@ fixed synchronously on Gradle updates.
 | 0.7            | Java 8     | Java 8      | 3.1       |
 | 0.8.1          | Java 8     | Java 8      | 4.0       |
 | 0.9            | Java 11    | Java 11     | 5.0       |
-| 0.x            | Java 17    | Java 17     | 6.0       |
+| 1.0            | Java 17    | Java 17     | 6.1       |
 
 ## Comparison
 

@@ -192,54 +192,10 @@ public class MockServletContext implements ServletContext {
     /**
      * Not implemented.
      *
-     * @see ServletContext#getServlet(java.lang.String)
-     */
-    @Override
-    public Servlet getServlet(String string) throws ServletException {
-        throw NYI;
-    }
-
-
-    /**
-     * Not implemented.
-     *
-     * @see ServletContext#getServlets()
-     */
-    @Override
-    public Enumeration<Servlet> getServlets() {
-        throw NYI;
-    }
-
-
-    /**
-     * Not implemented.
-     *
-     * @see ServletContext#getServletNames()
-     */
-    @Override
-    public Enumeration<String> getServletNames() {
-        throw NYI;
-    }
-
-
-    /**
-     * Not implemented.
-     *
      * @see ServletContext#log(java.lang.String)
      */
     @Override
     public void log(String string) {
-        throw NYI;
-    }
-
-
-    /**
-     * Not implemented.
-     *
-     * @see ServletContext#log(java.lang.Exception, java.lang.String)
-     */
-    @Override
-    public void log(Exception excptn, String string) {
         throw NYI;
     }
 
