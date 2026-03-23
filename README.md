@@ -46,10 +46,11 @@ The missing bits can be configured by a set of properties files, describing
 - additional components that should be instantiated
 - additional values that should be injected into the instantiated components but cannot be derived from the auto-scanned parts
 
+
 ## Convention over Configuration
 
 Firstly, the most important thing to use dinistiq is to annotate your 
-dependencies with JSR 330 @Inject so that dinistiq can find out which components 
+dependencies with JSR330 @Inject so that dinistiq can find out which components
 are needed.
 
 ```Java
@@ -140,7 +141,7 @@ public class QualifiedInjection {
 } // QualifiedInjection
 ```
 
-Only implementation annotated with the given qualifier are taken into account
+Only implementations annotated with the given qualifier are taken into account
 when performing the injection.
 
 ```Java
@@ -246,7 +247,7 @@ syntax had to be introduced. Any simple type found in the `java.lang` package
 can be instantiated with a value bound to it, since these values are immutable 
 and there are thus no modifiable fields or setters in these classes.
 
-Some examples for this are: 
+Some examples for this are:
 
 ```
 booleanValue=java.lang.Boolean("false")
@@ -272,9 +273,9 @@ listTest=java.util.List(first,second)
 
 ## How to use
 
-Extend your project with the dependency to the rather small dinistiq library 
-file. Dinistiq releases used to be available from Maven Central. The group id
-and artifact id are both 'dinistiq'.
+Extend your project with the dependency to the rather small dinistiq library
+file. Dinistiq releases are available from Maven Central. The group id and
+artifact id are both `dinistiq`.
 
 Thus, for projects built with Gradle you will need to add the following lines
 to the repositories sections of the build file:
@@ -295,7 +296,7 @@ maven {
 }
 ```
 
-And the dependecies section need the addition of the following dependency
+And the dependencies section need the addition of the following dependency
 description line:
 
 ```
@@ -597,8 +598,8 @@ we want to add some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.8.1|
-|Archive size|<25kB|
+|Version|0.9|
+|Archive size|<27kB|
 |Further dependencies|4|
 |API||
 |Methods in injector/context|10|
@@ -660,7 +661,7 @@ in features, easy to use, and still more configurable than other options I could
 think of. After some months of use, I now can invite other users to take a look 
 at it and try it in their own projects.
 
-Also this text gives you a "why" on the use of the JSR 330 annotations for Dependency 
+Also this text gives you a "why" on the use of the JSR330 annotations for Dependency
 Injection. It simply makes your code even more reusable in case your development 
 or deployment environment changes.
 
