@@ -2,7 +2,7 @@
 
 # Minimalistic Dependency Injection
 
-[![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://github.com/mgoellnitz/dinistiq/releases/latest)
+[![Latest Release](https://img.shields.io/github/release/mgoellnitz/dinistiq.svg)](https://codeberg.org/backendzeit/dinistiq/releases/latest)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/mgoellnitz/dinistiq/gradle.yml)](https://github.com/mgoellnitz/dinistiq/actions/workflows/gradle.yml)
 [![Build Status](https://img.shields.io/gitlab/pipeline/mgoellnitz/dinistiq.svg)](https://gitlab.com/mgoellnitz/dinistiq/pipelines)
 [![Coverage Status](https://coveralls.io/repos/github/mgoellnitz/dinistiq/badge.svg?branch=master)](https://coveralls.io/github/mgoellnitz/dinistiq?branch=master)
@@ -46,10 +46,11 @@ The missing bits can be configured by a set of properties files, describing
 - additional components that should be instantiated
 - additional values that should be injected into the instantiated components but cannot be derived from the auto-scanned parts
 
+
 ## Convention over Configuration
 
 Firstly, the most important thing to use dinistiq is to annotate your 
-dependencies with JSR @Inject so that dinistiq can find out which components 
+dependencies with JSR330 @Inject so that dinistiq can find out which components
 are needed.
 
 ```Java
@@ -60,6 +61,10 @@ public class TestComponentB {
 
 } // TestComponentB
 ```
+
+The required dependency for you package will be `javax:inject:1` for early
+version os dinistiq, and `jakarta.inject:jakarta.inject-api:2.0.1` and ulp
+later.
 
 In the next step, dinistiq resolves those components from the auto-scanned 
 portion of the classpath where it instantiates all classes annotated with 
@@ -136,7 +141,7 @@ public class QualifiedInjection {
 } // QualifiedInjection
 ```
 
-Only implementation annotated with the given qualifier are taken into account
+Only implementations annotated with the given qualifier are taken into account
 when performing the injection.
 
 ```Java
@@ -242,7 +247,7 @@ syntax had to be introduced. Any simple type found in the `java.lang` package
 can be instantiated with a value bound to it, since these values are immutable 
 and there are thus no modifiable fields or setters in these classes.
 
-Some examples for this are: 
+Some examples for this are:
 
 ```
 booleanValue=java.lang.Boolean("false")
@@ -268,12 +273,21 @@ listTest=java.util.List(first,second)
 
 ## How to use
 
-Extend your project with the dependency to the rather small dinistiq library 
-file. Dinistiq releases used to be available from JCenter. The group id and 
-artifact id are both 'dinistiq'.
+Extend your project with the dependency to the rather small dinistiq library
+file. Dinistiq releases are available from Maven Central. The group id and
+artifact id are both `dinistiq`.
 
 Thus, for projects built with Gradle you will need to add the following lines
-to your repositories sections of the build file
+to the repositories sections of the build file:
+
+```
+maven {
+  mavenCentral()
+}
+```
+
+Older releases where provided through the discontinued JCenter facility and
+can still be obtain like with:
 
 ```
 maven {
@@ -282,11 +296,15 @@ maven {
 }
 ```
 
-if they are not already there and the dependency to the artifact in the
-dependencies  section.
+And the dependencies section need the addition of the following dependency
+description line:
 
 ```
-compile "dinistiq:dinistiq:0.8.1"
+dependencies {
+  ...
+  implementation "dinistiq:dinistiq:0.9"
+  ...
+}
 ```
 
 Projects built with Apache Maven need the following steps:
@@ -314,27 +332,17 @@ base  pom.xml
   <dependency>
     <groupId>dinistiq</groupId>
     <artifactId>dinistiq</artifactId>
-    <versions>0.8.1</version>
+    <versions>0.9</version>
   </dependency>
 ...
 </dependencyManagement>
-
-...
-
-<repositories>
-  <repository>
-    <id>jcenter</id>
-    <name>JCenter Remains</name>
-    <url>https://releases.jfrog.io/artifactory/oss-releases/</url>
-  </repository>
-</repositories>
-...
 ```
 
 Dinistiq uses slf4j for logging and logback as an instance for testing.
 
-Snapshot artifacts - currently for version 0.9-SNAPSHOT - are available e.g.
-from Codeberg as a repository:
+Snapshot artifacts - currently for version 1.0-SNAPSHOT - are available
+from the respective GIT repository sites like e.g.
+[Codeberg](https://codeberg.org/backendzeit/dinistiq):
 
 ```
 https://codeberg.org/api/packages/backendzeit/maven
@@ -580,7 +588,7 @@ fixed synchronously on Gradle updates.
 | 0.7            | Java 8     | Java 8      | 3.1       |
 | 0.8.1          | Java 8     | Java 8      | 4.0       |
 | 0.9            | Java 11    | Java 11     | 5.0       |
-| 0.x            | Java 17    | Java 17     | 6.0       |
+| 1.0            | Java 17    | Java 17     | 6.1       |
 
 ## Comparison
 
@@ -590,8 +598,8 @@ we want to add some  values for dinistiq to this list:
 
 |Library|dinistiq|
 |:------|-------:|
-|Version|0.8.1|
-|Archive size|<25kB|
+|Version|0.9|
+|Archive size|<27kB|
 |Further dependencies|4|
 |API||
 |Methods in injector/context|10|
@@ -653,7 +661,7 @@ in features, easy to use, and still more configurable than other options I could
 think of. After some months of use, I now can invite other users to take a look 
 at it and try it in their own projects.
 
-Also this text gives you a "why" on the use of the JSR 330 annotations for Dependency 
+Also this text gives you a "why" on the use of the JSR330 annotations for Dependency
 Injection. It simply makes your code even more reusable in case your development 
 or deployment environment changes.
 
