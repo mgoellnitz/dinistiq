@@ -140,10 +140,10 @@ tasks.named("assemble") {
   dependsOn(javadocJar, sourcesJar)
 }
 
-var gitlabUser = 'Job-Token'
+var gitlabUser  = 'Job-Token'
 var gitlabToken = System.getenv("CI_JOB_TOKEN")
 if (gitlabToken == null) {
-  gitlabUser = 'Private-Token'
+  gitlabUser  = 'Private-Token'
   gitlabToken = System.getenv("GITLAB_COM_TOKEN")
 }
 
@@ -205,18 +205,18 @@ publishing {
   }
   repositories {
     maven {
-      name "Codeberg"
-      url "https://codeberg.org/api/packages/backendzeit/maven"
+      name = "Codeberg"
+      url  = "https://codeberg.org/api/packages/backendzeit/maven"
       credentials {
         username = project.findProperty("cb.user")  ?: System.getenv("CODEBERG_USER")
         password = project.findProperty("cb.token") ?: System.getenv("CODEBERG_TOKEN")
       }
     }
     maven {
-      name "GitLab"
-      url "https://gitlab.com/api/v4/projects/1966640/packages/maven"
+      name = "GitLab"
+      url  = "https://gitlab.com/api/v4/projects/1966640/packages/maven"
       credentials(HttpHeaderCredentials) {
-        name = gitlabUser
+        name  = gitlabUser
         value = gitlabToken
       }
       authentication {
@@ -224,8 +224,8 @@ publishing {
       }
     }
     maven {
-      name "GitHub"
-      url "https://maven.pkg.github.com/mgoellnitz/dinistiq"
+      name = "GitHub"
+      url  = "https://maven.pkg.github.com/mgoellnitz/dinistiq"
       credentials {
         username = project.findProperty("gh.user")  ?: System.getenv("GITHUB_COM_USER")
         password = project.findProperty("gh.token") ?: System.getenv("GITHUB_COM_TOKEN")
