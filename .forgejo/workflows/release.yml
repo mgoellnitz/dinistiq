@@ -35,22 +35,22 @@ jobs:
       image: debian:stable-slim
 
     steps:
-      - name: Prepare Tools
-        run: apt update ; apt install -yq gnupg nodejs
+    - name: Prepare Tools
+      run: apt update ; apt install -yq gnupg nodejs
 
-      - name: Checkout repository
-        uses: actions/checkout@v6
+    - name: Checkout repository
+      uses: actions/checkout@v6
 
-      - name: Set up JDK 17
-        uses: https://github.com/actions/setup-java@v5
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    - name: Set up JDK 17
+      uses: https://github.com/actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-      - name: Build with Gradle
-        run: |
-          cat <(echo -e "${{ secrets.PUBLICATION_KEY_FILE }}") | gpg --dearmor > key.gpg
-          ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} \
-                    -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
-                    -PmavenCentralUsername=${{secrets.CENTRAL_USER}} -PmavenCentralPassword=${{secrets.CENTRAL_TOKEN}} \
-                    build sign publishToMavenCentral
+    - name: Build with Gradle
+      run: |
+        cat <(echo -e "${{ secrets.PUBLICATION_KEY_FILE }}") | gpg --dearmor > key.gpg
+        ./gradlew -Ptag -PossindexUser=${{secrets.OSS_INDEX_USER}} -PossindexToken=${{secrets.OSS_INDEX_TOKEN}} \
+                  -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
+                  -PmavenCentralUsername=${{secrets.CENTRAL_USER}} -PmavenCentralPassword=${{secrets.CENTRAL_TOKEN}} \
+                  build sign publishToMavenCentral

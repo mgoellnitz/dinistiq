@@ -52,5 +52,3 @@ jobs:
                   -Psigning.keyId=${{secrets.PUBLICATION_KEY}} -Psigning.password=${{secrets.PUBLICATION_PASSWORD}} -Psigning.secretKeyRingFile=key.gpg \
                   -PmavenCentralUsername=${{secrets.CENTRAL_USER}} -PmavenCentralPassword=${{secrets.CENTRAL_TOKEN}} \
                   build sign publishToMavenCentral
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
