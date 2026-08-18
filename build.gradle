@@ -59,12 +59,12 @@ configurations {
 }
 
 lombok {
-  version = "1.18.44"
+  version = "1.18.46"
   sha256 = ""
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:2.0.17'
+  implementation 'org.slf4j:slf4j-api:2.0.18'
   implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
   implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
@@ -79,7 +79,7 @@ dependencies {
   // inject-tck introduces a vulnerability, which needs this dependency override:
   testImplementation 'junit:junit:4.13.2'
   // tests are logging at debug level through special logback.xml
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.5.32'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.6.3'
 }
 
 pmd {
@@ -108,7 +108,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = '0.8.14'
+  toolVersion = '0.8.15'
 }
 
 // Triggers some unit test elements
